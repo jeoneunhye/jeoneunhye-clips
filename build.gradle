@@ -5,8 +5,6 @@ plugins {
 }
 
 tasks.withType(JavaCompile) {
-    // 프로젝트의 소스 파일 인코딩을 gradle에게 알려준다.
-    // 컴파일 시 -encoding 명령어를 안 붙여도 된다
     options.encoding = 'UTF-8'
 
     // 소스 파일을 작성할 때 사용할 자바 버전 지정
