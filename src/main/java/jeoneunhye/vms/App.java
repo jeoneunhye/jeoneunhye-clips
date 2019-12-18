@@ -6,6 +6,5 @@ public class App {
         System.out.println("어서오세요~!");
         System.out.println("111");
         System.out.println("222");
-        System.out.println("333");
     }
 }
