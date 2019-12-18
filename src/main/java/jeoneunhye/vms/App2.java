@@ -1,41 +1,69 @@
 package jeoneunhye.vms;
+
+import java.sql.Date;
 import java.util.Scanner;
 
 public class App2 {
-public static void main(String[] args) {
-  Scanner keyboard = new Scanner(System.in);
-  System.out.print("번호? ");
-  int no = keyboard.nextInt();
-  keyboard.nextLine();
-  System.out.print("이름? ");
-  String name = keyboard.nextLine();
-  System.out.print("이메일주소? ");
-  String email = keyboard.nextLine();
-  System.out.print("암호? ");
-  String password = keyboard.nextLine();
-  System.out.print("등급? ");
-  String grade = keyboard.nextLine();
-  System.out.print("작성글 수? ");
-  int textCount = keyboard.nextInt();
-  System.out.print("작성댓글 수? ");
-  int commentCount = keyboard.nextInt();
-  keyboard.nextLine();
-  System.out.print("방문일? ");
-  int visitDate = keyboard.nextInt();
-  keyboard.nextLine();
-  System.out.print("가입일? ");
-  String registeredDate = keyboard.nextLine();
-  
-  keyboard.close();
-  System.out.println();
-  
-  System.out.printf("번호: %d\n", no);
-  System.out.printf("이름: %s\n", name);
-  System.out.printf("이메일: %s\n", email);
-  System.out.printf("암호: %s\n", password);
-  System.out.printf("등급: %s\n", grade);
-  System.out.printf("활동기록: 글 %1$d개, 댓글 %2$d개\n", textCount, commentCount);
-  System.out.printf("방문일: %d\n", visitDate);
-  System.out.printf("가입일: %s\n", registeredDate);
+  static final int SIZE = 100;
+  static int[] no = new int[SIZE];
+  static String[] name = new String[SIZE];
+  static String[] email = new String[SIZE];
+  static String[] password = new String[SIZE];
+  static String[] grade = new String[SIZE];
+  static int[] textCount = new int[SIZE];
+  static int[] commentCount = new int[SIZE];
+  static int[] visitDate = new int[SIZE];
+  static Date[] registeredDate = new Date[SIZE];
+  static int count = 0;
+
+  public static void main(String[] args) {
+    inputUsers();
+    System.out.println();
+    printUsers();
+  }
+
+  static void inputUsers() {
+    Scanner keyboard = new Scanner(System.in);
+    String response;
+    for (int i = 0; i < SIZE; i++) {
+      System.out.print("번호? ");
+      no[i] = keyboard.nextInt();
+      keyboard.nextLine();
+      System.out.print("이름? ");
+      name[i] = keyboard.nextLine();
+      System.out.print("이메일주소? ");
+      email[i] = keyboard.nextLine();
+      System.out.print("암호? ");
+      password[i] = keyboard.nextLine();
+      System.out.print("등급? ");
+      grade[i] = keyboard.nextLine();
+      System.out.print("작성글 수? ");
+      textCount[i] = keyboard.nextInt();
+      System.out.print("작성댓글 수? ");
+      commentCount[i] = keyboard.nextInt();
+      keyboard.nextLine();
+      System.out.print("방문일? ");
+      visitDate[i] = keyboard.nextInt();
+      keyboard.nextLine();
+      System.out.print("가입일? ");
+      registeredDate[i] = Date.valueOf(keyboard.nextLine());
+
+      count++;
+
+      System.out.println("계속 입력하시겠습니까?(Y/n)");
+      response = keyboard.nextLine();
+      if (!response.equalsIgnoreCase("y")) {
+        break;
+      }
+    }
+    keyboard.close();
+  }
+
+  static void printUsers() {
+    for (int i = 0; i < count; i++) {
+      System.out.printf("%d, %s, %s, %s, 글 %d개, 댓글 %d개, %d, %s\n",
+          no[i], name[i], email[i], grade[i],
+          textCount[i], commentCount[i], visitDate[i], registeredDate[i]);
+    }
   }
 }
