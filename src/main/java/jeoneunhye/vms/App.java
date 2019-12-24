@@ -2,6 +2,7 @@ package jeoneunhye.vms;
 
 import java.util.Scanner;
 import jeoneunhye.vms.handler.BoardHandler;
+import jeoneunhye.vms.handler.BoardHandler2;
 import jeoneunhye.vms.handler.MemberHandler;
 import jeoneunhye.vms.handler.VideoHandler;
 
@@ -12,6 +13,7 @@ public class App {
     VideoHandler.keyboard = keyboard;
     MemberHandler.keyboard = keyboard;
     BoardHandler.keyboard = keyboard;
+    BoardHandler2.keyboard = keyboard;
     
     String command;
     do {
@@ -35,12 +37,25 @@ public class App {
         case "/board/list":
           BoardHandler.listBoard();
           break;
+        case "/board/detail":
+          BoardHandler.detailBoard();
+          break;
+        case "/board2/add":
+          BoardHandler2.addBoard();
+          break;
+        case "/board2/list":
+          BoardHandler2.listBoard();
+          break;
+        case "/board2/detail":
+          BoardHandler2.detailBoard();
+          break;
         default:
           if (!command.equalsIgnoreCase("quit")) {
             System.out.println("실행할 수 없는 명령입니다.");
           }
       }
     }
+
     while (!command.equalsIgnoreCase("quit"));
     System.out.println("안녕!");
 

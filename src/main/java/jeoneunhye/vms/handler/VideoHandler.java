@@ -2,15 +2,10 @@ package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
+import jeoneunhye.vms.domain.Video;
 
 public class VideoHandler {
-  static class Video {
-    int no;
-    String subject;
-    String title;
-    Date uploadDate;
-    String playTime;
-  }
+
   static final int VIDEO_SIZE = 100;
   static Video[] videos = new Video[VIDEO_SIZE];
   static int videoCount = 0;

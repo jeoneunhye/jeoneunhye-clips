@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.util.Scanner;
 import jeoneunhye.vms.domain.Board;
 
-public class BoardHandler {
+public class BoardHandler2 {
 
   static final int BOARD_SIZE = 100;
   static int boardCount = 0;

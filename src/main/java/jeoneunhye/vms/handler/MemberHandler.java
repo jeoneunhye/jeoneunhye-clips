@@ -2,20 +2,10 @@ package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
+import jeoneunhye.vms.domain.Member;
 
 public class MemberHandler {
-  static class Member {
-    int no;
-    String name;
-    String email;
-    String password;
-    String grade;
-    int writeCount;
-    int commentCount;
-    int visitDateCount;
-    Date registeredDate;
-    int count;
-  }
+
   static final int MEMBER_SIZE = 100;
   static Member[] members = new Member[MEMBER_SIZE];
   static int memberCount = 0;
