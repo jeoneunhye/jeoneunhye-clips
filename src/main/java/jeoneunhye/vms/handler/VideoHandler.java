@@ -1,4 +1,4 @@
-package jeoneunhye.vms;
+package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
@@ -14,9 +14,9 @@ public class VideoHandler {
   static final int VIDEO_SIZE = 100;
   static Video[] videos = new Video[VIDEO_SIZE];
   static int videoCount = 0;
-  static Scanner keyboard;
-  
-  static void addVideo() {
+  public static Scanner keyboard;
+
+  public static void addVideo() {
     Video video = new Video();
     System.out.print("번호? ");
     video.no = keyboard.nextInt();
@@ -33,7 +33,7 @@ public class VideoHandler {
     System.out.println("저장하였습니다.");
   }
 
-  static void listVideo() {
+  public static void listVideo() {
     for (int i = 0; i < videoCount; i++) {
       Video v = videos[i];
       System.out.printf("%d, %s, %s, %s, %s\n",
