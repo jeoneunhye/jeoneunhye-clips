@@ -5,23 +5,30 @@ import java.util.Scanner;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
-
   static final int BOARD_SIZE = 100;
-  public static Scanner keyboard;
+  Scanner input;
   int boardCount = 0;
-  Board[] boards = new Board[BOARD_SIZE];
-  
+  Board[] boards;
+
+  public BoardHandler(Scanner input, int capacity) {
+    this.input = input;
+    if (capacity < BOARD_SIZE || capacity < 10000) 
+      this.boards = new Board[BOARD_SIZE];
+    else
+      this.boards = new Board[capacity];
+  }
+
   public void addBoard() {
     Board board = new Board();
     System.out.print("번호? ");
-    board.no = keyboard.nextInt();
-    keyboard.nextLine();
+    board.no = input.nextInt();
+    input.nextLine();
     System.out.print("제목? ");
-    board.title = keyboard.nextLine();
+    board.title = input.nextLine();
     System.out.print("내용? ");
-    board.contents = keyboard.nextLine();
+    board.contents = input.nextLine();
     System.out.print("작성일? ");
-    board.writeDate = Date.valueOf(keyboard.nextLine());
+    board.writeDate = Date.valueOf(input.nextLine());
     board.viewCount = 0;
 
     this.boards[this.boardCount++] = board;
@@ -37,8 +44,8 @@ public class BoardHandler {
   }
   public void detailBoard() {
     System.out.print("게시물 번호? ");
-    int no = keyboard.nextInt();
-    keyboard.nextLine();
+    int no = input.nextInt();
+    input.nextLine();
 
     Board board = null;
     for (int i = 0; i < this.boardCount; i++) {
@@ -47,12 +54,12 @@ public class BoardHandler {
         break;
       }
     }
-    
+
     if (board == null) {
       System.out.println("게시물 번호가 유효하지 않습니다.");
       return;
     }
-    
+
     System.out.printf("번호: %d\n", board.no);
     System.out.printf("제목: %s\n", board.title);
     System.out.printf("내용: %s\n", board.contents);

@@ -7,23 +7,27 @@ import jeoneunhye.vms.domain.Video;
 public class VideoHandler {
 
   static final int VIDEO_SIZE = 100;
-  public static Scanner keyboard;
-  Video[] videos = new Video[VIDEO_SIZE];
+  Scanner input;
+  Video[] videos;
   int videoCount = 0;
 
+  public VideoHandler(Scanner input) {
+    this.input = input;
+    this.videos = new Video[VIDEO_SIZE];
+  }
   public void addVideo() {
     Video video = new Video();
     System.out.print("번호? ");
-    video.no = keyboard.nextInt();
-    keyboard.nextLine();
+    video.no = input.nextInt();
+    input.nextLine();
     System.out.print("주제? ");
-    video.subject = keyboard.nextLine();
+    video.subject = input.nextLine();
     System.out.print("제목? ");
-    video.title = keyboard.nextLine();
+    video.title = input.nextLine();
     System.out.print("업로드날짜? ");
-    video.uploadDate = Date.valueOf(keyboard.nextLine());
+    video.uploadDate = Date.valueOf(input.nextLine());
     System.out.print("재생시간? ");
-    video.playTime = keyboard.nextLine();
+    video.playTime = input.nextLine();
     this.videos[this.videoCount++] = video;
     System.out.println("저장하였습니다.");
   }

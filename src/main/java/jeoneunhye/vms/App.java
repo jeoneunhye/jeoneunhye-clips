@@ -8,16 +8,12 @@ import jeoneunhye.vms.handler.VideoHandler;
 public class App {
   static Scanner keyboard = new Scanner(System.in);
 
-  public static void main(String[] args) {
-    VideoHandler.keyboard = keyboard;
-    MemberHandler.keyboard = keyboard;
-    BoardHandler.keyboard = keyboard;
-    
-    VideoHandler videoHandler = new VideoHandler();
-    MemberHandler memberHandler = new MemberHandler();
-    BoardHandler boardHandler = new BoardHandler();
-    BoardHandler boardHandler2 = new BoardHandler();
-    
+  public static void main(String[] args) {    
+    VideoHandler videoHandler = new VideoHandler(keyboard);
+    MemberHandler memberHandler = new MemberHandler(keyboard);
+    BoardHandler boardHandler = new BoardHandler(keyboard, 5000);
+    BoardHandler boardHandler2 = new BoardHandler(keyboard, 1000);
+
     String command;
     do {
       command = prompt();
