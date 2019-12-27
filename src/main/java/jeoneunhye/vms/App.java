@@ -2,7 +2,6 @@ package jeoneunhye.vms;
 
 import java.util.Scanner;
 import jeoneunhye.vms.handler.BoardHandler;
-import jeoneunhye.vms.handler.BoardHandler2;
 import jeoneunhye.vms.handler.MemberHandler;
 import jeoneunhye.vms.handler.VideoHandler;
 
@@ -13,41 +12,45 @@ public class App {
     VideoHandler.keyboard = keyboard;
     MemberHandler.keyboard = keyboard;
     BoardHandler.keyboard = keyboard;
-    BoardHandler2.keyboard = keyboard;
+    
+    VideoHandler videoHandler = new VideoHandler();
+    MemberHandler memberHandler = new MemberHandler();
+    BoardHandler boardHandler = new BoardHandler();
+    BoardHandler boardHandler2 = new BoardHandler();
     
     String command;
     do {
       command = prompt();
       switch(command) {
         case "/video/add":
-          VideoHandler.addVideo();
+          videoHandler.addVideo();
           break;
         case "/video/list":
-          VideoHandler.listVideo();
+          videoHandler.listVideo();
           break;
         case "/member/add":
-          MemberHandler.addMember();
+          memberHandler.addMember();
           break;
         case "/member/list":
-          MemberHandler.listMember();
+          memberHandler.listMember();
           break;
         case "/board/add":
-          BoardHandler.addBoard();
+          boardHandler.addBoard();
           break;
         case "/board/list":
-          BoardHandler.listBoard();
+          boardHandler.listBoard();
           break;
         case "/board/detail":
-          BoardHandler.detailBoard();
+          boardHandler.detailBoard();
           break;
         case "/board2/add":
-          BoardHandler2.addBoard();
+          boardHandler2.addBoard();
           break;
         case "/board2/list":
-          BoardHandler2.listBoard();
+          boardHandler2.listBoard();
           break;
         case "/board2/detail":
-          BoardHandler2.detailBoard();
+          boardHandler2.detailBoard();
           break;
         default:
           if (!command.equalsIgnoreCase("quit")) {

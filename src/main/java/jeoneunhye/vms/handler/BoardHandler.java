@@ -7,11 +7,11 @@ import jeoneunhye.vms.domain.Board;
 public class BoardHandler {
 
   static final int BOARD_SIZE = 100;
-  static int boardCount = 0;
-  static Board[] boards = new Board[BOARD_SIZE];
   public static Scanner keyboard;
+  int boardCount = 0;
+  Board[] boards = new Board[BOARD_SIZE];
   
-  public static void addBoard() {
+  public void addBoard() {
     Board board = new Board();
     System.out.print("번호? ");
     board.no = keyboard.nextInt();
@@ -24,26 +24,26 @@ public class BoardHandler {
     board.writeDate = Date.valueOf(keyboard.nextLine());
     board.viewCount = 0;
 
-    boards[boardCount++] = board;
+    this.boards[this.boardCount++] = board;
     System.out.println("저장하였습니다.");
   }
 
-  public static void listBoard() {
-    for(int i = 0; i < boardCount; i++) {
-      Board b = boards[i];
+  public void listBoard() {
+    for(int i = 0; i < this.boardCount; i++) {
+      Board b = this.boards[i];
       System.out.printf("%d, %s, %s, %d\n",
           b.no, b.title, b.writeDate, b.viewCount);
     }
   }
-  public static void detailBoard() {
+  public void detailBoard() {
     System.out.print("게시물 번호? ");
     int no = keyboard.nextInt();
     keyboard.nextLine();
 
     Board board = null;
-    for (int i = 0; i < boardCount; i++) {
-      if (boards[i].no == no) {
-        board = boards[i];
+    for (int i = 0; i < this.boardCount; i++) {
+      if (this.boards[i].no == no) {
+        board = this.boards[i];
         break;
       }
     }
