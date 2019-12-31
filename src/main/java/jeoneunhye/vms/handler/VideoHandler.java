@@ -18,16 +18,16 @@ public class VideoHandler {
   public void addVideo() {
     Video video = new Video();
     System.out.print("번호? ");
-    video.no = input.nextInt();
+    video.setNo(input.nextInt());
     input.nextLine();
     System.out.print("주제? ");
-    video.subject = input.nextLine();
+    video.setSubject(input.nextLine());
     System.out.print("제목? ");
-    video.title = input.nextLine();
+    video.setTitle(input.nextLine());
     System.out.print("업로드날짜? ");
-    video.uploadDate = Date.valueOf(input.nextLine());
+    video.setUploadDate(Date.valueOf(input.nextLine()));
     System.out.print("재생시간? ");
-    video.playTime = input.nextLine();
+    video.setPlayTime(input.nextLine());
     this.videos[this.videoCount++] = video;
     System.out.println("저장하였습니다.");
   }
@@ -36,7 +36,7 @@ public class VideoHandler {
     for (int i = 0; i < this.videoCount; i++) {
       Video v = this.videos[i];
       System.out.printf("%d, %s, %s, %s, %s\n",
-          v.no, v.subject, v.title, v.uploadDate, v.playTime);
+          v.getNo(), v.getSubject(), v.getTitle(), v.getUploadDate(), v.getPlayTime());
     }
   }
 }

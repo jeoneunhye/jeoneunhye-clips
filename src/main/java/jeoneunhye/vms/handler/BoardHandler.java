@@ -10,6 +10,10 @@ public class BoardHandler {
   int boardCount = 0;
   Board[] boards;
 
+
+  public BoardHandler(Scanner input) {
+    this.input = input;
+  }
   public BoardHandler(Scanner input, int capacity) {
     this.input = input;
     if (capacity < BOARD_SIZE || capacity < 10000) 
@@ -21,15 +25,15 @@ public class BoardHandler {
   public void addBoard() {
     Board board = new Board();
     System.out.print("번호? ");
-    board.no = input.nextInt();
+    board.setNo(input.nextInt());
     input.nextLine();
     System.out.print("제목? ");
-    board.title = input.nextLine();
+    board.setTitle(input.nextLine());
     System.out.print("내용? ");
-    board.contents = input.nextLine();
+    board.setContents(input.nextLine());
     System.out.print("작성일? ");
-    board.writeDate = Date.valueOf(input.nextLine());
-    board.viewCount = 0;
+    board.setWriteDate(Date.valueOf(input.nextLine()));
+    board.setViewCount(0);
 
     this.boards[this.boardCount++] = board;
     System.out.println("저장하였습니다.");
@@ -39,7 +43,7 @@ public class BoardHandler {
     for(int i = 0; i < this.boardCount; i++) {
       Board b = this.boards[i];
       System.out.printf("%d, %s, %s, %d\n",
-          b.no, b.title, b.writeDate, b.viewCount);
+          b.getNo(), b.getTitle(), b.getWriteDate(), b.getViewCount());
     }
   }
   public void detailBoard() {
@@ -49,7 +53,7 @@ public class BoardHandler {
 
     Board board = null;
     for (int i = 0; i < this.boardCount; i++) {
-      if (this.boards[i].no == no) {
+      if (this.boards[i].getNo() == no) {
         board = this.boards[i];
         break;
       }
@@ -60,10 +64,10 @@ public class BoardHandler {
       return;
     }
 
-    System.out.printf("번호: %d\n", board.no);
-    System.out.printf("제목: %s\n", board.title);
-    System.out.printf("내용: %s\n", board.contents);
-    System.out.printf("작성일: %s\n", board.writeDate);
-    System.out.printf("조회수: %d\n", board.viewCount);
+    System.out.printf("번호: %d\n", board.getNo());
+    System.out.printf("제목: %s\n", board.getTitle());
+    System.out.printf("내용: %s\n", board.getContents());
+    System.out.printf("작성일: %s\n", board.getWriteDate());
+    System.out.printf("조회수: %d\n", board.getViewCount());
   }
 }

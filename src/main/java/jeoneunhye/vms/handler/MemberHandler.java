@@ -19,26 +19,26 @@ public class MemberHandler {
     Member member = new Member();
 
     System.out.print("번호? ");
-    member.no = input.nextInt();
+    member.setNo(input.nextInt());
     input.nextLine();
     System.out.print("이름? ");
-    member.name = input.nextLine();
+    member.setName(input.nextLine());
     System.out.print("이메일주소? ");
-    member.email = input.nextLine();
+    member.setEmail(input.nextLine());
     System.out.print("암호? ");
-    member.password = input.nextLine();
+    member.setPassword(input.nextLine());
     System.out.print("등급? ");
-    member.grade = input.nextLine();
+    member.setGrade(input.nextLine());
     System.out.print("작성글 수? ");
-    member.writeCount = input.nextInt();
+    member.setWriteCount(input.nextInt());
     System.out.print("작성댓글 수? ");
-    member.commentCount = input.nextInt();
+    member.setCommentCount(input.nextInt());
     input.nextLine();
     System.out.print("방문일? ");
-    member.visitDateCount = input.nextInt();
+    member.setVisitDateCount(input.nextInt());
     input.nextLine();
     System.out.print("가입일? ");
-    member.registeredDate = Date.valueOf(input.nextLine());
+    member.setRegisteredDate(Date.valueOf(input.nextLine()));
 
     this.members[this.memberCount++] = member;
     System.out.println("저장하였습니다.");
@@ -48,8 +48,8 @@ public class MemberHandler {
     for (int i = 0; i < this.memberCount; i++) {
       Member m = this.members[i];
       System.out.printf("%d, %s, %s, %s, 글 %d개, 댓글 %d개, %d, %s\n",
-          m.no, m.name, m.email, m.grade,
-          m.writeCount, m.commentCount, m.visitDateCount, m.registeredDate);
+          m.getNo(), m.getName(), m.getEmail(), m.getGrade(),
+          m.getWriteCount(), m.getCommentCount(), m.getVisitDateCount(), m.getRegisteredDate());
     }
   }
 }
