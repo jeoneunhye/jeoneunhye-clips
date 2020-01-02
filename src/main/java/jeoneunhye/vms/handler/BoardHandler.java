@@ -5,21 +5,17 @@ import java.util.Scanner;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
-  static final int BOARD_SIZE = 100;
   Scanner input;
-  int boardCount = 0;
-  Board[] boards;
-
+  BoardList boardList;
 
   public BoardHandler(Scanner input) {
     this.input = input;
+    this.boardList = new BoardList();
   }
+  
   public BoardHandler(Scanner input, int capacity) {
     this.input = input;
-    if (capacity < BOARD_SIZE || capacity < 10000) 
-      this.boards = new Board[BOARD_SIZE];
-    else
-      this.boards = new Board[capacity];
+    this.boardList = new BoardList();
   }
 
   public void addBoard() {
@@ -35,29 +31,25 @@ public class BoardHandler {
     board.setWriteDate(Date.valueOf(input.nextLine()));
     board.setViewCount(0);
 
-    this.boards[this.boardCount++] = board;
+    this.boardList.add(board);
+    
     System.out.println("저장하였습니다.");
   }
 
   public void listBoard() {
-    for(int i = 0; i < this.boardCount; i++) {
-      Board b = this.boards[i];
+    Board[] boards = this.boardList.toArray();
+    for(Board b : boards) {
       System.out.printf("%d, %s, %s, %d\n",
           b.getNo(), b.getTitle(), b.getWriteDate(), b.getViewCount());
     }
   }
+  
   public void detailBoard() {
     System.out.print("게시물 번호? ");
     int no = input.nextInt();
     input.nextLine();
 
-    Board board = null;
-    for (int i = 0; i < this.boardCount; i++) {
-      if (this.boards[i].getNo() == no) {
-        board = this.boards[i];
-        break;
-      }
-    }
+    Board board = this.boardList.get(no);
 
     if (board == null) {
       System.out.println("게시물 번호가 유효하지 않습니다.");

@@ -6,15 +6,19 @@ import jeoneunhye.vms.domain.Member;
 
 public class MemberHandler {
 
-  static final int MEMBER_SIZE = 100;
   Scanner input;
-  Member[] members;
-  int memberCount = 0;
-
+  MemberList memberList;
+  
   public MemberHandler(Scanner input) {
     this.input = input;
-    this.members = new Member[MEMBER_SIZE];
+    this.memberList = new MemberList();
   }
+  
+  public MemberHandler(Scanner input, int capacity) {
+    this.input = input;
+    this.memberList = new MemberList(capacity);
+  }
+  
   public void addMember() {
     Member member = new Member();
 
@@ -40,13 +44,14 @@ public class MemberHandler {
     System.out.print("가입일? ");
     member.setRegisteredDate(Date.valueOf(input.nextLine()));
 
-    this.members[this.memberCount++] = member;
+    this.memberList.add(member);
+    
     System.out.println("저장하였습니다.");
   }
 
   public void listMember() {
-    for (int i = 0; i < this.memberCount; i++) {
-      Member m = this.members[i];
+    Member[] members = this.memberList.toArray();
+    for (Member m : members) {
       System.out.printf("%d, %s, %s, %s, 글 %d개, 댓글 %d개, %d, %s\n",
           m.getNo(), m.getName(), m.getEmail(), m.getGrade(),
           m.getWriteCount(), m.getCommentCount(), m.getVisitDateCount(), m.getRegisteredDate());
