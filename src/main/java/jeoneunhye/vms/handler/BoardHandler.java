@@ -6,16 +6,16 @@ import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
   Scanner input;
-  BoardList boardList;
+  ArrayList boardList;
 
   public BoardHandler(Scanner input) {
     this.input = input;
-    this.boardList = new BoardList();
+    this.boardList = new ArrayList();
   }
   
   public BoardHandler(Scanner input, int capacity) {
     this.input = input;
-    this.boardList = new BoardList();
+    this.boardList = new ArrayList();
   }
 
   public void addBoard() {
@@ -37,19 +37,20 @@ public class BoardHandler {
   }
 
   public void listBoard() {
-    Board[] boards = this.boardList.toArray();
-    for(Board b : boards) {
+    Object[] arr = this.boardList.toArray();
+    for(Object obj : arr) {
+      Board b = (Board)obj;
       System.out.printf("%d, %s, %s, %d\n",
           b.getNo(), b.getTitle(), b.getWriteDate(), b.getViewCount());
     }
   }
   
   public void detailBoard() {
-    System.out.print("게시물 번호? ");
-    int no = input.nextInt();
+    System.out.print("게시물 인덱스? ");
+    int index = input.nextInt();
     input.nextLine();
 
-    Board board = this.boardList.get(no);
+    Board board = (Board)this.boardList.get(index);
 
     if (board == null) {
       System.out.println("게시물 번호가 유효하지 않습니다.");

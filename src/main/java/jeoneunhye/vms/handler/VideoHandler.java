@@ -7,16 +7,16 @@ import jeoneunhye.vms.domain.Video;
 public class VideoHandler {
 
   Scanner input;
-  VideoList videoList;
+  ArrayList videoList;
   
   public VideoHandler(Scanner input) {
     this.input = input;
-    this.videoList = new VideoList();
+    this.videoList = new ArrayList();
   }
   
   public VideoHandler(Scanner input, int capacity) {
     this.input = input;
-    this.videoList = new VideoList(capacity);
+    this.videoList = new ArrayList(capacity);
   }
   
   public void addVideo() {
@@ -39,8 +39,9 @@ public class VideoHandler {
   }
 
   public void listVideo() {
-    Video[] videos = this.videoList.toArray();
-    for (Video v : videos) {
+    Object[] arr = this.videoList.toArray();
+    for (Object obj : arr) {
+      Video v = (Video) obj;
       System.out.printf("%d, %s, %s, %s, %s\n",
           v.getNo(), v.getSubject(), v.getTitle(), v.getUploadDate(), v.getPlayTime());
     }

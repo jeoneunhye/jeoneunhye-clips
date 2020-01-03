@@ -7,16 +7,16 @@ import jeoneunhye.vms.domain.Member;
 public class MemberHandler {
 
   Scanner input;
-  MemberList memberList;
+  ArrayList memberList;
   
   public MemberHandler(Scanner input) {
     this.input = input;
-    this.memberList = new MemberList();
+    this.memberList = new ArrayList();
   }
   
   public MemberHandler(Scanner input, int capacity) {
     this.input = input;
-    this.memberList = new MemberList(capacity);
+    this.memberList = new ArrayList(capacity);
   }
   
   public void addMember() {
@@ -50,8 +50,9 @@ public class MemberHandler {
   }
 
   public void listMember() {
-    Member[] members = this.memberList.toArray();
-    for (Member m : members) {
+    Object[] arr = this.memberList.toArray();
+    for (Object obj : arr) {
+      Member m = (Member)obj;
       System.out.printf("%d, %s, %s, %s, 글 %d개, 댓글 %d개, %d, %s\n",
           m.getNo(), m.getName(), m.getEmail(), m.getGrade(),
           m.getWriteCount(), m.getCommentCount(), m.getVisitDateCount(), m.getRegisteredDate());
