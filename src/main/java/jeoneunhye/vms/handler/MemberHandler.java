@@ -2,23 +2,23 @@ package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
+import jeoneunhye.util.ArrayList;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberHandler {
-
   Scanner input;
-  ArrayList memberList;
-  
+  ArrayList<Member> memberList;
+
   public MemberHandler(Scanner input) {
     this.input = input;
-    this.memberList = new ArrayList();
+    this.memberList = new ArrayList<>();
   }
-  
+
   public MemberHandler(Scanner input, int capacity) {
     this.input = input;
-    this.memberList = new ArrayList(capacity);
+    this.memberList = new ArrayList<>(capacity);
   }
-  
+
   public void addMember() {
     Member member = new Member();
 
@@ -45,14 +45,14 @@ public class MemberHandler {
     member.setRegisteredDate(Date.valueOf(input.nextLine()));
 
     this.memberList.add(member);
-    
+
     System.out.println("저장하였습니다.");
   }
 
   public void listMember() {
-    Object[] arr = this.memberList.toArray();
-    for (Object obj : arr) {
-      Member m = (Member)obj;
+    Member[] arr = new Member[this.memberList.size()];
+    this.memberList.toArray(arr);
+    for (Member m : arr) {
       System.out.printf("%d, %s, %s, %s, 글 %d개, 댓글 %d개, %d, %s\n",
           m.getNo(), m.getName(), m.getEmail(), m.getGrade(),
           m.getWriteCount(), m.getCommentCount(), m.getVisitDateCount(), m.getRegisteredDate());

@@ -2,23 +2,23 @@ package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
+import jeoneunhye.util.ArrayList;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoHandler {
-
   Scanner input;
-  ArrayList videoList;
-  
+  ArrayList<Video> videoList;
+
   public VideoHandler(Scanner input) {
     this.input = input;
-    this.videoList = new ArrayList();
+    this.videoList = new ArrayList<>();
   }
-  
+
   public VideoHandler(Scanner input, int capacity) {
     this.input = input;
-    this.videoList = new ArrayList(capacity);
+    this.videoList = new ArrayList<>(capacity);
   }
-  
+
   public void addVideo() {
     Video video = new Video();
     System.out.print("번호? ");
@@ -32,16 +32,16 @@ public class VideoHandler {
     video.setUploadDate(Date.valueOf(input.nextLine()));
     System.out.print("재생시간? ");
     video.setPlayTime(input.nextLine());
-    
+
     this.videoList.add(video);
-    
+
     System.out.println("저장하였습니다.");
   }
 
   public void listVideo() {
-    Object[] arr = this.videoList.toArray();
-    for (Object obj : arr) {
-      Video v = (Video) obj;
+    Video[] arr = new Video[this.videoList.size()];
+    this.videoList.toArray(arr);
+    for (Video v : arr) {
       System.out.printf("%d, %s, %s, %s, %s\n",
           v.getNo(), v.getSubject(), v.getTitle(), v.getUploadDate(), v.getPlayTime());
     }

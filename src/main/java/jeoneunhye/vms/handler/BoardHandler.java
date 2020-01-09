@@ -2,24 +2,26 @@ package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import java.util.Scanner;
+import jeoneunhye.util.ArrayList;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
   Scanner input;
-  ArrayList boardList;
+  ArrayList<Board> boardList;
 
   public BoardHandler(Scanner input) {
     this.input = input;
-    this.boardList = new ArrayList();
+    this.boardList = new ArrayList<>();
   }
-  
+
   public BoardHandler(Scanner input, int capacity) {
     this.input = input;
-    this.boardList = new ArrayList();
+    this.boardList = new ArrayList<>();
   }
 
   public void addBoard() {
     Board board = new Board();
+
     System.out.print("번호? ");
     board.setNo(input.nextInt());
     input.nextLine();
@@ -27,33 +29,34 @@ public class BoardHandler {
     board.setTitle(input.nextLine());
     System.out.print("내용? ");
     board.setContents(input.nextLine());
-    System.out.print("작성일? ");
-    board.setWriteDate(Date.valueOf(input.nextLine()));
+    board.setWriteDate(new Date(System.currentTimeMillis()));
     board.setViewCount(0);
 
     this.boardList.add(board);
-    
+
     System.out.println("저장하였습니다.");
   }
 
   public void listBoard() {
-    Object[] arr = this.boardList.toArray();
-    for(Object obj : arr) {
-      Board b = (Board)obj;
+    Board[] arr = new Board[this.boardList.size()];
+
+    this.boardList.toArray(arr);
+
+    for (Board b : arr) {
       System.out.printf("%d, %s, %s, %d\n",
           b.getNo(), b.getTitle(), b.getWriteDate(), b.getViewCount());
     }
   }
-  
+
   public void detailBoard() {
-    System.out.print("게시물 인덱스? ");
+    System.out.print("게시글 인덱스? ");
     int index = input.nextInt();
     input.nextLine();
 
     Board board = (Board)this.boardList.get(index);
 
     if (board == null) {
-      System.out.println("게시물 번호가 유효하지 않습니다.");
+      System.out.println("게시글 인덱스가 유효하지 않습니다.");
       return;
     }
 
