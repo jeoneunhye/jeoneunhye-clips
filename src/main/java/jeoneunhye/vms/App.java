@@ -1,6 +1,7 @@
 package jeoneunhye.vms;
 
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.handler.BoardHandler;
 import jeoneunhye.vms.handler.MemberHandler;
 import jeoneunhye.vms.handler.VideoHandler;
@@ -9,10 +10,12 @@ public class App {
   static Scanner keyboard = new Scanner(System.in);
 
   public static void main(String[] args) {    
-    VideoHandler videoHandler = new VideoHandler(keyboard);
-    MemberHandler memberHandler = new MemberHandler(keyboard);
-    BoardHandler boardHandler = new BoardHandler(keyboard, 5000);
-    BoardHandler boardHandler2 = new BoardHandler(keyboard, 1000);
+    Prompt prompt = new Prompt(keyboard);
+    
+    VideoHandler videoHandler = new VideoHandler(prompt);
+    MemberHandler memberHandler = new MemberHandler(prompt);
+    BoardHandler boardHandler = new BoardHandler(prompt, 5000);
+    BoardHandler boardHandler2 = new BoardHandler(prompt, 1000);
 
     String command;
     do {
@@ -24,11 +27,29 @@ public class App {
         case "/video/list":
           videoHandler.listVideo();
           break;
+        case "/video/detail":
+          videoHandler.detailVideo();
+          break;
+        case "/video/update":
+          videoHandler.updateVideo();
+          break;
+        case "/video/delete":
+          videoHandler.deleteVideo();
+          break;
         case "/member/add":
           memberHandler.addMember();
           break;
         case "/member/list":
           memberHandler.listMember();
+          break;
+        case "/member/detail":
+          memberHandler.detailMember();
+          break;
+        case "/member/update":
+          memberHandler.updateMember();
+          break;
+        case "/member/delete":
+          memberHandler.deleteMember();
           break;
         case "/board/add":
           boardHandler.addBoard();
@@ -39,6 +60,12 @@ public class App {
         case "/board/detail":
           boardHandler.detailBoard();
           break;
+        case "/board/update":
+          boardHandler.updateBoard();
+          break;
+        case "/board/delete":
+          boardHandler.deleteBoard();
+          break;
         case "/board2/add":
           boardHandler2.addBoard();
           break;
@@ -47,6 +74,11 @@ public class App {
           break;
         case "/board2/detail":
           boardHandler2.detailBoard();
+        case "/board2/update":
+          boardHandler2.updateBoard();
+          break;
+        case "/board2/delete":
+          boardHandler2.deleteBoard();
           break;
         default:
           if (!command.equalsIgnoreCase("quit")) {

@@ -24,7 +24,7 @@ public class ArrayList<E> {
   public E[] toArray(E[] arr) {
     if (arr.length < this.size)
       return (E[]) Arrays.copyOf(this.list, this.size, arr.getClass());
-    
+
     System.arraycopy(this.list, 0, arr, 0, this.size);
     return arr;
   }
@@ -39,14 +39,37 @@ public class ArrayList<E> {
   }
 
   @SuppressWarnings("unchecked")
-  public E get(int idx) {
-    if (idx >= 0 && idx < this.size) {
-      return (E) this.list[idx];
-    } else {
+  public E get(int index) {
+    if (index < 0 || index >= this.size)
       return null;
-    }
+    return (E) this.list[index];
   }
-  
+
+  @SuppressWarnings("unchecked")
+  public E set(int index, E e) {
+    if (index < 0 || index >= this.size)
+      return null;
+
+    E oldValue = (E) this.list[index];
+    this.list[index] = e;
+
+    return oldValue;
+  }
+
+  @SuppressWarnings("unchecked")
+  public E remove(int index) {
+    if (index < 0 || index >= this.size)
+      return null;
+
+    E oldValue = (E) this.list[index];
+    
+    System.arraycopy(this.list, index + 1, this.list, index, this.size - (index + 1));
+    
+    this.size--;
+    
+    return oldValue;
+  }
+
   public int size() {
     return this.size;
   }

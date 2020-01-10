@@ -1,34 +1,31 @@
 package jeoneunhye.vms.handler;
 
 import java.sql.Date;
-import java.util.Scanner;
 import jeoneunhye.util.ArrayList;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
-  Scanner input;
   ArrayList<Board> boardList;
+  
+  Prompt prompt;
 
-  public BoardHandler(Scanner input) {
-    this.input = input;
+  public BoardHandler(Prompt prompt) {
+    this.prompt = prompt;
     this.boardList = new ArrayList<>();
   }
 
-  public BoardHandler(Scanner input, int capacity) {
-    this.input = input;
+  public BoardHandler(Prompt prompt, int capacity) {
+    this.prompt = prompt;
     this.boardList = new ArrayList<>();
   }
 
   public void addBoard() {
     Board board = new Board();
 
-    System.out.print("번호? ");
-    board.setNo(input.nextInt());
-    input.nextLine();
-    System.out.print("제목? ");
-    board.setTitle(input.nextLine());
-    System.out.print("내용? ");
-    board.setContents(input.nextLine());
+    board.setNo(prompt.inputInt("번호? "));
+    board.setTitle(prompt.inputString("제목? "));
+    board.setContents(prompt.inputString("내용? "));
     board.setWriteDate(new Date(System.currentTimeMillis()));
     board.setViewCount(0);
 
@@ -49,21 +46,67 @@ public class BoardHandler {
   }
 
   public void detailBoard() {
-    System.out.print("게시글 인덱스? ");
-    int index = input.nextInt();
-    input.nextLine();
+    int index = indexOfBoard(prompt.inputInt("번호? "));
 
-    Board board = (Board)this.boardList.get(index);
-
-    if (board == null) {
-      System.out.println("게시글 인덱스가 유효하지 않습니다.");
+    if (index == -1) {
+      System.out.println("해당 게시글을 찾을 수 없습니다.");
       return;
     }
 
-    System.out.printf("번호: %d\n", board.getNo());
+    Board board = this.boardList.get(index);
     System.out.printf("제목: %s\n", board.getTitle());
     System.out.printf("내용: %s\n", board.getContents());
     System.out.printf("작성일: %s\n", board.getWriteDate());
     System.out.printf("조회수: %d\n", board.getViewCount());
+  }
+  
+  public void updateBoard() {
+    int index = indexOfBoard(prompt.inputInt("번호? "));
+
+    if (index == -1) {
+      System.out.println("해당 게시글을 찾을 수 없습니다.");
+      return;
+    }
+    
+    Board oldBoard = this.boardList.get(index);
+    Board newBoard = new Board();
+    
+    newBoard.setNo(oldBoard.getNo());
+    newBoard.setTitle(prompt.inputString(String.format("제목? ", oldBoard.getTitle()),
+        oldBoard.getTitle()));
+    newBoard.setContents(prompt.inputString(String.format("내용? ", oldBoard.getContents()),
+        oldBoard.getContents()));
+    newBoard.setWriteDate(oldBoard.getWriteDate());
+    newBoard.setViewCount(oldBoard.getViewCount());
+    
+    if (oldBoard.equals(newBoard)) {
+      System.out.println("게시글 변경을 취소하였습니다.");
+      return;
+    }
+    
+    this.boardList.set(index, newBoard);
+    System.out.println("게시글을 변경하였습니다.");
+  }
+  
+  public void deleteBoard() {
+    int index = indexOfBoard(prompt.inputInt("글번호? "));
+    
+    if (index == -1) {
+      System.out.println("해당 게시글을 찾을 수 없습니다.");
+      return;
+    }
+    
+    this.boardList.remove(index);
+    
+    System.out.println("게시글을 삭제하였습니다.");
+  }
+  
+  private int indexOfBoard(int no) {
+    for (int i = 0; i < this.boardList.size(); i++) {
+      if (this.boardList.get(i).getNo() == no) {
+        return i;
+      }
+    }
+    return -1;
   }
 }
