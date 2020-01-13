@@ -2,22 +2,18 @@ package jeoneunhye.vms.handler;
 
 import java.sql.Date;
 import jeoneunhye.util.ArrayList;
+import jeoneunhye.util.LinkedList;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
-  ArrayList<Board> boardList;
+  LinkedList<Board> boardList;
   
   Prompt prompt;
 
   public BoardHandler(Prompt prompt) {
     this.prompt = prompt;
-    this.boardList = new ArrayList<>();
-  }
-
-  public BoardHandler(Prompt prompt, int capacity) {
-    this.prompt = prompt;
-    this.boardList = new ArrayList<>();
+    this.boardList = new LinkedList<>();
   }
 
   public void addBoard() {
@@ -46,7 +42,7 @@ public class BoardHandler {
   }
 
   public void detailBoard() {
-    int index = indexOfBoard(prompt.inputInt("번호? "));
+    int index = indexOfBoard(prompt.inputInt("글번호? "));
 
     if (index == -1) {
       System.out.println("해당 게시글을 찾을 수 없습니다.");
@@ -61,7 +57,7 @@ public class BoardHandler {
   }
   
   public void updateBoard() {
-    int index = indexOfBoard(prompt.inputInt("번호? "));
+    int index = indexOfBoard(prompt.inputInt("글번호? "));
 
     if (index == -1) {
       System.out.println("해당 게시글을 찾을 수 없습니다.");

@@ -1,22 +1,16 @@
 package jeoneunhye.vms.handler;
 
-import java.sql.Date;
-import jeoneunhye.util.ArrayList;
+import jeoneunhye.util.LinkedList;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoHandler {
   Prompt prompt;
-  ArrayList<Video> videoList;
+  LinkedList<Video> videoList;
 
   public VideoHandler(Prompt prompt) {
     this.prompt = prompt;
-    this.videoList = new ArrayList<>();
-  }
-
-  public VideoHandler(Prompt prompt, int capacity) {
-    this.prompt = prompt;
-    this.videoList = new ArrayList<>(capacity);
+    this.videoList = new LinkedList<>();
   }
 
   public void addVideo() {

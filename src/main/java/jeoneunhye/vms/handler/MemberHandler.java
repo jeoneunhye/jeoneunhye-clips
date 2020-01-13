@@ -1,21 +1,16 @@
 package jeoneunhye.vms.handler;
 
-import jeoneunhye.util.ArrayList;
+import jeoneunhye.util.LinkedList;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberHandler {
   Prompt prompt;
-  ArrayList<Member> memberList;
+  LinkedList<Member> memberList;
 
   public MemberHandler(Prompt prompt) {
     this.prompt = prompt;
-    this.memberList = new ArrayList<>();
-  }
-
-  public MemberHandler(Prompt prompt, int capacity) {
-    this.prompt = prompt;
-    this.memberList = new ArrayList<>(capacity);
+    this.memberList = new LinkedList<>();
   }
 
   public void addMember() {

@@ -14,8 +14,7 @@ public class App {
     
     VideoHandler videoHandler = new VideoHandler(prompt);
     MemberHandler memberHandler = new MemberHandler(prompt);
-    BoardHandler boardHandler = new BoardHandler(prompt, 5000);
-    BoardHandler boardHandler2 = new BoardHandler(prompt, 1000);
+    BoardHandler boardHandler = new BoardHandler(prompt);
 
     String command;
     do {
@@ -65,20 +64,6 @@ public class App {
           break;
         case "/board/delete":
           boardHandler.deleteBoard();
-          break;
-        case "/board2/add":
-          boardHandler2.addBoard();
-          break;
-        case "/board2/list":
-          boardHandler2.listBoard();
-          break;
-        case "/board2/detail":
-          boardHandler2.detailBoard();
-        case "/board2/update":
-          boardHandler2.updateBoard();
-          break;
-        case "/board2/delete":
-          boardHandler2.deleteBoard();
           break;
         default:
           if (!command.equalsIgnoreCase("quit")) {
