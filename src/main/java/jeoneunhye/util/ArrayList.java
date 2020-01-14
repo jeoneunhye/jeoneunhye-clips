@@ -29,13 +29,30 @@ public class ArrayList<E> {
     return arr;
   }
 
-  public void add(E obj) {
+  public void add(E e) {
     if(this.size == this.list.length) {
       int oldCapacity = this.list.length;
       int newCapacity = oldCapacity + (oldCapacity >> 1);
       this.list = Arrays.copyOf(list, newCapacity);
     }
-    this.list[this.size++] = obj;
+    this.list[this.size++] = e;
+  }
+
+  public void add(int index, E value) {
+    if (index < 0 || index >= this.size)
+      return;
+
+    if (this.size == this.list.length) {
+      grow();
+    }
+
+    for (int i = this.size - 1; i >= index; i--) {
+      this.list[i + 1] = this.list[i];
+    }
+
+    this.list[index] = value;
+
+    this.size++;
   }
 
   @SuppressWarnings("unchecked")
@@ -62,15 +79,21 @@ public class ArrayList<E> {
       return null;
 
     E oldValue = (E) this.list[index];
-    
+
     System.arraycopy(this.list, index + 1, this.list, index, this.size - (index + 1));
-    
+
     this.size--;
-    
+
     return oldValue;
   }
 
-  public int size() {
-    return this.size;
+  private Object[] grow() {
+    return Arrays.copyOf(this.list, newCapacity());
+  }
+
+  private int newCapacity() {
+    int oldCapacity = this.list.length;
+
+    return oldCapacity + (oldCapacity >> 1);
   }
 }
