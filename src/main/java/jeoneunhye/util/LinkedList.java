@@ -4,12 +4,12 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class LinkedList<E> {
-  Node first;
-  Node last;
+  Node<E> first;
+  Node<E> last;
   int size;
 
   public void add(E value) {
-    Node newNode = new Node();
+    Node<E> newNode = new Node<>();
 
     newNode.value = value;
 
@@ -27,22 +27,22 @@ public class LinkedList<E> {
     if (index < 0 || index >= size)
       return null;
 
-    Node cursor = first;
+    Node<E> cursor = first;
 
     for (int i = 0; i < index; i++) {
       cursor = cursor.next;
     }
-    return (E) cursor.value;
+    return cursor.value;
   }
 
   public void add(int index, E value) {
     if (index < 0 || index >= size)
       return;
 
-    Node newNode = new Node();
+    Node<E> newNode = new Node<>();
     newNode.value = value;
 
-    Node cursor = first;
+    Node<E> cursor = first;
     for (int i = 0; i < index - 1; i++) {
       cursor = cursor.next;
     }
@@ -62,12 +62,12 @@ public class LinkedList<E> {
     if (index < 0 || index >= size)
       return null;
 
-    Node cursor = first;
+    Node<E> cursor = first;
     for (int i = 0; i < index - 1; i++) {
       cursor = cursor.next;
     }
 
-    Node deletedNode = null;
+    Node<E> deletedNode = null;
 
     if (index == 0) {
       deletedNode = first;
@@ -81,19 +81,19 @@ public class LinkedList<E> {
 
     size--;
 
-    return (E) deletedNode.value;
+    return deletedNode.value;
   }
 
   public E set(int index, E value) {
     if (index < 0 || index >= size)
       return null;
 
-    Node cursor = first;
+    Node<E> cursor = first;
     for (int i = 0; i < index - 1; i++) {
       cursor = cursor.next;
     }
 
-    E oldValue = (E) cursor.value;
+    E oldValue = cursor.value;
     cursor.value = value;
 
     return oldValue;
@@ -102,38 +102,38 @@ public class LinkedList<E> {
   public Object[] toArray() {
     Object[] arr = new Object[size];
 
-    Node cursor = first;
+    Node<E> cursor = first;
 
     for (int i = 0; i < size; i++) {
       arr[i] = cursor.value;
       cursor = cursor.next;
     }
-    
+
     return arr;
   }
-  
+
   @SuppressWarnings("unchecked")
   public E[] toArray(E[] arr) {
     if (arr.length < size) {
       arr = (E[]) Array.newInstance(arr.getClass().getComponentType(), size);
     }
-    
+
     Node<E> cursor = first;
-    
+
     for (int i = 0; i < size; i++) {
       arr[i] = cursor.value;
       cursor = cursor.next;
     }
-    
+
     return arr;
   }
-  
+
   public int size() {
     return this.size;
   }
 
   static class Node<T> {
     T value;
-    Node next;
+    Node<T> next;
   }
 }
