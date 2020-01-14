@@ -2,16 +2,18 @@ package jeoneunhye.vms;
 
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.Stack;
 import jeoneunhye.vms.handler.BoardHandler;
 import jeoneunhye.vms.handler.MemberHandler;
 import jeoneunhye.vms.handler.VideoHandler;
 
 public class App {
   static Scanner keyboard = new Scanner(System.in);
+  static Stack<String> commandStack = new Stack<>();
 
   public static void main(String[] args) {    
     Prompt prompt = new Prompt(keyboard);
-    
+
     VideoHandler videoHandler = new VideoHandler(prompt);
     MemberHandler memberHandler = new MemberHandler(prompt);
     BoardHandler boardHandler = new BoardHandler(prompt);
@@ -19,6 +21,12 @@ public class App {
     String command;
     do {
       command = prompt();
+
+      if (command.length() == 0)
+        continue;
+
+      commandStack.push(command);
+
       switch(command) {
         case "/video/add":
           videoHandler.addVideo();
@@ -65,6 +73,9 @@ public class App {
         case "/board/delete":
           boardHandler.deleteBoard();
           break;
+        case "history":
+          printCommandHistory();
+          break;
         default:
           if (!command.equalsIgnoreCase("quit")) {
             System.out.println("실행할 수 없는 명령입니다.");
@@ -82,6 +93,25 @@ public class App {
     String command;
     System.out.print("\n명령> ");
     command = keyboard.nextLine();
+
     return command;
+  }
+
+  private static void printCommandHistory() {
+    Stack<String> historyStack = commandStack.clone();
+
+    int count = 0;
+
+    while (!historyStack.empty()) {
+      System.out.println(historyStack.pop());
+      count++;
+
+      if ((count % 5) == 0) {
+        System.out.print(":");
+        String str = keyboard.nextLine();
+        if (str.equalsIgnoreCase("q"))
+          break;
+      }
+    }
   }
 }
