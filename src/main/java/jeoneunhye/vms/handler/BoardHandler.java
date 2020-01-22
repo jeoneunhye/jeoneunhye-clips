@@ -1,19 +1,18 @@
 package jeoneunhye.vms.handler;
 
 import java.sql.Date;
-import jeoneunhye.util.ArrayList;
-import jeoneunhye.util.LinkedList;
+import jeoneunhye.util.List;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
-  LinkedList<Board> boardList;
-  
+  List<Board> boardList;
+
   Prompt prompt;
 
-  public BoardHandler(Prompt prompt) {
+  public BoardHandler(Prompt prompt, List<Board> list) {
     this.prompt = prompt;
-    this.boardList = new LinkedList<>();
+    this.boardList = list;
   }
 
   public void addBoard() {
@@ -55,7 +54,7 @@ public class BoardHandler {
     System.out.printf("작성일: %s\n", board.getWriteDate());
     System.out.printf("조회수: %d\n", board.getViewCount());
   }
-  
+
   public void updateBoard() {
     int index = indexOfBoard(prompt.inputInt("글번호? "));
 
@@ -63,10 +62,10 @@ public class BoardHandler {
       System.out.println("해당 게시글을 찾을 수 없습니다.");
       return;
     }
-    
+
     Board oldBoard = this.boardList.get(index);
     Board newBoard = new Board();
-    
+
     newBoard.setNo(oldBoard.getNo());
     newBoard.setTitle(prompt.inputString(String.format("제목? ", oldBoard.getTitle()),
         oldBoard.getTitle()));
@@ -74,29 +73,29 @@ public class BoardHandler {
         oldBoard.getContents()));
     newBoard.setWriteDate(oldBoard.getWriteDate());
     newBoard.setViewCount(oldBoard.getViewCount());
-    
+
     if (oldBoard.equals(newBoard)) {
       System.out.println("게시글 변경을 취소하였습니다.");
       return;
     }
-    
+
     this.boardList.set(index, newBoard);
     System.out.println("게시글을 변경하였습니다.");
   }
-  
+
   public void deleteBoard() {
     int index = indexOfBoard(prompt.inputInt("글번호? "));
-    
+
     if (index == -1) {
       System.out.println("해당 게시글을 찾을 수 없습니다.");
       return;
     }
-    
+
     this.boardList.remove(index);
-    
+
     System.out.println("게시글을 삭제하였습니다.");
   }
-  
+
   private int indexOfBoard(int no) {
     for (int i = 0; i < this.boardList.size(); i++) {
       if (this.boardList.get(i).getNo() == no) {

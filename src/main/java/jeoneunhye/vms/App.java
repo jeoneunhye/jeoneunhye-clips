@@ -1,9 +1,15 @@
 package jeoneunhye.vms;
 
 import java.util.Scanner;
+import jeoneunhye.util.ArrayList;
+import jeoneunhye.util.LinkedList;
+import jeoneunhye.util.AbstractList;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.util.Queue;
 import jeoneunhye.util.Stack;
+import jeoneunhye.vms.domain.Board;
+import jeoneunhye.vms.domain.Member;
+import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.handler.BoardHandler;
 import jeoneunhye.vms.handler.MemberHandler;
 import jeoneunhye.vms.handler.VideoHandler;
@@ -13,12 +19,15 @@ public class App {
   static Stack<String> commandStack = new Stack<>();
   static Queue<String> commandQueue = new Queue<>();
 
-  public static void main(String[] args) {    
+  public static void main(String[] args) {
     Prompt prompt = new Prompt(keyboard);
 
-    VideoHandler videoHandler = new VideoHandler(prompt);
-    MemberHandler memberHandler = new MemberHandler(prompt);
-    BoardHandler boardHandler = new BoardHandler(prompt);
+    AbstractList<Video> videoList = new ArrayList<>();
+    VideoHandler videoHandler = new VideoHandler(prompt, videoList);
+    AbstractList<Member> memberList = new ArrayList<>();
+    MemberHandler memberHandler = new MemberHandler(prompt, memberList);
+    AbstractList<Board> boardList = new LinkedList<>();
+    BoardHandler boardHandler = new BoardHandler(prompt, boardList);
 
     String command;
     do {

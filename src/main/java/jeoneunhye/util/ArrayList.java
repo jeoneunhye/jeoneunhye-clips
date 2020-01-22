@@ -2,10 +2,9 @@ package jeoneunhye.util;
 
 import java.util.Arrays;
 
-public class ArrayList<E> {
+public class ArrayList<E> extends AbstractList<E> {
   private static final int DEFAULT_CAPACITY = 100;
-  private int size = 0;
-  private Object[] list;
+  Object[] list;
 
   public ArrayList() {
     this.list = new Object[DEFAULT_CAPACITY];
@@ -20,6 +19,12 @@ public class ArrayList<E> {
     }
   }
 
+  @Override
+  public Object[] toArray() {
+    return Arrays.copyOf(this.list, this.size);
+  }
+
+  @Override
   @SuppressWarnings("unchecked")
   public E[] toArray(E[] arr) {
     if (arr.length < this.size)
@@ -29,6 +34,7 @@ public class ArrayList<E> {
     return arr;
   }
 
+  @Override
   public void add(E e) {
     if(this.size == this.list.length) {
       int oldCapacity = this.list.length;
@@ -38,6 +44,7 @@ public class ArrayList<E> {
     this.list[this.size++] = e;
   }
 
+  @Override
   public void add(int index, E value) {
     if (index < 0 || index >= this.size)
       return;
@@ -55,6 +62,7 @@ public class ArrayList<E> {
     this.size++;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public E get(int index) {
     if (index < 0 || index >= this.size)
@@ -62,6 +70,7 @@ public class ArrayList<E> {
     return (E) this.list[index];
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public E set(int index, E e) {
     if (index < 0 || index >= this.size)
@@ -73,6 +82,7 @@ public class ArrayList<E> {
     return oldValue;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public E remove(int index) {
     if (index < 0 || index >= this.size)
