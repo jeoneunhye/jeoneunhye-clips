@@ -2,8 +2,8 @@ package jeoneunhye.vms;
 
 import java.util.Scanner;
 import jeoneunhye.util.ArrayList;
+import jeoneunhye.util.Iterator;
 import jeoneunhye.util.LinkedList;
-import jeoneunhye.util.AbstractList;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.util.Queue;
 import jeoneunhye.util.Stack;
@@ -22,17 +22,18 @@ public class App {
   public static void main(String[] args) {
     Prompt prompt = new Prompt(keyboard);
 
-    AbstractList<Video> videoList = new ArrayList<>();
+    ArrayList<Video> videoList = new ArrayList<>();
     VideoHandler videoHandler = new VideoHandler(prompt, videoList);
-    AbstractList<Member> memberList = new ArrayList<>();
+
+    ArrayList<Member> memberList = new ArrayList<>();
     MemberHandler memberHandler = new MemberHandler(prompt, memberList);
-    AbstractList<Board> boardList = new LinkedList<>();
+
+    LinkedList<Board> boardList = new LinkedList<>();
     BoardHandler boardHandler = new BoardHandler(prompt, boardList);
 
     String command;
     do {
       command = prompt();
-
       if (command.length() == 0)
         continue;
 
@@ -86,10 +87,10 @@ public class App {
           boardHandler.deleteBoard();
           break;
         case "history":
-          printCommandHistory();
+          printCommandHistory(commandStack.iterator());
           break;
         case "history2":
-          printCommandHistory2();
+          printCommandHistory(commandQueue.iterator());
           break;
         default:
           if (!command.equalsIgnoreCase("quit")) {
@@ -112,33 +113,14 @@ public class App {
     return command;
   }
 
-  private static void printCommandHistory() {
-    Stack<String> historyStack = commandStack.clone();
-
+  private static void printCommandHistory(Iterator<String> iterator) {
     int count = 0;
 
-    while (!historyStack.empty()) {
-      System.out.println(historyStack.pop());
+    while (iterator.hasNext()) {
+      System.out.println(iterator.next());
       count++;
 
       if ((count % 5) == 0) {
-        System.out.print(":");
-        String str = keyboard.nextLine();
-        if (str.equalsIgnoreCase("q"))
-          break;
-      }
-    }
-  }
-
-  private static void printCommandHistory2() {
-    Queue<String> historyQueue = commandQueue.clone();
-
-    int count = 0;
-
-    while (historyQueue.size() > 0) {
-      System.out.println(historyQueue.poll());
-
-      if (++count % 5 == 0) {
         System.out.print(":");
         String str = keyboard.nextLine();
         if (str.equalsIgnoreCase("q"))

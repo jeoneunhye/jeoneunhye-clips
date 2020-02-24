@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class ArrayList<E> extends AbstractList<E> {
   private static final int DEFAULT_CAPACITY = 100;
-  Object[] list;
+  private Object[] list;
 
   public ArrayList() {
     this.list = new Object[DEFAULT_CAPACITY];
@@ -14,37 +14,23 @@ public class ArrayList<E> extends AbstractList<E> {
     if (capacity > DEFAULT_CAPACITY &&
         capacity < 10000) {
       this.list = new Object[capacity];
+      
     } else {
       this.list = new Object[DEFAULT_CAPACITY];
     }
   }
 
-  @Override
-  public Object[] toArray() {
-    return Arrays.copyOf(this.list, this.size);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public E[] toArray(E[] arr) {
-    if (arr.length < this.size)
-      return (E[]) Arrays.copyOf(this.list, this.size, arr.getClass());
-
-    System.arraycopy(this.list, 0, arr, 0, this.size);
-    return arr;
-  }
-
-  @Override
-  public void add(E e) {
+  public void add(E value) {
     if(this.size == this.list.length) {
       int oldCapacity = this.list.length;
       int newCapacity = oldCapacity + (oldCapacity >> 1);
+      
       this.list = Arrays.copyOf(list, newCapacity);
     }
-    this.list[this.size++] = e;
+    
+    this.list[this.size++] = value;
   }
 
-  @Override
   public void add(int index, E value) {
     if (index < 0 || index >= this.size)
       return;
@@ -62,15 +48,14 @@ public class ArrayList<E> extends AbstractList<E> {
     this.size++;
   }
 
-  @Override
   @SuppressWarnings("unchecked")
   public E get(int index) {
     if (index < 0 || index >= this.size)
       return null;
+    
     return (E) this.list[index];
   }
 
-  @Override
   @SuppressWarnings("unchecked")
   public E set(int index, E e) {
     if (index < 0 || index >= this.size)
@@ -82,7 +67,6 @@ public class ArrayList<E> extends AbstractList<E> {
     return oldValue;
   }
 
-  @Override
   @SuppressWarnings("unchecked")
   public E remove(int index) {
     if (index < 0 || index >= this.size)
@@ -90,13 +74,29 @@ public class ArrayList<E> extends AbstractList<E> {
 
     E oldValue = (E) this.list[index];
 
-    System.arraycopy(this.list, index + 1, this.list, index, this.size - (index + 1));
+    System.arraycopy(this.list, index + 1,
+        this.list, index, this.size - (index + 1));
 
     this.size--;
 
     return oldValue;
   }
 
+  @Override
+  public Object[] toArray() {
+    return Arrays.copyOf(this.list, this.size);
+  }
+    
+  @SuppressWarnings("unchecked")
+  public E[] toArray(E[] arr) {
+    if (arr.length < this.size)
+      return (E[]) Arrays.copyOf(this.list, this.size, arr.getClass());
+
+    System.arraycopy(this.list, 0, arr, 0, this.size);
+    
+    return arr;
+  }
+  
   private Object[] grow() {
     return Arrays.copyOf(this.list, newCapacity());
   }

@@ -27,9 +27,9 @@ public class Stack<E> implements Cloneable {
       return null;
 
     E value = (E) this.elementData[--this.size];
-    
+
     this.elementData[this.size] = null;
-    
+
     return value;
   }
 
@@ -65,5 +65,21 @@ public class Stack<E> implements Cloneable {
   private int newCapacity() {
     int oldCapacity = this.elementData.length;
     return oldCapacity + (oldCapacity >> 1);
+  }
+
+  public Iterator<E> iterator() {
+    return new Iterator<E>() {
+      Stack<E> stack = Stack.this.clone();
+
+      @Override
+      public boolean hasNext() {
+        return !stack.empty();
+      }
+
+      @Override
+      public E next() {
+        return stack.pop();
+      }
+    };
   }
 }

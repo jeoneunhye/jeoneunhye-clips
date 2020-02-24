@@ -1,19 +1,19 @@
 package jeoneunhye.util;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
 
 public class LinkedList<E> extends AbstractList<E> {
   Node<E> first;
   Node<E> last;
 
-  @Override
   public void add(E value) {
     Node<E> newNode = new Node<>();
-
     newNode.value = value;
 
     if (first == null) {
       last = first = newNode;
+      
     } else {
       last.next = newNode;
       last = newNode;
@@ -22,20 +22,6 @@ public class LinkedList<E> extends AbstractList<E> {
     size++;
   }
 
-  @Override
-  public E get(int index) {
-    if (index < 0 || index >= size)
-      return null;
-
-    Node<E> cursor = first;
-
-    for (int i = 0; i < index; i++) {
-      cursor = cursor.next;
-    }
-    return cursor.value;
-  }
-
-  @Override
   public void add(int index, E value) {
     if (index < 0 || index >= size)
       return;
@@ -51,6 +37,7 @@ public class LinkedList<E> extends AbstractList<E> {
     if (index == 0) {
       newNode.next = first;
       first = newNode;
+      
     } else {
       newNode.next = cursor.next;
       cursor.next = newNode;
@@ -58,13 +45,26 @@ public class LinkedList<E> extends AbstractList<E> {
 
     size++;
   }
+  
+  public E get(int index) {
+    if (index < 0 || index >= size)
+      return null;
 
-  @Override
+    Node<E> cursor = first;
+
+    for (int i = 0; i < index; i++) {
+      cursor = cursor.next;
+    }
+    
+    return cursor.value;
+  }
+
   public E remove(int index) {
     if (index < 0 || index >= size)
       return null;
 
     Node<E> cursor = first;
+    
     for (int i = 0; i < index - 1; i++) {
       cursor = cursor.next;
     }
@@ -74,6 +74,7 @@ public class LinkedList<E> extends AbstractList<E> {
     if (index == 0) {
       deletedNode = first;
       first = deletedNode.next;
+      
     } else {
       deletedNode = cursor.next;
       cursor.next = deletedNode.next;
@@ -86,7 +87,6 @@ public class LinkedList<E> extends AbstractList<E> {
     return deletedNode.value;
   }
 
-  @Override
   public E set(int index, E value) {
     if (index < 0 || index >= size)
       return null;
@@ -102,7 +102,6 @@ public class LinkedList<E> extends AbstractList<E> {
     return oldValue;
   }
 
-  @Override
   public Object[] toArray() {
     Object[] arr = new Object[size];
 
@@ -116,7 +115,6 @@ public class LinkedList<E> extends AbstractList<E> {
     return arr;
   }
 
-  @Override
   @SuppressWarnings("unchecked")
   public E[] toArray(E[] arr) {
     if (arr.length < size) {

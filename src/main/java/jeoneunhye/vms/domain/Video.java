@@ -6,6 +6,9 @@ public class Video {
   private int no;
   private String subject;
   private String title;
+  private String url;
+  private String playTime;
+  private String writer;
   private Date uploadDate;
   
   @Override
@@ -13,9 +16,11 @@ public class Video {
     final int prime = 31;
     int result = 1;
     result = prime * result + no;
-    result = prime * result + ((playTime == null) ? 0 : playTime.hashCode());
     result = prime * result + ((subject == null) ? 0 : subject.hashCode());
     result = prime * result + ((title == null) ? 0 : title.hashCode());
+    result = prime * result + ((writer == null) ? 0 : writer.hashCode());
+    result = prime * result + ((url == null) ? 0 : url.hashCode());
+    result = prime * result + ((playTime == null) ? 0 : playTime.hashCode());
     result = prime * result + ((uploadDate == null) ? 0 : uploadDate.hashCode());
     return result;
   }
@@ -28,13 +33,9 @@ public class Video {
       return false;
     if (getClass() != obj.getClass())
       return false;
+
     Video other = (Video) obj;
     if (no != other.no)
-      return false;
-    if (playTime == null) {
-      if (other.playTime != null)
-        return false;
-    } else if (!playTime.equals(other.playTime))
       return false;
     if (subject == null) {
       if (other.subject != null)
@@ -45,6 +46,21 @@ public class Video {
       if (other.title != null)
         return false;
     } else if (!title.equals(other.title))
+      return false;
+    if (url == null) {
+      if (other.url != null)
+        return false;
+    } else if (!url.equals(other.url))
+      return false;
+    if (playTime == null) {
+      if (other.playTime != null)
+        return false;
+    } else if (!playTime.equals(other.playTime))
+      return false;
+    if (writer == null) {
+      if (other.writer != null)
+        return false;
+    } else if (!writer.equals(other.writer))
       return false;
     if (uploadDate == null) {
       if (other.uploadDate != null)
@@ -72,11 +88,11 @@ public class Video {
   public void setTitle(String title) {
     this.title = title;
   }
-  public Date getUploadDate() {
-    return uploadDate;
+  public String getUrl() {
+    return url;
   }
-  public void setUploadDate(Date uploadDate) {
-    this.uploadDate = uploadDate;
+  public void setUrl(String url) {
+    this.url = url;
   }
   public String getPlayTime() {
     return playTime;
@@ -84,5 +100,16 @@ public class Video {
   public void setPlayTime(String playTime) {
     this.playTime = playTime;
   }
-  private String playTime;
+  public String getWriter() {
+    return writer;
+  }
+  public void setWriter(String writer) {
+    this.writer = writer;
+  }
+  public Date getUploadDate() {
+    return uploadDate;
+  }
+  public void setUploadDate(Date uploadDate) {
+    this.uploadDate = uploadDate;
+  }
 }
