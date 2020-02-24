@@ -1,16 +1,16 @@
 package jeoneunhye.vms.handler;
 
 import java.sql.Date;
-import jeoneunhye.util.AbstractList;
-import jeoneunhye.util.Iterator;
+import java.util.Iterator;
+import java.util.List;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardHandler {
   Prompt prompt;
-  AbstractList<Board> boardList;
+  List<Board> boardList;
 
-  public BoardHandler(Prompt prompt, AbstractList<Board> list) {
+  public BoardHandler(Prompt prompt, List<Board> list) {
     this.prompt = prompt;
     this.boardList = list;
   }
@@ -54,17 +54,17 @@ public class BoardHandler {
     System.out.printf("작성일: %s\n", board.getWriteDate());
     System.out.printf("조회수: %d\n", board.getViewCount());
   }
-  
+
   public void updateBoard() {
     int index = indexOfBoard(prompt.inputInt("글번호? "));
     if (index == -1) {
       System.out.println("해당 게시글을 찾을 수 없습니다.");
       return;
     }
-    
+
     Board oldBoard = this.boardList.get(index);
     Board newBoard = new Board();
-    
+
     newBoard.setNo(oldBoard.getNo());
     newBoard.setVideoNo(prompt.inputInt(
         String.format("영상번호(%d)? ", oldBoard.getVideoNo()), oldBoard.getVideoNo()));
@@ -75,27 +75,27 @@ public class BoardHandler {
     newBoard.setWriter(oldBoard.getWriter());
     newBoard.setWriteDate(oldBoard.getWriteDate());
     newBoard.setViewCount(oldBoard.getViewCount());
-    
+
     if (oldBoard.equals(newBoard)) {
       System.out.println("게시글 변경을 취소하였습니다.");
       return;
     }
-    
+
     this.boardList.set(index, newBoard);
     System.out.println("게시글을 변경하였습니다.");
   }
-  
+
   public void deleteBoard() {
     int index = indexOfBoard(prompt.inputInt("글번호? "));
     if (index == -1) {
       System.out.println("해당 게시글을 찾을 수 없습니다.");
       return;
     }
-    
+
     this.boardList.remove(index);
     System.out.println("게시글을 삭제하였습니다.");
   }
-  
+
   private int indexOfBoard(int no) {
     for (int i = 0; i < this.boardList.size(); i++) {
       if (this.boardList.get(i).getNo() == no) {

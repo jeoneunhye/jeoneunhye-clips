@@ -1,12 +1,13 @@
 package jeoneunhye.vms;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
-import jeoneunhye.util.ArrayList;
-import jeoneunhye.util.Iterator;
-import jeoneunhye.util.LinkedList;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.util.Queue;
-import jeoneunhye.util.Stack;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.domain.Video;
@@ -16,8 +17,8 @@ import jeoneunhye.vms.handler.VideoHandler;
 
 public class App {
   static Scanner keyboard = new Scanner(System.in);
-  static Stack<String> commandStack = new Stack<>();
-  static Queue<String> commandQueue = new Queue<>();
+  static Deque<String> commandStack = new ArrayDeque<>();
+  static Queue<String> commandQueue = new LinkedList<>();
 
   public static void main(String[] args) {
     Prompt prompt = new Prompt(keyboard);

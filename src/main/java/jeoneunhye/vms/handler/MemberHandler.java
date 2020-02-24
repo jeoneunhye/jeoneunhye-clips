@@ -1,16 +1,16 @@
 package jeoneunhye.vms.handler;
 
 import java.sql.Date;
-import jeoneunhye.util.AbstractList;
-import jeoneunhye.util.Iterator;
+import java.util.Iterator;
+import java.util.List;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberHandler {
   Prompt prompt;
-  AbstractList<Member> memberList;
+  List<Member> memberList;
 
-  public MemberHandler(Prompt prompt, AbstractList<Member> list) {
+  public MemberHandler(Prompt prompt, List<Member> list) {
     this.prompt = prompt;
     this.memberList = list;
   }
@@ -45,7 +45,7 @@ public class MemberHandler {
       System.out.println("해당 번호의 회원을 찾을 수 없습니다.");
       return;
     }
-    
+
     Member member = this.memberList.get(index);
     System.out.printf("아이디: %s\n", member.getId());
     System.out.printf("닉네임: %s\n", member.getNickname());
@@ -54,17 +54,17 @@ public class MemberHandler {
     System.out.printf("이메일: %s\n", member.getEmail());
     System.out.printf("등록일: %s\n", member.getRegisteredDate());
   }
-  
+
   public void updateMember() {
     int index = indexOfMember(prompt.inputInt("회원 번호? "));
     if (index == -1) {
       System.out.println("해당 번호의 회원을 찾을 수 없습니다.");
       return;
     }
-    
+
     Member oldMember = this.memberList.get(index);
     Member newMember = new Member();
-    
+
     newMember.setNo(oldMember.getNo());
     newMember.setId(prompt.inputString(
         String.format("아이디(%s)? ", oldMember.getId()), oldMember.getId()));
@@ -77,27 +77,27 @@ public class MemberHandler {
     newMember.setEmail(prompt.inputString(
         String.format("이메일(%s)? ", oldMember.getEmail()), oldMember.getEmail()));
     newMember.setRegisteredDate(oldMember.getRegisteredDate());
-    
+
     if (newMember.equals(oldMember)) {
       System.out.println("회원 변경을 취소하였습니다.");
       return;
     }
-    
+
     this.memberList.set(index, newMember);
     System.out.println("회원을 변경하였습니다.");
   }
-  
+
   public void deleteMember() {
     int index = indexOfMember(prompt.inputInt("회원 번호? "));
     if (index == -1) {
       System.out.println("해당 번호의 회원을 찾을 수 없습니다.");
       return;
     }
-    
+
     this.memberList.remove(index);
     System.out.println("회원을 삭제하였습니다.");
   }
-  
+
   private int indexOfMember(int no) {
     for (int i = 0; i < this.memberList.size(); i++) {
       if (this.memberList.get(i).getNo() == no) {

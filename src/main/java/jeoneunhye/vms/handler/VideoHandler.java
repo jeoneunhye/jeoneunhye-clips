@@ -1,15 +1,15 @@
 package jeoneunhye.vms.handler;
 
-import jeoneunhye.util.AbstractList;
-import jeoneunhye.util.Iterator;
+import java.util.Iterator;
+import java.util.List;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoHandler {
   Prompt prompt;
-  AbstractList<Video> videoList;
+  List<Video> videoList;
 
-  public VideoHandler(Prompt prompt, AbstractList<Video> list) {
+  public VideoHandler(Prompt prompt, List<Video> list) {
     this.prompt = prompt;
     this.videoList = list;
   }
@@ -37,13 +37,13 @@ public class VideoHandler {
           v.getNo(), v.getSubject(), v.getTitle(), v.getPlayTime(), v.getWriter());
     }
   }
-  
+
   public void detailVideo() {
     int index = indexOfVideo(prompt.inputInt("영상 번호? "));
     if (index == -1) {
       System.out.println("해당 번호의 영상을 찾을 수 없습니다.");
     }
-    
+
     Video video = this.videoList.get(index);
     System.out.printf("주제: %s\n", video.getSubject());
     System.out.printf("제목: %s\n", video.getTitle());
@@ -52,16 +52,16 @@ public class VideoHandler {
     System.out.printf("업로더: %s\n", video.getPlayTime());
     System.out.printf("업로드 날짜: %s\n", video.getUploadDate());
   }
-  
+
   public void updateVideo() {
     int index = indexOfVideo(prompt.inputInt("영상 번호? "));
     if (index == -1) {
       System.out.println("해당 번호의 영상을 찾을 수 없습니다.");
     }
-    
+
     Video oldVideo = this.videoList.get(index);
     Video newVideo = new Video();
-    
+
     newVideo.setNo(oldVideo.getNo());
     newVideo.setSubject(prompt.inputString(
         String.format("주제(%s)? ", oldVideo.getSubject()), oldVideo.getSubject()));
@@ -75,26 +75,26 @@ public class VideoHandler {
         String.format("업로더(%s)?", oldVideo.getWriter()), oldVideo.getWriter()));
     newVideo.setUploadDate(prompt.inputDate(
         String.format("업로드 날짜(%s)? ", oldVideo.getUploadDate()), oldVideo.getUploadDate()));
-    
+
     if (newVideo.equals(oldVideo)) {
       System.out.println("영상을 취소하였습니다.");
       return;
     }
-    
+
     this.videoList.set(index, newVideo);
     System.out.println("영상을 변경하였습니다.");
   }
-  
+
   public void deleteVideo() {
     int index = indexOfVideo(prompt.inputInt("영상 번호? "));
     if (index == -1) {
       System.out.println("해당 번호의 영상을 찾을 수 없습니다.");
     }
-    
+
     this.videoList.remove(index);
     System.out.println("영상을 삭제하였습니다.");
   }
-  
+
   private int indexOfVideo(int no) {
     for (int i = 0; i < this.videoList.size(); i++) {
       if (this.videoList.get(i).getNo() == no) {
