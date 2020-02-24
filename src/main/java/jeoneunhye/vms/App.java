@@ -3,6 +3,7 @@ package jeoneunhye.vms;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -11,9 +12,22 @@ import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.domain.Video;
-import jeoneunhye.vms.handler.BoardHandler;
-import jeoneunhye.vms.handler.MemberHandler;
-import jeoneunhye.vms.handler.VideoHandler;
+import jeoneunhye.vms.handler.BoardAddCommand;
+import jeoneunhye.vms.handler.BoardDeleteCommand;
+import jeoneunhye.vms.handler.BoardDetailCommand;
+import jeoneunhye.vms.handler.BoardListCommand;
+import jeoneunhye.vms.handler.BoardUpdateCommand;
+import jeoneunhye.vms.handler.Command;
+import jeoneunhye.vms.handler.MemberAddCommand;
+import jeoneunhye.vms.handler.MemberDeleteCommand;
+import jeoneunhye.vms.handler.MemberDetailCommand;
+import jeoneunhye.vms.handler.MemberListCommand;
+import jeoneunhye.vms.handler.MemberUpdateCommand;
+import jeoneunhye.vms.handler.VideoAddCommand;
+import jeoneunhye.vms.handler.VideoDeleteCommand;
+import jeoneunhye.vms.handler.VideoDetailCommand;
+import jeoneunhye.vms.handler.VideoListCommand;
+import jeoneunhye.vms.handler.VideoUpdateCommand;
 
 public class App {
   static Scanner keyboard = new Scanner(System.in);
@@ -22,86 +36,63 @@ public class App {
 
   public static void main(String[] args) {
     Prompt prompt = new Prompt(keyboard);
+    HashMap<String, Command> commandMap = new HashMap<>();
 
     ArrayList<Video> videoList = new ArrayList<>();
-    VideoHandler videoHandler = new VideoHandler(prompt, videoList);
+    commandMap.put("/video/add", new VideoAddCommand(prompt, videoList));
+    commandMap.put("/video/list", new VideoListCommand(videoList));
+    commandMap.put("/video/detail", new VideoDetailCommand(prompt, videoList));
+    commandMap.put("/video/update", new VideoUpdateCommand(prompt, videoList));
+    commandMap.put("/video/delete", new VideoDeleteCommand(prompt, videoList));
 
     ArrayList<Member> memberList = new ArrayList<>();
-    MemberHandler memberHandler = new MemberHandler(prompt, memberList);
+    commandMap.put("/member/add", new MemberAddCommand(prompt, memberList));
+    commandMap.put("/member/list", new MemberListCommand(memberList));
+    commandMap.put("/member/detail", new MemberDetailCommand(prompt, memberList));
+    commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberList));
+    commandMap.put("/member/delete", new MemberDeleteCommand(prompt, memberList));
 
     LinkedList<Board> boardList = new LinkedList<>();
-    BoardHandler boardHandler = new BoardHandler(prompt, boardList);
+    commandMap.put("/board/add", new BoardAddCommand(prompt, boardList));
+    commandMap.put("/board/list", new BoardListCommand(boardList));
+    commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardList));
+    commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardList));
+    commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardList));
 
     String command;
-    do {
+    while (true) {
       command = prompt();
       if (command.length() == 0)
         continue;
 
+      if (command.length() == 0)
+        continue;
+
+      if (command.equals("quit")) {
+        System.out.println("안녕!");
+        break;
+
+      } else if (command.equals("history")) {
+        printCommandHistory(commandStack.iterator());
+        continue;
+
+      } else if (command.equals("history2")) {
+        printCommandHistory(commandQueue.iterator());
+        continue;
+      }
+
       commandStack.push(command);
       commandQueue.offer(command);
 
-      switch(command) {
-        case "/video/add":
-          videoHandler.addVideo();
-          break;
-        case "/video/list":
-          videoHandler.listVideo();
-          break;
-        case "/video/detail":
-          videoHandler.detailVideo();
-          break;
-        case "/video/update":
-          videoHandler.updateVideo();
-          break;
-        case "/video/delete":
-          videoHandler.deleteVideo();
-          break;
-        case "/member/add":
-          memberHandler.addMember();
-          break;
-        case "/member/list":
-          memberHandler.listMember();
-          break;
-        case "/member/detail":
-          memberHandler.detailMember();
-          break;
-        case "/member/update":
-          memberHandler.updateMember();
-          break;
-        case "/member/delete":
-          memberHandler.deleteMember();
-          break;
-        case "/board/add":
-          boardHandler.addBoard();
-          break;
-        case "/board/list":
-          boardHandler.listBoard();
-          break;
-        case "/board/detail":
-          boardHandler.detailBoard();
-          break;
-        case "/board/update":
-          boardHandler.updateBoard();
-          break;
-        case "/board/delete":
-          boardHandler.deleteBoard();
-          break;
-        case "history":
-          printCommandHistory(commandStack.iterator());
-          break;
-        case "history2":
-          printCommandHistory(commandQueue.iterator());
-          break;
-        default:
-          if (!command.equalsIgnoreCase("quit")) {
-            System.out.println("실행할 수 없는 명령입니다.");
-          }
+      Command commandHandler = commandMap.get(command);
+
+      if (commandHandler != null) {
+        commandHandler.execute();
+
+      } else {
+        System.out.println("실행할 수 없는 명령입니다.");
       }
     }
-
-    while (!command.equalsIgnoreCase("quit"));
-    System.out.println("안녕!");
 
     keyboard.close();
   }
