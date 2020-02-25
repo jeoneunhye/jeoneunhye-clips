@@ -1,8 +1,11 @@
 package jeoneunhye.vms.domain;
 
+import java.io.Serializable;
 import java.sql.Date;
 
-public class Member {
+public class Member implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   private int no;
   private String id;
   private String nickname;
