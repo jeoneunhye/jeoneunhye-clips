@@ -10,7 +10,30 @@ public class Video {
   private String playTime;
   private String writer;
   private Date uploadDate;
-  
+
+  // video.csv 파일 데이터 포맷
+  // 번호,주제,제목,주소,재생시간,업로더,업로드날짜
+  public static Video valueOf(String csv) {
+    String[] data = csv.split(",");
+
+    Video video = new Video();
+    video.setNo(Integer.parseInt(data[0]));
+    video.setSubject(data[1]);
+    video.setTitle(data[2]);
+    video.setUrl(data[3]);
+    video.setPlayTime(data[4]);
+    video.setWriter(data[5]);
+    video.setUploadDate(Date.valueOf(data[6]));
+
+    return video;
+  }
+
+  public String toCsvString() {
+    return String.format("%d,%s,%s,%s,%s,%s,%s",
+        this.getNo(), this.getSubject(), this.getTitle(), this.getUrl(),
+        this.getPlayTime(), this.getWriter(), this.getUploadDate());
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -24,7 +47,7 @@ public class Video {
     result = prime * result + ((uploadDate == null) ? 0 : uploadDate.hashCode());
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -69,7 +92,7 @@ public class Video {
       return false;
     return true;
   }
-  
+
   public int getNo() {
     return no;
   }

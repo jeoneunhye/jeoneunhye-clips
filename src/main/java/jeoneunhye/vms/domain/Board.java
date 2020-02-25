@@ -10,7 +10,30 @@ public class Board {
   private String writer;
   private Date writeDate;
   private int viewCount;
-  
+
+  // board.csv 파일 데이터 포맷
+  // 번호,영상번호,제목,내용,작성자,등록일,조회수
+  public static Board valueOf(String csv) {
+    String[] data = csv.split(",");
+
+    Board board = new Board();
+    board.setNo(Integer.parseInt(data[0]));
+    board.setVideoNo(Integer.parseInt(data[1]));
+    board.setTitle(data[2]);
+    board.setContents(data[3]);
+    board.setWriter(data[4]);
+    board.setWriteDate(Date.valueOf(data[5]));
+    board.setViewCount(Integer.parseInt(data[6]));
+
+    return board;
+  }
+
+  public String toCsvString() {
+    return String.format("%d,%d,%s,%s,%s,%s,%d",
+        this.getNo(), this.getVideoNo(), this.getTitle(), this.getContents(),
+        this.getWriter(), this.getWriteDate(), this.getViewCount());
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;
@@ -24,7 +47,7 @@ public class Board {
     result = prime * result + viewCount;
     return result;
   }
-  
+
   @Override
   public boolean equals(Object obj) {
     if (this == obj)
@@ -63,7 +86,7 @@ public class Board {
       return false;
     return true;
   }
-  
+
   public int getNo() {
     return no;
   }
