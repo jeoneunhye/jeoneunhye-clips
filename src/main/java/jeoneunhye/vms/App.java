@@ -1,22 +1,18 @@
 package jeoneunhye.vms;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.Set;
+import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.domain.Member;
@@ -39,18 +35,39 @@ import jeoneunhye.vms.handler.VideoListCommand;
 import jeoneunhye.vms.handler.VideoUpdateCommand;
 
 public class App {
-  static Scanner keyboard = new Scanner(System.in);
-  static Deque<String> commandStack = new ArrayDeque<>();
-  static Queue<String> commandQueue = new LinkedList<>();
+  Scanner keyboard = new Scanner(System.in);
+  Deque<String> commandStack = new ArrayDeque<>();
+  Queue<String> commandQueue = new LinkedList<>();
 
-  static List<Video> videoList = new ArrayList<>();
-  static List<Member> memberList = new ArrayList<>();
-  static List<Board> boardList = new LinkedList<>();
+  List<Video> videoList = new ArrayList<>();
+  List<Member> memberList = new ArrayList<>();
+  List<Board> boardList = new LinkedList<>();
 
-  public static void main(String[] args) {
-    loadVideoData();
-    loadMemberData();
-    loadBoardData();
+  Set<ApplicationContextListener> listeners = new HashSet<>();
+  Map<String, Object> context = new HashMap<>();
+
+  public void addApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  public void removeApplicationContextListener(ApplicationContextListener listener) {
+    listeners.remove(listener);
+  }
+
+  private void notifyApplicationInitialized() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextInitialized(context);
+    }
+  }
+
+  private void notifyApplicationDestroyed() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextDestroyed(context);
+    }
+  }
+
+  public void service() {
+    notifyApplicationInitialized();
 
     Prompt prompt = new Prompt(keyboard);
     HashMap<String, Command> commandMap = new HashMap<>();
@@ -111,12 +128,10 @@ public class App {
 
     keyboard.close();
 
-    saveVideoData();
-    saveMemberData();
-    saveBoardData();
+    notifyApplicationDestroyed();
   }
 
-  static String prompt() {
+  String prompt() {
     String command;
     System.out.print("\n명령> ");
     command = keyboard.nextLine();
@@ -124,7 +139,7 @@ public class App {
     return command;
   }
 
-  private static void printCommandHistory(Iterator<String> iterator) {
+  private void printCommandHistory(Iterator<String> iterator) {
     int count = 0;
 
     while (iterator.hasNext()) {
@@ -140,150 +155,11 @@ public class App {
     }
   }
 
-  @SuppressWarnings("unchecked")
-  private static void loadVideoData() {
-    // File file = new File("data/video.ser");
-    File file = new File("data/video.ser2");
+  public static void main(String[] args) {
+    App app = new App();
 
-    try (ObjectInputStream in =
-        new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
+    app.addApplicationContextListener(new DataLoaderListener());
 
-      /*
-      int size = in.readInt();
-
-      for (int i = 0; i < size; i++) {
-        videoList.add((Video) in.readObject());
-      }
-       */
-
-      videoList = (List<Video>) in.readObject();
-
-      System.out.printf("총 %d개의 영상 데이터를 로딩했습니다.\n", videoList.size());
-
-    } catch (Exception e) {
-      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
-    }
-  }
-
-  private static void saveVideoData() {
-    // File file = new File("data/video.ser");
-    File file = new File("data/video.ser2");
-
-    try (ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
-
-      /*
-      out.writeInt(videoList.size());
-
-      for (Video video : videoList) {
-        out.writeObject(video);
-      }
-       */
-
-      out.writeObject(videoList);
-
-      System.out.printf("총 %d개의 영상 데이터를 저장했습니다.\n", videoList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static void loadMemberData() {
-    // File file = new File("data/member.ser");
-    File file = new File("data/member.ser2");
-
-    try (ObjectInputStream in =
-        new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-
-      /*
-      int size = in.readInt();
-
-      for (int i = 0; i < size; i++) {
-        memberList.add((Member) in.readObject());
-      }
-       */
-
-      memberList = (List<Member>) in.readObject();
-
-      System.out.printf("총 %d개의 회원 데이터를 로딩했습니다.\n", memberList.size());
-
-    } catch (Exception e) {
-      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
-    }
-  }
-
-  private static void saveMemberData() {
-    // File file = new File("data/member.ser");
-    File file = new File("data/member.ser2");
-
-    try (ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
-
-      /*
-      out.writeInt(memberList.size());
-
-      for (Member member : memberList) {
-        out.writeObject(member);
-      }
-       */
-
-      out.writeObject(memberList);
-
-      System.out.printf("총 %d개의 회원 데이터를 저장했습니다.\n", memberList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
-    }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static void loadBoardData() {
-    // File file = new File("data/board.ser");
-    File file = new File("data/board.ser2");
-
-    try (ObjectInputStream in =
-        new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)))) {
-
-      /*
-      int size = in.readInt();
-
-      for (int i = 0; i < size; i++) {
-        boardList.add((Board) in.readObject());
-      }
-       */
-
-      boardList = (List<Board>) in.readObject();
-
-      System.out.printf("총 %d개의 게시글 데이터를 로딩했습니다.\n", boardList.size());
-
-    } catch (Exception e) {
-      System.out.println("파일 읽기 중 오류 발생! - " + e.getMessage());
-    }
-  }
-
-  private static void saveBoardData() {
-    // File file = new File("data/board.ser");
-    File file = new File("data/board.ser2");
-
-    try (ObjectOutputStream out =
-        new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
-
-      /*
-      out.writeInt(boardList.size());
-
-      for (Board board : boardList) {
-        out.writeObject(board);
-      }
-       */
-
-      out.writeObject(boardList);
-
-      System.out.printf("총 %d개의 게시글 데이터를 저장했습니다.\n", boardList.size());
-
-    } catch (IOException e) {
-      System.out.println("파일 쓰기 중 오류 발생! - " + e.getMessage());
-    }
+    app.service();
   }
 }
