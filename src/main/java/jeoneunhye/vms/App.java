@@ -1,14 +1,16 @@
 package jeoneunhye.vms;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -16,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Scanner;
-import com.google.gson.Gson;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.domain.Member;
@@ -141,28 +142,25 @@ public class App {
   }
 
   private static void loadVideoData() {
-    // File file = new File("data/video.csv");
-    File file = new File("data/video.json");
+    File file = new File("data/video.data");
 
-    /*
-    try (FileReader in = new FileReader(file);
-        Scanner dataScan = new Scanner(in)) {
+    try (DataInputStream in =
+        new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
 
-      while (true) {
-        try {
-          videoList.add(Video.valueOf(dataScan.nextLine()));
+      int size = in.readInt();
 
-        } catch (Exception e) {
-          break;
-        }
+      for (int i = 0; i < size; i++) {
+        Video video = new Video();
+        video.setNo(in.readInt());
+        video.setSubject(in.readUTF());
+        video.setTitle(in.readUTF());
+        video.setUrl(in.readUTF());
+        video.setPlayTime(in.readUTF());
+        video.setWriter(in.readUTF());
+        video.setUploadDate(Date.valueOf(in.readUTF()));
 
-        System.out.printf("총 %d개의 영상 데이터를 로딩했습니다.\n", videoList.size());
+        videoList.add(video);
       }
-     */
-
-    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-
-      videoList.addAll(Arrays.asList(new Gson().fromJson(in, Video[].class)));
 
       System.out.printf("총 %d개의 영상 데이터를 로딩했습니다.\n", videoList.size());
 
@@ -172,20 +170,22 @@ public class App {
   }
 
   private static void saveVideoData() {
-    // File file = new File("data/video.csv");
-    File file = new File("data/video.json");
+    File file = new File("data/video.data");
 
-    /*
-    try (FileWriter out = new FileWriter(file)) {
+    try (DataOutputStream out =
+        new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+
+      out.writeInt(videoList.size());
 
       for (Video video : videoList) {
-        out.write(video.toCsvString() + "\n");
+        out.writeInt(video.getNo());
+        out.writeUTF(video.getSubject());
+        out.writeUTF(video.getTitle());
+        out.writeUTF(video.getUrl());
+        out.writeUTF(video.getPlayTime());
+        out.writeUTF(video.getWriter());
+        out.writeUTF(String.valueOf(video.getUploadDate()));
       }
-     */
-
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
-
-      out.write(new Gson().toJson(videoList));
 
       System.out.printf("총 %d개의 영상 데이터를 저장했습니다.\n", videoList.size());
 
@@ -195,28 +195,25 @@ public class App {
   }
 
   private static void loadMemberData() {
-    // File file = new File("data/member.csv");
-    File file = new File("data/member.json");
+    File file = new File("data/member.data");
 
-    /*
-    try (FileReader in = new FileReader(file);
-        Scanner dataScan = new Scanner(in)) {
+    try (DataInputStream in =
+        new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
 
-      while (true) {
-        try {
-          memberList.add(Member.valueOf(dataScan.nextLine()));
+      int size = in.readInt();
 
-        } catch (Exception e) {
-          break;
-        }
+      for (int i = 0; i < size; i++) {
+        Member member = new Member();
+        member.setNo(in.readInt());
+        member.setId(in.readUTF());
+        member.setNickname(in.readUTF());
+        member.setPassword(in.readUTF());
+        member.setPhone(in.readUTF());
+        member.setEmail(in.readUTF());
+        member.setRegisteredDate(Date.valueOf(in.readUTF()));
 
-        System.out.printf("총 %d개의 회원 데이터를 로딩했습니다.\n", memberList.size());
+        memberList.add(member);
       }
-     */
-
-    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-
-      memberList.addAll(Arrays.asList(new Gson().fromJson(in, Member[].class)));
 
       System.out.printf("총 %d개의 회원 데이터를 로딩했습니다.\n", memberList.size());
 
@@ -226,20 +223,22 @@ public class App {
   }
 
   private static void saveMemberData() {
-    // File file = new File("data/member.csv");
-    File file = new File("data/member.json");
+    File file = new File("data/member.data");
 
-    /*
-    try (FileWriter out = new FileWriter(file)) {
+    try (DataOutputStream out =
+        new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+
+      out.writeInt(memberList.size());
 
       for (Member member : memberList) {
-        out.write(member.toCsvString() + "\n");
+        out.writeInt(member.getNo());
+        out.writeUTF(member.getId());
+        out.writeUTF(member.getNickname());
+        out.writeUTF(member.getPassword());
+        out.writeUTF(member.getPhone());
+        out.writeUTF(member.getEmail());
+        out.writeUTF(String.valueOf(member.getRegisteredDate()));
       }
-     */
-
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
-
-      out.write(new Gson().toJson(memberList));
 
       System.out.printf("총 %d개의 회원 데이터를 저장했습니다.\n", memberList.size());
 
@@ -249,28 +248,25 @@ public class App {
   }
 
   private static void loadBoardData() {
-    // File file = new File("data/board.csv");
-    File file = new File("data/board.json");
+    File file = new File("data/board.data");
 
-    /*
-    try (FileReader in = new FileReader(file);
-        Scanner dataScan = new Scanner(in)) {
+    try (DataInputStream in =
+        new DataInputStream(new BufferedInputStream(new FileInputStream(file)))) {
 
-      while (true) {
-        try {
-          boardList.add(Board.valueOf(dataScan.nextLine()));
+      int size = in.readInt();
 
-        } catch (Exception e) {
-          break;
-        }
+      for (int i = 0; i < size; i++) {
+        Board board = new Board();
+        board.setNo(in.readInt());
+        board.setVideoNo(in.readInt());
+        board.setTitle(in.readUTF());
+        board.setContents(in.readUTF());
+        board.setWriter(in.readUTF());
+        board.setWriteDate(Date.valueOf(in.readUTF()));
+        board.setViewCount(0);
 
-        System.out.printf("총 %d개의 게시글 데이터를 로딩했습니다.\n", boardList.size());
+        boardList.add(board);
       }
-     */
-
-    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-
-      boardList.addAll(Arrays.asList(new Gson().fromJson(in, Board[].class)));
 
       System.out.printf("총 %d개의 게시글 데이터를 로딩했습니다.\n", boardList.size());
 
@@ -280,20 +276,22 @@ public class App {
   }
 
   private static void saveBoardData() {
-    // File file = new File("data/board.csv");
-    File file = new File("data/board.json");
+    File file = new File("data/board.data");
 
-    /*
-    try (FileWriter out = new FileWriter(file)) {
+    try (DataOutputStream out =
+        new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)))) {
+
+      out.writeInt(boardList.size());
 
       for (Board board : boardList) {
-        out.write(board.toCsvString() + "\n");
+        out.writeInt(board.getNo());
+        out.writeInt(board.getVideoNo());
+        out.writeUTF(board.getTitle());
+        out.writeUTF(board.getContents());
+        out.writeUTF(board.getWriter());
+        out.writeUTF(String.valueOf(board.getWriteDate()));
+        out.writeInt(board.getViewCount());
       }
-     */
-
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
-
-      out.write(new Gson().toJson(boardList));
 
       System.out.printf("총 %d개의 게시글 데이터를 저장했습니다.\n", boardList.size());
 
