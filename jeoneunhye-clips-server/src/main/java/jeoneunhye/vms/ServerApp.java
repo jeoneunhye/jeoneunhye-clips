@@ -1,13 +1,56 @@
 // VMS 서버
 package jeoneunhye.vms;
 
-import java.io.PrintStream;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.vms.domain.Board;
+import jeoneunhye.vms.domain.Member;
+import jeoneunhye.vms.domain.Video;
 
 public class ServerApp {
+  Set<ApplicationContextListener> listeners = new HashSet<>();
+  Map<String, Object> context = new HashMap<>();
+
+  public void addApplicationContextListener(ApplicationContextListener listener) {
+    listeners.add(listener);
+  }
+
+  public void removeApplicationContextListener(ApplicationContextListener listener) {
+    listeners.remove(listener);
+  }
+
+  private void notifyApplicationInitialized() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextInitialized(context);
+    }
+  }
+
+  private void notifyApplicationDestroyed() {
+    for (ApplicationContextListener listener : listeners) {
+      listener.contextDestroyed(context);
+    }
+  }
+
+  void service() {
+    notifyApplicationInitialized();
+
+    List<Video> videoList = (List<Video>) context.get("videoList");
+    List<Member> memberList = (List<Member>) context.get("memberList");
+    List<Board> boardList = (List<Board>) context.get("boardList");
+
+    notifyApplicationDestroyed();
+  }
+
   public static void main(String[] args) {
+    ServerApp app = new ServerApp();
+    app.addApplicationContextListener(new DataLoaderListener());
+    app.service();
+
+    /*
     try (
         ServerSocket serverSocket = new ServerSocket(9999)) {
 
@@ -26,8 +69,10 @@ public class ServerApp {
       System.out.println("연결 중 오류 발생!");
       return;
     }
+     */
   }
 
+  /*
   static void processRequest(Socket clientSocket) {
     try (
         Socket socket = clientSocket;
@@ -47,4 +92,5 @@ public class ServerApp {
       e.printStackTrace();
     }
   }
+   */
 }
