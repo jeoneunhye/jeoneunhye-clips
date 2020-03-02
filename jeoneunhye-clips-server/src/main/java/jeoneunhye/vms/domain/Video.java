@@ -38,6 +38,12 @@ public class Video implements Serializable {
   }
 
   @Override
+  public String toString() {
+    return "Video [no=" + no + ", subject=" + subject + ", title=" + title + ", url=" + url
+        + ", playTime=" + playTime + ", writer=" + writer + ", uploadDate=" + uploadDate + "]";
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;

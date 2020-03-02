@@ -38,6 +38,12 @@ public class Member implements Serializable {
   }
 
   @Override
+  public String toString() {
+    return "Member [no=" + no + ", id=" + id + ", nickname=" + nickname + ", password=" + password
+        + ", phone=" + phone + ", email=" + email + ", registeredDate=" + registeredDate + "]";
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;

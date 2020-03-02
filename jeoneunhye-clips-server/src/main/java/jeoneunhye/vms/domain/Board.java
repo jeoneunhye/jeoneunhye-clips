@@ -38,6 +38,13 @@ public class Board implements Serializable {
   }
 
   @Override
+  public String toString() {
+    return "Board [no=" + no + ", videoNo=" + videoNo + ", title=" + title + ", contents="
+        + contents + ", writer=" + writer + ", writeDate=" + writeDate + ", viewCount=" + viewCount
+        + "]";
+  }
+
+  @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
