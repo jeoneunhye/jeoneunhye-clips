@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.vms.dao.BoardObjectFileDao;
-import jeoneunhye.vms.dao.MemberObjectFileDao;
-import jeoneunhye.vms.dao.VideoObjectFileDao;
+import jeoneunhye.vms.dao.json.BoardJsonFileDao;
+import jeoneunhye.vms.dao.json.MemberJsonFileDao;
+import jeoneunhye.vms.dao.json.VideoJsonFileDao;
 import jeoneunhye.vms.servlet.BoardAddServlet;
 import jeoneunhye.vms.servlet.BoardDeleteServlet;
 import jeoneunhye.vms.servlet.BoardDetailServlet;
@@ -60,9 +60,9 @@ public class ServerApp {
   public void service() {
     notifyApplicationInitialized();
 
-    VideoObjectFileDao videoDao = (VideoObjectFileDao) context.get("videoDao");
-    MemberObjectFileDao memberDao = (MemberObjectFileDao) context.get("memberDao");
-    BoardObjectFileDao boardDao = (BoardObjectFileDao) context.get("boardDao");
+    VideoJsonFileDao videoDao = (VideoJsonFileDao) context.get("videoDao");
+    MemberJsonFileDao memberDao = (MemberJsonFileDao) context.get("memberDao");
+    BoardJsonFileDao boardDao = (BoardJsonFileDao) context.get("boardDao");
 
     servletMap.put("/video/add", new VideoAddServlet(videoDao));
     servletMap.put("/video/list", new VideoListServlet(videoDao));

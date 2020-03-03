@@ -2,12 +2,12 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import jeoneunhye.vms.dao.VideoObjectFileDao;
+import jeoneunhye.vms.dao.json.VideoJsonFileDao;
 
 public class VideoDeleteServlet implements Servlet {
-  VideoObjectFileDao videoDao;
+  VideoJsonFileDao videoDao;
 
-  public VideoDeleteServlet(VideoObjectFileDao videoDao) {
+  public VideoDeleteServlet(VideoJsonFileDao videoDao) {
     this.videoDao = videoDao;
   }
 

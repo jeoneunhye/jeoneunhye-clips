@@ -2,12 +2,12 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import jeoneunhye.vms.dao.BoardObjectFileDao;
+import jeoneunhye.vms.dao.json.BoardJsonFileDao;
 
 public class BoardDeleteServlet implements Servlet {
-  BoardObjectFileDao boardDao;
+  BoardJsonFileDao boardDao;
 
-  public BoardDeleteServlet(BoardObjectFileDao boardDao) {
+  public BoardDeleteServlet(BoardJsonFileDao boardDao) {
     this.boardDao = boardDao;
   }
 

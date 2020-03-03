@@ -2,16 +2,16 @@ package jeoneunhye.vms;
 
 import java.util.Map;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.vms.dao.BoardObjectFileDao;
-import jeoneunhye.vms.dao.MemberObjectFileDao;
-import jeoneunhye.vms.dao.VideoObjectFileDao;
+import jeoneunhye.vms.dao.json.BoardJsonFileDao;
+import jeoneunhye.vms.dao.json.MemberJsonFileDao;
+import jeoneunhye.vms.dao.json.VideoJsonFileDao;
 
 public class DataLoaderListener implements ApplicationContextListener {
   @Override
   public void contextInitialized(Map<String, Object> context) {
-    VideoObjectFileDao videoDao = new VideoObjectFileDao("data/video.ser2");
-    MemberObjectFileDao memberDao = new MemberObjectFileDao("data/member.ser2");
-    BoardObjectFileDao boardDao = new BoardObjectFileDao("data/board.ser2");
+    VideoJsonFileDao videoDao = new VideoJsonFileDao("data/video.json");
+    MemberJsonFileDao memberDao = new MemberJsonFileDao("data/member.json");
+    BoardJsonFileDao boardDao = new BoardJsonFileDao("data/board.json");
 
     context.put("videoDao", videoDao);
     context.put("memberDao", memberDao);

@@ -2,13 +2,13 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import jeoneunhye.vms.dao.VideoObjectFileDao;
+import jeoneunhye.vms.dao.json.VideoJsonFileDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoAddServlet implements Servlet {
-  VideoObjectFileDao videoDao;
+  VideoJsonFileDao videoDao;
 
-  public VideoAddServlet(VideoObjectFileDao videoDao) {
+  public VideoAddServlet(VideoJsonFileDao videoDao) {
     this.videoDao = videoDao;
   }
 
