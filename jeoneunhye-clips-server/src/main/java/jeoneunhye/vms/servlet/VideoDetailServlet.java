@@ -2,28 +2,21 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import jeoneunhye.vms.dao.VideoObjectFileDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoDetailServlet implements Servlet {
-  List<Video> videos;
+  VideoObjectFileDao videoDao;
 
-  public VideoDetailServlet(List<Video> videos) {
-    this.videos = videos;
+  public VideoDetailServlet(VideoObjectFileDao videoDao) {
+    this.videoDao = videoDao;
   }
 
   @Override
   public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
     int no = in.readInt();
 
-    Video video = null;
-    for (Video v : videos) {
-      if (v.getNo() == no) {
-        video = v;
-        break;
-      }
-    }
-
+    Video video = videoDao.findByNo(no);
     if (video != null) {
       out.writeUTF("OK");
       out.writeObject(video);

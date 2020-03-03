@@ -8,13 +8,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.vms.domain.Board;
-import jeoneunhye.vms.domain.Member;
-import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.dao.BoardObjectFileDao;
+import jeoneunhye.vms.dao.MemberObjectFileDao;
+import jeoneunhye.vms.dao.VideoObjectFileDao;
 import jeoneunhye.vms.servlet.BoardAddServlet;
 import jeoneunhye.vms.servlet.BoardDeleteServlet;
 import jeoneunhye.vms.servlet.BoardDetailServlet;
@@ -36,10 +35,6 @@ public class ServerApp {
   Set<ApplicationContextListener> listeners = new HashSet<>();
   Map<String, Object> context = new HashMap<>();
   Map<String, Servlet> servletMap = new HashMap<>();
-
-  List<Video> videos;
-  List<Member> members;
-  List<Board> boards;
 
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
@@ -65,27 +60,27 @@ public class ServerApp {
   public void service() {
     notifyApplicationInitialized();
 
-    videos = (List<Video>) context.get("videoList");
-    members = (List<Member>) context.get("memberList");
-    boards = (List<Board>) context.get("boardList");
+    VideoObjectFileDao videoDao = (VideoObjectFileDao) context.get("videoDao");
+    MemberObjectFileDao memberDao = (MemberObjectFileDao) context.get("memberDao");
+    BoardObjectFileDao boardDao = (BoardObjectFileDao) context.get("boardDao");
 
-    servletMap.put("/video/add", new VideoAddServlet(videos));
-    servletMap.put("/video/list", new VideoListServlet(videos));
-    servletMap.put("/video/detail", new VideoDetailServlet(videos));
-    servletMap.put("/video/update", new VideoUpdateServlet(videos));
-    servletMap.put("/video/delete", new VideoDeleteServlet(videos));
+    servletMap.put("/video/add", new VideoAddServlet(videoDao));
+    servletMap.put("/video/list", new VideoListServlet(videoDao));
+    servletMap.put("/video/detail", new VideoDetailServlet(videoDao));
+    servletMap.put("/video/update", new VideoUpdateServlet(videoDao));
+    servletMap.put("/video/delete", new VideoDeleteServlet(videoDao));
 
-    servletMap.put("/member/add", new MemberAddServlet(members));
-    servletMap.put("/member/list", new MemberListServlet(members));
-    servletMap.put("/member/detail", new MemberDetailServlet(members));
-    servletMap.put("/member/update", new MemberUpdateServlet(members));
-    servletMap.put("/member/delete", new MemberDeleteServlet(members));
+    servletMap.put("/member/add", new MemberAddServlet(memberDao));
+    servletMap.put("/member/list", new MemberListServlet(memberDao));
+    servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
+    servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
+    servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
 
-    servletMap.put("/board/add", new BoardAddServlet(boards));
-    servletMap.put("/board/list", new BoardListServlet(boards));
-    servletMap.put("/board/detail", new BoardDetailServlet(boards));
-    servletMap.put("/board/update", new BoardUpdateServlet(boards));
-    servletMap.put("/board/delete", new BoardDeleteServlet(boards));
+    servletMap.put("/board/add", new BoardAddServlet(boardDao));
+    servletMap.put("/board/list", new BoardListServlet(boardDao));
+    servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
+    servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
+    servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 

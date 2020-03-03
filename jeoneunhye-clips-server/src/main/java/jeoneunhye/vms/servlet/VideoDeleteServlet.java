@@ -2,32 +2,21 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
-import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.dao.VideoObjectFileDao;
 
 public class VideoDeleteServlet implements Servlet {
-  List<Video> videos;
+  VideoObjectFileDao videoDao;
 
-  public VideoDeleteServlet(List<Video> videos) {
-    this.videos = videos;
+  public VideoDeleteServlet(VideoObjectFileDao videoDao) {
+    this.videoDao = videoDao;
   }
 
   @Override
   public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
     int no = in.readInt();
 
-    int index = -1;
-    for (int i = 0; i < videos.size(); i++) {
-      if (videos.get(i).getNo() == no) {
-        index = i;
-        break;
-      }
-    }
-
-    if (index != -1) {
-      videos.remove(index);
+    if (videoDao.delete(no) > 0) {
       out.writeUTF("OK");
-      out.flush();
 
     } else {
       out.writeUTF("FAIL");

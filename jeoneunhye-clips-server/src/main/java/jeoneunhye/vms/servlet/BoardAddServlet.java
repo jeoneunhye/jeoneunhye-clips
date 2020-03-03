@@ -2,29 +2,21 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import jeoneunhye.vms.dao.BoardObjectFileDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardAddServlet implements Servlet {
-  List<Board> boards;
+  BoardObjectFileDao boardDao;
 
-  public BoardAddServlet(List<Board> boards) {
-    this.boards = boards;
+  public BoardAddServlet(BoardObjectFileDao boardDao) {
+    this.boardDao = boardDao;
   }
 
   @Override
   public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
     Board board = (Board) in.readObject();
 
-    int i = 0;
-    for (; i < boards.size(); i++) {
-      if (boards.get(i).getNo() == board.getNo()) {
-        break;
-      }
-    }
-
-    if (i == boards.size()) {
-      boards.add(board);
+    if (boardDao.insert(board) > 0) {
       out.writeUTF("OK");
 
     } else {
