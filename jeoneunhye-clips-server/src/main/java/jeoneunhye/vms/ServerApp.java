@@ -15,10 +15,27 @@ import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.servlet.BoardAddServlet;
+import jeoneunhye.vms.servlet.BoardDeleteServlet;
+import jeoneunhye.vms.servlet.BoardDetailServlet;
+import jeoneunhye.vms.servlet.BoardListServlet;
+import jeoneunhye.vms.servlet.BoardUpdateServlet;
+import jeoneunhye.vms.servlet.MemberAddServlet;
+import jeoneunhye.vms.servlet.MemberDeleteServlet;
+import jeoneunhye.vms.servlet.MemberDetailServlet;
+import jeoneunhye.vms.servlet.MemberListServlet;
+import jeoneunhye.vms.servlet.MemberUpdateServlet;
+import jeoneunhye.vms.servlet.Servlet;
+import jeoneunhye.vms.servlet.VideoAddServlet;
+import jeoneunhye.vms.servlet.VideoDeleteServlet;
+import jeoneunhye.vms.servlet.VideoDetailServlet;
+import jeoneunhye.vms.servlet.VideoListServlet;
+import jeoneunhye.vms.servlet.VideoUpdateServlet;
 
 public class ServerApp {
   Set<ApplicationContextListener> listeners = new HashSet<>();
   Map<String, Object> context = new HashMap<>();
+  Map<String, Servlet> servletMap = new HashMap<>();
 
   List<Video> videos;
   List<Member> members;
@@ -52,6 +69,24 @@ public class ServerApp {
     members = (List<Member>) context.get("memberList");
     boards = (List<Board>) context.get("boardList");
 
+    servletMap.put("/video/add", new VideoAddServlet(videos));
+    servletMap.put("/video/list", new VideoListServlet(videos));
+    servletMap.put("/video/detail", new VideoDetailServlet(videos));
+    servletMap.put("/video/update", new VideoUpdateServlet(videos));
+    servletMap.put("/video/delete", new VideoDeleteServlet(videos));
+
+    servletMap.put("/member/add", new MemberAddServlet(members));
+    servletMap.put("/member/list", new MemberListServlet(members));
+    servletMap.put("/member/detail", new MemberDetailServlet(members));
+    servletMap.put("/member/update", new MemberUpdateServlet(members));
+    servletMap.put("/member/delete", new MemberDeleteServlet(members));
+
+    servletMap.put("/board/add", new BoardAddServlet(boards));
+    servletMap.put("/board/list", new BoardListServlet(boards));
+    servletMap.put("/board/detail", new BoardDetailServlet(boards));
+    servletMap.put("/board/update", new BoardUpdateServlet(boards));
+    servletMap.put("/board/delete", new BoardDeleteServlet(boards));
+
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 
       System.out.println("클라이언트 연결 대기중...");
@@ -65,7 +100,7 @@ public class ServerApp {
           break;
         }
 
-        System.out.println("-----클라이언트 요청 처리 완료-----");
+        System.out.println("-----클라이언트가 연결을 종료하였습니다.");
       }
 
     } catch (Exception e) {
@@ -80,7 +115,7 @@ public class ServerApp {
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
 
-      System.out.println("입출력 스트림 준비 완료");
+      System.out.println("클라이언트와 데이터 통신 시작");
 
       while (true) {
         String request = in.readUTF();
@@ -95,57 +130,27 @@ public class ServerApp {
             out.writeUTF("OK");
             out.flush();
             return 9;
-          case "/video/list":
-            listVideo(out);
-            break;
-          case "/video/add":
-            addVideo(in, out);
-            break;
-          case "/video/detail":
-            detailVideo(in, out);
-            break;
-          case "/video/update":
-            updateVideo(in, out);
-            break;
-          case "/video/delete":
-            deleteVideo(in, out);
-            break;
-          case "/member/list":
-            listMember(out);
-            break;
-          case "/member/add":
-            addMember(in, out);
-            break;
-          case "/member/detail":
-            detailMember(in, out);
-            break;
-          case "/member/update":
-            updateMember(in, out);
-            break;
-          case "/member/delete":
-            deleteMember(in, out);
-            break;
-          case "/board/list":
-            listBoard(out);
-            break;
-          case "/board/add":
-            addBoard(in, out);
-            break;
-          case "/board/detail":
-            detailBoard(in, out);
-            break;
-          case "/board/update":
-            updateBoard(in, out);
-            break;
-          case "/board/delete":
-            deleteBoard(in, out);
-            break;
-          default:
-            notFound(out);
+        }
+
+        Servlet servlet = servletMap.get(request);
+        if (servlet != null) {
+          try {
+            servlet.service(in, out);
+
+          } catch (Exception e) {
+            out.writeUTF("FAIL");
+            out.writeUTF(e.getMessage());
+
+            System.out.print("클라이언트 요청 처리 중 오류 발생: ");
+            e.printStackTrace();
+          }
+
+        } else {
+          notFound(out);
         }
 
         out.flush();
-        System.out.println("클라이언트로 메시지 전송 완료");
+        System.out.println("클라이언트에게 응답 완료");
       }
 
     } catch (Exception e) {
@@ -158,346 +163,6 @@ public class ServerApp {
   private void notFound(ObjectOutputStream out) throws IOException {
     out.writeUTF("FAIL");
     out.writeUTF("요청한 명령을 처리할 수 없습니다.");
-  }
-
-  private void listVideo(ObjectOutputStream out) throws IOException {
-    out.writeUTF("OK");
-    out.reset();
-    out.writeObject(videos);
-  }
-
-  private void addVideo(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      Video video = (Video) in.readObject();
-
-      int i = 0;
-      for (; i < videos.size(); i++) {
-        if (videos.get(i).getNo() == video.getNo()) {
-          break;
-        }
-      }
-
-      if (i == videos.size()) {
-        videos.add(video);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("같은 번호의 영상이 있습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void detailVideo(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      int no = in.readInt();
-
-      Video video = null;
-      for (Video v : videos) {
-        if (v.getNo() == no) {
-          video = v;
-          break;
-        }
-      }
-
-      if (video != null) {
-        out.writeUTF("OK");
-        out.writeObject(video);
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 영상이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void updateVideo(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      Video video = (Video) in.readObject();
-
-      int index = -1;
-      for (int i = 0; i < videos.size(); i++) {
-        if (videos.get(i).getNo() == video.getNo()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        videos.set(index, video);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 영상이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void deleteVideo(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      int no = in.readInt();
-
-      int index = -1;
-      for (int i = 0; i < videos.size(); i++) {
-        if (videos.get(i).getNo() == no) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        videos.remove(index);
-        out.writeUTF("OK");
-        out.flush();
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 영상이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void listMember(ObjectOutputStream out) throws IOException {
-    out.writeUTF("OK");
-    out.reset();
-    out.writeObject(members);
-  }
-
-  private void addMember(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      Member member = (Member) in.readObject();
-
-      int i = 0;
-      for (; i < members.size(); i++) {
-        if (members.get(i).getNo() == member.getNo()) {
-          break;
-        }
-      }
-
-      if (i == members.size()) {
-        members.add(member);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("같은 번호의 회원이 있습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void detailMember(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      int no = in.readInt();
-
-      Member member = null;
-      for (Member m : members) {
-        if (m.getNo() == no) {
-          member = m;
-          break;
-        }
-      }
-
-      if (member != null) {
-        out.writeUTF("OK");
-        out.writeObject(member);
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void updateMember(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      Member member = (Member) in.readObject();
-
-      int index = -1;
-      for (int i = 0; i < members.size(); i++) {
-        if (members.get(i).getNo() == member.getNo()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        members.set(index, member);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void deleteMember(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      int no = in.readInt();
-
-      int index = -1;
-      for (int i = 0; i < members.size(); i++) {
-        if (members.get(i).getNo() == no) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        members.remove(index);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 회원이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void listBoard(ObjectOutputStream out) throws IOException {
-    out.writeUTF("OK");
-    out.reset();
-    out.writeObject(boards);
-  }
-
-  private void addBoard(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      Board board = (Board) in.readObject();
-
-      int i = 0;
-      for (; i < boards.size(); i++) {
-        if (boards.get(i).getNo() == board.getNo()) {
-          break;
-        }
-      }
-
-      if (i == boards.size()) {
-        boards.add(board);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("같은 번호의 게시글이 있습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void detailBoard(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      int no = in.readInt();
-
-      Board board = null;
-      for (Board b : boards) {
-        if (b.getNo() == no) {
-          board = b;
-          break;
-        }
-      }
-
-      if (board != null) {
-        out.writeUTF("OK");
-        out.writeObject(board);
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 게시글이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void updateBoard(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      Board board = (Board) in.readObject();
-
-      int index = -1;
-      for (int i = 0; i < boards.size(); i++) {
-        if (boards.get(i).getNo() == board.getNo()) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index != -1) {
-        boards.set(index, board);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 게시글이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
-  }
-
-  private void deleteBoard(ObjectInputStream in, ObjectOutputStream out) throws IOException {
-    try {
-      int no = in.readInt();
-
-      int index = -1;
-      for (int i = 0; i < boards.size(); i++) {
-        if (boards.get(i).getNo() == no) {
-          index = i;
-          break;
-        }
-      }
-
-      if (index == -1) {
-        boards.remove(index);
-        out.writeUTF("OK");
-
-      } else {
-        out.writeUTF("FAIL");
-        out.writeUTF("해당 번호의 게시글이 없습니다.");
-      }
-
-    } catch (Exception e) {
-      out.writeUTF("FAIL");
-      out.writeUTF(e.getMessage());
-    }
   }
 
   public static void main(String[] args) {
