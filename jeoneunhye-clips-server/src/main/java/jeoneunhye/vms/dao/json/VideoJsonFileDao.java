@@ -1,13 +1,15 @@
 package jeoneunhye.vms.dao.json;
 
 import java.util.List;
+import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
-public class VideoJsonFileDao extends AbstractJsonFileDao<Video> {
+public class VideoJsonFileDao extends AbstractJsonFileDao<Video> implements VideoDao {
   public VideoJsonFileDao(String filename) {
     super(filename);
   }
 
+  @Override
   public int insert(Video video) throws Exception {
     if (indexOf(video.getNo()) > -1) {
       return 0;
@@ -19,10 +21,12 @@ public class VideoJsonFileDao extends AbstractJsonFileDao<Video> {
     return 1;
   }
 
+  @Override
   public List<Video> findAll() throws Exception {
     return list;
   }
 
+  @Override
   public Video findByNo(int no) throws Exception {
     int index = indexOf(no);
     if (index == -1) {
@@ -32,6 +36,7 @@ public class VideoJsonFileDao extends AbstractJsonFileDao<Video> {
     return list.get(index);
   }
 
+  @Override
   public int update(Video video) throws Exception {
     int index = indexOf(video.getNo());
     if (index == -1) {
@@ -44,6 +49,7 @@ public class VideoJsonFileDao extends AbstractJsonFileDao<Video> {
     return 1;
   }
 
+  @Override
   public int delete(int no) throws Exception {
     int index = indexOf(no);
     if (index == -1) {

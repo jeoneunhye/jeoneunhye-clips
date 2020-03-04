@@ -11,9 +11,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.vms.dao.json.BoardJsonFileDao;
-import jeoneunhye.vms.dao.json.MemberJsonFileDao;
-import jeoneunhye.vms.dao.json.VideoJsonFileDao;
+import jeoneunhye.vms.dao.BoardDao;
+import jeoneunhye.vms.dao.MemberDao;
+import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.servlet.BoardAddServlet;
 import jeoneunhye.vms.servlet.BoardDeleteServlet;
 import jeoneunhye.vms.servlet.BoardDetailServlet;
@@ -56,13 +56,12 @@ public class ServerApp {
     }
   }
 
-  @SuppressWarnings("unchecked")
   public void service() {
     notifyApplicationInitialized();
 
-    VideoJsonFileDao videoDao = (VideoJsonFileDao) context.get("videoDao");
-    MemberJsonFileDao memberDao = (MemberJsonFileDao) context.get("memberDao");
-    BoardJsonFileDao boardDao = (BoardJsonFileDao) context.get("boardDao");
+    VideoDao videoDao = (VideoDao) context.get("videoDao");
+    MemberDao memberDao = (MemberDao) context.get("memberDao");
+    BoardDao boardDao = (BoardDao) context.get("boardDao");
 
     servletMap.put("/video/add", new VideoAddServlet(videoDao));
     servletMap.put("/video/list", new VideoListServlet(videoDao));

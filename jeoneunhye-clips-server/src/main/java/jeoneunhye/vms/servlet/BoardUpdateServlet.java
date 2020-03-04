@@ -2,13 +2,13 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import jeoneunhye.vms.dao.json.BoardJsonFileDao;
+import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardUpdateServlet implements Servlet {
-  BoardJsonFileDao boardDao;
+  BoardDao boardDao;
 
-  public BoardUpdateServlet(BoardJsonFileDao boardDao) {
+  public BoardUpdateServlet(BoardDao boardDao) {
     this.boardDao = boardDao;
   }
 

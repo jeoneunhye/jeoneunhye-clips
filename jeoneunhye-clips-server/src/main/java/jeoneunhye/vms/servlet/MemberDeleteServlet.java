@@ -2,12 +2,12 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import jeoneunhye.vms.dao.json.MemberJsonFileDao;
+import jeoneunhye.vms.dao.MemberDao;
 
 public class MemberDeleteServlet implements Servlet {
-  MemberJsonFileDao memberDao;
+  MemberDao memberDao;
 
-  public MemberDeleteServlet(MemberJsonFileDao memberDao) {
+  public MemberDeleteServlet(MemberDao memberDao) {
     this.memberDao = memberDao;
   }
 

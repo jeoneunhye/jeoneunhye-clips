@@ -2,13 +2,13 @@ package jeoneunhye.vms.servlet;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import jeoneunhye.vms.dao.json.MemberJsonFileDao;
+import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberUpdateServlet implements Servlet {
-  MemberJsonFileDao memberDao;
+  MemberDao memberDao;
 
-  public MemberUpdateServlet(MemberJsonFileDao memberDao) {
+  public MemberUpdateServlet(MemberDao memberDao) {
     this.memberDao = memberDao;
   }
 
