@@ -1,18 +1,15 @@
 package jeoneunhye.vms.handler;
 // "/member/delete" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.MemberDao;
 
 public class MemberDeleteCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
 
-  public MemberDeleteCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public MemberDeleteCommand(Prompt prompt, MemberDao memberDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.memberDao = memberDao;
   }
 
   @Override
@@ -20,20 +17,12 @@ public class MemberDeleteCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      out.writeUTF("/member/delete");
-      out.writeInt(no);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
+      memberDao.delete(no);
 
       System.out.println("회원을 삭제하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("명령 실행 중 오류 발생!");
+      System.out.println("회원을 삭제할 수 없습니다.");
     }
   }
 }

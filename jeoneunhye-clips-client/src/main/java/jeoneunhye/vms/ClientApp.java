@@ -12,6 +12,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.proxy.BoardDaoProxy;
+import jeoneunhye.vms.dao.proxy.MemberDaoProxy;
+import jeoneunhye.vms.dao.proxy.VideoDaoProxy;
 import jeoneunhye.vms.handler.BoardAddCommand;
 import jeoneunhye.vms.handler.BoardDeleteCommand;
 import jeoneunhye.vms.handler.BoardDetailCommand;
@@ -52,7 +55,7 @@ public class ClientApp {
         ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-      System.out.println("서버에 연결되었습니다.");
+      System.out.println("서버와 연결하였습니다.");
 
       processCommand(out, in);
 
@@ -70,24 +73,28 @@ public class ClientApp {
     Deque<String> commandStack = new ArrayDeque<>();
     Queue<String> commandQueue = new LinkedList<>();
 
+    VideoDaoProxy videoDao = new VideoDaoProxy(in, out);
+    MemberDaoProxy memberDao = new MemberDaoProxy(in, out);
+    BoardDaoProxy boardDao = new BoardDaoProxy(in, out);
+
     HashMap<String, Command> commandMap = new HashMap<>();
-    commandMap.put("/video/list", new VideoListCommand(out, in));
-    commandMap.put("/video/add", new VideoAddCommand(prompt, out, in));
-    commandMap.put("/video/detail", new VideoDetailCommand(prompt, out, in));
-    commandMap.put("/video/update", new VideoUpdateCommand(prompt, out, in));
-    commandMap.put("/video/delete", new VideoDeleteCommand(prompt, out, in));
+    commandMap.put("/video/list", new VideoListCommand(videoDao));
+    commandMap.put("/video/add", new VideoAddCommand(prompt, videoDao));
+    commandMap.put("/video/detail", new VideoDetailCommand(prompt, videoDao));
+    commandMap.put("/video/update", new VideoUpdateCommand(prompt, videoDao));
+    commandMap.put("/video/delete", new VideoDeleteCommand(prompt, videoDao));
 
-    commandMap.put("/member/list", new MemberListCommand(out, in));
-    commandMap.put("/member/add", new MemberAddCommand(prompt, out, in));
-    commandMap.put("/member/detail", new MemberDetailCommand(prompt, out, in));
-    commandMap.put("/member/update", new MemberUpdateCommand(prompt, out, in));
-    commandMap.put("/member/delete", new MemberDeleteCommand(prompt, out, in));
+    commandMap.put("/member/list", new MemberListCommand(memberDao));
+    commandMap.put("/member/add", new MemberAddCommand(prompt, memberDao));
+    commandMap.put("/member/detail", new MemberDetailCommand(prompt, memberDao));
+    commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberDao));
+    commandMap.put("/member/delete", new MemberDeleteCommand(prompt, memberDao));
 
-    commandMap.put("/board/add", new BoardAddCommand(prompt, out, in));
-    commandMap.put("/board/list", new BoardListCommand(out, in));
-    commandMap.put("/board/detail", new BoardDetailCommand(prompt, out, in));
-    commandMap.put("/board/update", new BoardUpdateCommand(prompt, out, in));
-    commandMap.put("/board/delete", new BoardDeleteCommand(prompt, out, in));
+    commandMap.put("/board/add", new BoardAddCommand(prompt, boardDao));
+    commandMap.put("/board/list", new BoardListCommand(boardDao));
+    commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardDao));
+    commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardDao));
+    commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardDao));
 
     try {
       while (true) {

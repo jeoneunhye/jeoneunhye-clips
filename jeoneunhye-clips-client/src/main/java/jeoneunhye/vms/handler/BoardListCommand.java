@@ -1,33 +1,20 @@
 package jeoneunhye.vms.handler;
 // "/board/list" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.List;
+import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardListCommand implements Command {
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  BoardDao boardDao;
 
-  public BoardListCommand(ObjectOutputStream out, ObjectInputStream in) {
-    this.out = out;
-    this.in = in;
+  public BoardListCommand(BoardDao boardDao) {
+    this.boardDao = boardDao;
   }
 
-  @SuppressWarnings("unchecked")
   @Override
   public void execute() {
     try {
-      out.writeUTF("/board/list");
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
-
-      List<Board> boards = (List<Board>) in.readObject();
+      List<Board> boards = boardDao.findAll();
 
       for (Board b : boards) {
         System.out.printf("%d, %d, %s, %s, %s, %d\n",
@@ -35,7 +22,7 @@ public class BoardListCommand implements Command {
       }
 
     } catch (Exception e) {
-      System.out.println("통신 오류 발생!");
+      System.out.println("게시글 목록을 조회할 수 없습니다.");
     }
   }
 }

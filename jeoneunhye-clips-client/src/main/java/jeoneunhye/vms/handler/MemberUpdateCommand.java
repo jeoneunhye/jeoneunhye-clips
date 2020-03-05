@@ -1,19 +1,16 @@
 package jeoneunhye.vms.handler;
 // "/member/update" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberUpdateCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
 
-  public MemberUpdateCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public MemberUpdateCommand(Prompt prompt, MemberDao memberDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.memberDao = memberDao;
   }
 
   @Override
@@ -21,17 +18,7 @@ public class MemberUpdateCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      out.writeUTF("/member/detail");
-      out.writeInt(no);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
-
-      Member oldMember = (Member) in.readObject();
+      Member oldMember = memberDao.findByNo(no);
 
       Member newMember = new Member();
       newMember.setNo(oldMember.getNo());
@@ -52,20 +39,12 @@ public class MemberUpdateCommand implements Command {
         return;
       }
 
-      out.writeUTF("/member/update");
-      out.writeObject(newMember);
-      out.flush();
-
-      response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
+      memberDao.update(newMember);
 
       System.out.println("회원을 변경하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("명령 실행 중 오류 발생!");
+      System.out.println("회원을 변경할 수 없습니다.");
     }
   }
 }

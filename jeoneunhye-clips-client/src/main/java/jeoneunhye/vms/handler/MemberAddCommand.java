@@ -1,20 +1,17 @@
 package jeoneunhye.vms.handler;
 // "/member/add" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.sql.Date;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberAddCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  MemberDao memberDao;
 
-  public MemberAddCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public MemberAddCommand(Prompt prompt, MemberDao memberDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.memberDao = memberDao;
   }
 
   @Override
@@ -29,20 +26,12 @@ public class MemberAddCommand implements Command {
     member.setRegisteredDate(new Date(System.currentTimeMillis()));
 
     try {
-      out.writeUTF("/member/add");
-      out.writeObject(member);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
+      memberDao.insert(member);
 
       System.out.println("회원을 저장하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("통신 오류 발생!");
+      System.out.println("회원을 저장할 수 없습니다.");
     }
   }
 }

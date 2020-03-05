@@ -1,20 +1,17 @@
 package jeoneunhye.vms.handler;
-// "board/add" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+// "/board/add" 명령어 처리
 import java.sql.Date;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardAddCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  BoardDao boardDao;
 
-  public BoardAddCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public BoardAddCommand(Prompt prompt, BoardDao boardDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.boardDao = boardDao;
   }
 
   @Override
@@ -29,21 +26,11 @@ public class BoardAddCommand implements Command {
     board.setViewCount(0);
 
     try {
-      out.writeUTF("/board/add");
-
-      out.writeObject(board);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
-
+      boardDao.insert(board);
       System.out.println("게시글을 저장하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("통신 오류 발생!");
+      System.out.println("게시글을 저장할 수 없습니다.");
     }
   }
 }

@@ -1,19 +1,16 @@
 package jeoneunhye.vms.handler;
 // "/board/update" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardUpdateCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  BoardDao boardDao;
 
-  public BoardUpdateCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public BoardUpdateCommand(Prompt prompt, BoardDao boardDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.boardDao = boardDao;
   }
 
   @Override
@@ -21,17 +18,7 @@ public class BoardUpdateCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      out.writeUTF("/board/detail");
-      out.writeInt(no);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
-
-      Board oldBoard = (Board) in.readObject();
+      Board oldBoard = boardDao.findByNo(no);
 
       Board newBoard = new Board();
       newBoard.setNo(oldBoard.getNo());
@@ -50,20 +37,12 @@ public class BoardUpdateCommand implements Command {
         return;
       }
 
-      out.writeUTF("/board/update");
-      out.writeObject(newBoard);
-      out.flush();
-
-      response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
+      boardDao.update(newBoard);
 
       System.out.println("게시물을 변경하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("명령 실행 중 오류 발생!");
+      System.out.println("게시글을 변경할 수 없습니다.");
     }
   }
 }

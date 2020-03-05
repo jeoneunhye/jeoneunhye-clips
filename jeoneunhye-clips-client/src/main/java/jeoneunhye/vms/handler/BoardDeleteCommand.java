@@ -1,18 +1,15 @@
 package jeoneunhye.vms.handler;
 // "/board/delete" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.BoardDao;
 
 public class BoardDeleteCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  BoardDao boardDao;
 
-  public BoardDeleteCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public BoardDeleteCommand(Prompt prompt, BoardDao boardDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.boardDao = boardDao;
   }
 
   @Override
@@ -20,20 +17,12 @@ public class BoardDeleteCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      out.writeUTF("/board/delete");
-      out.writeInt(no);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
+      boardDao.delete(no);
 
       System.out.println("게시글을 삭제하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("명령 실행 중 오류 발생!");
+      System.out.println("게시글을 삭제할 수 없습니다.");
     }
   }
 }

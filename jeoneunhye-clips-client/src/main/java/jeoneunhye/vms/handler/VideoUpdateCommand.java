@@ -1,19 +1,16 @@
 package jeoneunhye.vms.handler;
 // "/video/update" 명령어 처리
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoUpdateCommand implements Command {
   Prompt prompt;
-  ObjectOutputStream out;
-  ObjectInputStream in;
+  VideoDao videoDao;
 
-  public VideoUpdateCommand(Prompt prompt, ObjectOutputStream out, ObjectInputStream in) {
+  public VideoUpdateCommand(Prompt prompt, VideoDao videoDao) {
     this.prompt = prompt;
-    this.out = out;
-    this.in = in;
+    this.videoDao = videoDao;
   }
 
   @Override
@@ -21,17 +18,7 @@ public class VideoUpdateCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      out.writeUTF("/video/detail");
-      out.writeInt(no);
-      out.flush();
-
-      String response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
-
-      Video oldVideo = (Video) in.readObject();
+      Video oldVideo = videoDao.findByNo(no);
 
       Video newVideo = new Video();
       newVideo.setNo(oldVideo.getNo());
@@ -53,20 +40,12 @@ public class VideoUpdateCommand implements Command {
         return;
       }
 
-      out.writeUTF("/video/update");
-      out.writeObject(newVideo);
-      out.flush();
-
-      response = in.readUTF();
-      if (response.equals("FAIL")) {
-        System.out.println(in.readUTF());
-        return;
-      }
+      videoDao.update(newVideo);
 
       System.out.println("영상을 변경하였습니다.");
 
     } catch (Exception e) {
-      System.out.println("명령 실행 중 오류 발생!");
+      System.out.println("영상을 변경할 수 없습니다.");
     }
   }
 }
