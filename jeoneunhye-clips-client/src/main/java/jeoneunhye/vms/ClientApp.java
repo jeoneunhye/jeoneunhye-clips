@@ -36,12 +36,20 @@ public class ClientApp {
   Scanner keyScan = new Scanner(System.in);
   Prompt prompt = new Prompt(keyScan);
 
-  public void service() {
-    String serverAddr = null;
-    int port = 0;
+  Deque<String> commandStack;
+  Queue<String> commandQueue;
 
+  String host;
+  int port;
+
+  public ClientApp() {
+    commandStack = new ArrayDeque<>();
+    commandQueue = new LinkedList<>();
+  }
+
+  public void service() {
     try {
-      serverAddr = prompt.inputString("서버? ");
+      host = prompt.inputString("서버? ");
       port = prompt.inputInt("포트? ");
 
     } catch (Exception e) {
@@ -50,28 +58,40 @@ public class ClientApp {
       return;
     }
 
-    try (
-        Socket socket = new Socket(serverAddr, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    while (true) {
+      String command;
+      command = prompt.inputString("\n명령> ");
 
-      System.out.println("서버와 연결하였습니다.");
+      if (command.length() == 0) {
+        continue;
 
-      processCommand(out, in);
+      } else if (command.equals("history")) {
+        printCommandHistory(commandStack.iterator());
+        continue;
 
-      System.out.println("서버 연결을 종료합니다.");
+      } else if (command.equals("history2")) {
+        printCommandHistory(commandQueue.iterator());
+        continue;
 
-    } catch (Exception e) {
-      System.out.print("예외 발생:");
-      e.printStackTrace();
+      } else if (command.equals("quit")) {
+        break;
+      }
+
+      commandStack.push(command);
+      commandQueue.offer(command);
+
+      processCommand(command);
     }
 
     keyScan.close();
   }
 
-  private void processCommand(ObjectOutputStream out, ObjectInputStream in) {
-    Deque<String> commandStack = new ArrayDeque<>();
-    Queue<String> commandQueue = new LinkedList<>();
+  private void processCommand(String command) {
+    try (Socket socket = new Socket(host, port);
+        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+      System.out.println("서버와 연결하였습니다.");
 
     VideoDaoProxy videoDao = new VideoDaoProxy(in, out);
     MemberDaoProxy memberDao = new MemberDaoProxy(in, out);
@@ -96,50 +116,30 @@ public class ClientApp {
     commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardDao));
     commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardDao));
 
-    try {
-      while (true) {
-        String command;
-        command = prompt.inputString("\n명령> ");
-        if (command.length() == 0)
-          continue;
-
-        if (command.equals("quit") || command.equals("/server/stop")) {
-          out.writeUTF(command);
+      commandMap.put("/server/stop", () -> {
+        try {
+          out.writeUTF(command); // == "/server/stop"
           out.flush();
           System.out.println("서버: " + in.readUTF());
           System.out.println("안녕!");
-          break;
 
-        } else if (command.equals("history")) {
-          printCommandHistory(commandStack.iterator());
-          continue;
+        } catch (Exception e) {}
+      });
 
-        } else if (command.equals("history2")) {
-          printCommandHistory(commandQueue.iterator());
-          continue;
-        }
-
-        commandStack.push(command);
-        commandQueue.offer(command);
-
-        Command commandHandler = commandMap.get(command);
-        if (commandHandler != null) {
-          try {
-            commandHandler.execute();
-
-          } catch (Exception e) {
-            System.out.printf("명령 실행 중 오류 발생: %s\n", e.getMessage());
-          }
-
-        } else {
-          System.out.println("실행할 수 없는 명령입니다.");
-        }
+      Command commandHandler = commandMap.get(command);
+      if (commandHandler == null) {
+        System.out.println("실행할 수 없는 명령입니다.");
+        return;
       }
-    } catch (Exception e) {
-      System.out.println("프로그램 실행 중 오류 발생!");
-    }
 
-    keyScan.close();
+      commandHandler.execute();
+
+      System.out.println("서버 연결을 종료합니다.");
+
+    } catch (Exception e) {
+      System.out.print("예외 발생: ");
+      e.printStackTrace();
+    }
   }
 
   private void printCommandHistory(Iterator<String> iterator) {
