@@ -94,7 +94,7 @@ public class ServerApp {
           break;
         }
 
-        System.out.println("-----클라이언트가 연결을 종료하였습니다.");
+        System.out.println("-----클라이언트와의 연결을 종료하였습니다.");
       }
 
     } catch (Exception e) {
@@ -111,15 +111,10 @@ public class ServerApp {
 
       System.out.println("클라이언트와 데이터 통신 시작");
 
-      while (true) {
         String request = in.readUTF();
         System.out.println("클라이언트> " + request);
 
         switch (request) {
-          case "quit":
-            out.writeUTF("OK");
-            out.flush();
-            return 0;
           case "/server/stop":
             out.writeUTF("OK");
             out.flush();
@@ -145,7 +140,8 @@ public class ServerApp {
 
         out.flush();
         System.out.println("클라이언트에게 응답 완료");
-      }
+
+        return 0;
 
     } catch (Exception e) {
       System.out.print("예외 발생: ");
