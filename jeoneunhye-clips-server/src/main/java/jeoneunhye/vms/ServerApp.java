@@ -90,9 +90,10 @@ public class ServerApp {
 
         System.out.println("클라이언트 연결 완료!");
 
-        if (processRequest(socket) == 9) {
-          break;
-        }
+        new Thread(() -> {
+          processRequest(socket);
+          System.out.println();
+        }).start();
 
         System.out.println("-----클라이언트와의 연결을 종료하였습니다.");
       }
@@ -113,13 +114,6 @@ public class ServerApp {
 
         String request = in.readUTF();
         System.out.println("클라이언트> " + request);
-
-        switch (request) {
-          case "/server/stop":
-            out.writeUTF("OK");
-            out.flush();
-            return 9;
-        }
 
         Servlet servlet = servletMap.get(request);
         if (servlet != null) {
