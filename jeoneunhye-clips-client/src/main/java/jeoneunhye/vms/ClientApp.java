@@ -87,15 +87,9 @@ public class ClientApp {
   }
 
   private void processCommand(String command) {
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("서버와 연결하였습니다.");
-
-    VideoDaoProxy videoDao = new VideoDaoProxy(in, out);
-    MemberDaoProxy memberDao = new MemberDaoProxy(in, out);
-    BoardDaoProxy boardDao = new BoardDaoProxy(in, out);
+    VideoDaoProxy videoDao = new VideoDaoProxy(host, port);
+    MemberDaoProxy memberDao = new MemberDaoProxy(host, port);
+    BoardDaoProxy boardDao = new BoardDaoProxy(host, port);
 
     HashMap<String, Command> commandMap = new HashMap<>();
     commandMap.put("/video/list", new VideoListCommand(videoDao));
@@ -118,11 +112,17 @@ public class ClientApp {
 
       commandMap.put("/server/stop", () -> {
         try {
-          out.writeUTF(command); // == "/server/stop"
+        try (Socket socket = new Socket(host, port);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+          System.out.println("서버와 연결하였습니다.");
+
+          out.writeUTF(command);
           out.flush();
           System.out.println("서버: " + in.readUTF());
           System.out.println("안녕!");
-
+        }
         } catch (Exception e) {}
       });
 
@@ -135,11 +135,6 @@ public class ClientApp {
       commandHandler.execute();
 
       System.out.println("서버 연결을 종료합니다.");
-
-    } catch (Exception e) {
-      System.out.print("예외 발생: ");
-      e.printStackTrace();
-    }
   }
 
   private void printCommandHistory(Iterator<String> iterator) {
