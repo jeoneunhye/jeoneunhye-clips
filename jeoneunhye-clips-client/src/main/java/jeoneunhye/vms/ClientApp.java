@@ -13,6 +13,7 @@ import java.util.Queue;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.proxy.BoardDaoProxy;
+import jeoneunhye.vms.dao.proxy.DaoProxyHelper;
 import jeoneunhye.vms.dao.proxy.MemberDaoProxy;
 import jeoneunhye.vms.dao.proxy.VideoDaoProxy;
 import jeoneunhye.vms.handler.BoardAddCommand;
@@ -42,12 +43,12 @@ public class ClientApp {
   String host;
   int port;
 
+  HashMap<String, Command> commandMap = new HashMap<>();
+
   public ClientApp() {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
-  }
 
-  public void service() {
     try {
       host = prompt.inputString("서버? ");
       port = prompt.inputInt("포트? ");
@@ -58,6 +59,48 @@ public class ClientApp {
       return;
     }
 
+    DaoProxyHelper daoProxyHelper = new DaoProxyHelper(host, port);
+
+    VideoDaoProxy videoDao = new VideoDaoProxy(daoProxyHelper);
+    MemberDaoProxy memberDao = new MemberDaoProxy(daoProxyHelper);
+    BoardDaoProxy boardDao = new BoardDaoProxy(daoProxyHelper);
+
+    commandMap.put("/video/list", new VideoListCommand(videoDao));
+    commandMap.put("/video/add", new VideoAddCommand(prompt, videoDao));
+    commandMap.put("/video/detail", new VideoDetailCommand(prompt, videoDao));
+    commandMap.put("/video/update", new VideoUpdateCommand(prompt, videoDao));
+    commandMap.put("/video/delete", new VideoDeleteCommand(prompt, videoDao));
+
+    commandMap.put("/member/list", new MemberListCommand(memberDao));
+    commandMap.put("/member/add", new MemberAddCommand(prompt, memberDao));
+    commandMap.put("/member/detail", new MemberDetailCommand(prompt, memberDao));
+    commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberDao));
+    commandMap.put("/member/delete", new MemberDeleteCommand(prompt, memberDao));
+
+    commandMap.put("/board/add", new BoardAddCommand(prompt, boardDao));
+    commandMap.put("/board/list", new BoardListCommand(boardDao));
+    commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardDao));
+    commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardDao));
+    commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardDao));
+
+      commandMap.put("/server/stop", () -> {
+        try {
+        try (Socket socket = new Socket(host, port);
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+
+          System.out.println("서버와 연결하였습니다.");
+
+          out.writeUTF("/server/stop");
+          out.flush();
+          System.out.println("서버: " + in.readUTF());
+          System.out.println("안녕!");
+        }
+        } catch (Exception e) {}
+      });
+  }
+
+  public void service() {
     while (true) {
       String command;
       command = prompt.inputString("\n명령> ");
@@ -87,45 +130,6 @@ public class ClientApp {
   }
 
   private void processCommand(String command) {
-    VideoDaoProxy videoDao = new VideoDaoProxy(host, port);
-    MemberDaoProxy memberDao = new MemberDaoProxy(host, port);
-    BoardDaoProxy boardDao = new BoardDaoProxy(host, port);
-
-    HashMap<String, Command> commandMap = new HashMap<>();
-    commandMap.put("/video/list", new VideoListCommand(videoDao));
-    commandMap.put("/video/add", new VideoAddCommand(prompt, videoDao));
-    commandMap.put("/video/detail", new VideoDetailCommand(prompt, videoDao));
-    commandMap.put("/video/update", new VideoUpdateCommand(prompt, videoDao));
-    commandMap.put("/video/delete", new VideoDeleteCommand(prompt, videoDao));
-
-    commandMap.put("/member/list", new MemberListCommand(memberDao));
-    commandMap.put("/member/add", new MemberAddCommand(prompt, memberDao));
-    commandMap.put("/member/detail", new MemberDetailCommand(prompt, memberDao));
-    commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberDao));
-    commandMap.put("/member/delete", new MemberDeleteCommand(prompt, memberDao));
-
-    commandMap.put("/board/add", new BoardAddCommand(prompt, boardDao));
-    commandMap.put("/board/list", new BoardListCommand(boardDao));
-    commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardDao));
-    commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardDao));
-    commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardDao));
-
-      commandMap.put("/server/stop", () -> {
-        try {
-        try (Socket socket = new Socket(host, port);
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-          System.out.println("서버와 연결하였습니다.");
-
-          out.writeUTF(command);
-          out.flush();
-          System.out.println("서버: " + in.readUTF());
-          System.out.println("안녕!");
-        }
-        } catch (Exception e) {}
-      });
-
       Command commandHandler = commandMap.get(command);
       if (commandHandler == null) {
         System.out.println("실행할 수 없는 명령입니다.");

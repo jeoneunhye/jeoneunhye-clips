@@ -1,29 +1,19 @@
 package jeoneunhye.vms.dao.proxy;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.List;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoDaoProxy implements VideoDao {
-  String host;
-  int port;
+  DaoProxyHelper daoProxyHelper;
 
-  public VideoDaoProxy(String host, int port) {
-    this.host = host;
-    this.port = port;
+  public VideoDaoProxy(DaoProxyHelper daoProxyHelper) {
+    this.daoProxyHelper = daoProxyHelper;
   }
 
   @Override
   public int insert(Video video) throws Exception {
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("서버와 연결하였습니다.");
-
+    return (int) daoProxyHelper.request((in, out) -> {
     out.writeUTF("/video/add");
     out.writeObject(video);
     out.flush();
@@ -34,18 +24,13 @@ public class VideoDaoProxy implements VideoDao {
     }
 
     return 1;
-    }
+    });
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public List<Video> findAll() throws Exception {
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("서버와 연결하였습니다.");
-
+    return (List<Video>) daoProxyHelper.request((in, out) -> {
     out.writeUTF("/video/list");
     out.flush();
 
@@ -55,17 +40,12 @@ public class VideoDaoProxy implements VideoDao {
     }
 
     return (List<Video>) in.readObject();
-    }
+    });
   }
 
   @Override
   public Video findByNo(int no) throws Exception {
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("서버와 연결하였습니다.");
-
+    return (Video) daoProxyHelper.request((in, out) -> {
     out.writeUTF("/video/detail");
     out.writeInt(no);
     out.flush();
@@ -76,17 +56,12 @@ public class VideoDaoProxy implements VideoDao {
     }
 
     return (Video) in.readObject();
-    }
+    });
   }
 
   @Override
   public int update(Video video) throws Exception {
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("서버와 연결하였습니다.");
-
+    return (int) daoProxyHelper.request((in, out) -> {
     out.writeUTF("/video/update");
     out.writeObject(video);
     out.flush();
@@ -97,17 +72,12 @@ public class VideoDaoProxy implements VideoDao {
     }
 
     return 1;
-    }
+    });
   }
 
   @Override
   public int delete(int no) throws Exception {
-    try (Socket socket = new Socket(host, port);
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-      System.out.println("서버와 연결하였습니다.");
-
+    return (int) daoProxyHelper.request((in, out) -> {
     out.writeUTF("/video/delete");
     out.writeInt(no);
     out.flush();
@@ -118,6 +88,6 @@ public class VideoDaoProxy implements VideoDao {
     }
 
     return 1;
-    }
+    });
   }
 }
