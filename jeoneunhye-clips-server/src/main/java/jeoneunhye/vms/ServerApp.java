@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
@@ -35,6 +37,8 @@ public class ServerApp {
   Set<ApplicationContextListener> listeners = new HashSet<>();
   Map<String, Object> context = new HashMap<>();
   Map<String, Servlet> servletMap = new HashMap<>();
+
+  ExecutorService executorService = Executors.newCachedThreadPool();
 
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
@@ -90,10 +94,10 @@ public class ServerApp {
 
         System.out.println("클라이언트 연결 완료!");
 
-        new Thread(() -> {
+        executorService.submit(() -> {
           processRequest(socket);
-          System.out.println();
-        }).start();
+          System.out.println("-----클라이언트 요청 처리 완료");
+        });
 
         System.out.println("-----클라이언트와의 연결을 종료하였습니다.");
       }
@@ -103,6 +107,8 @@ public class ServerApp {
     }
 
     notifyApplicationDestroyed();
+
+    executorService.shutdown();
   }
 
   int processRequest(Socket clientSocket) {
