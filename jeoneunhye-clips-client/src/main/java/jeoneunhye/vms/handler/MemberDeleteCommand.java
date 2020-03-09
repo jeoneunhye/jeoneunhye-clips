@@ -17,9 +17,12 @@ public class MemberDeleteCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      memberDao.delete(no);
+      if (memberDao.delete(no) > 0) {
+        System.out.println("회원을 삭제하였습니다.");
 
-      System.out.println("회원을 삭제하였습니다.");
+      } else {
+        System.out.println("해당 번호의 회원이 없습니다.");
+      }
 
     } catch (Exception e) {
       System.out.println("회원을 삭제할 수 없습니다.");

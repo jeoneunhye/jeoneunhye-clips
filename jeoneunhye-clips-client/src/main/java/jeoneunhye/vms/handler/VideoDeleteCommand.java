@@ -17,9 +17,12 @@ public class VideoDeleteCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      videoDao.delete(no);
+      if (videoDao.delete(no) > 0) {
+        System.out.println("영상을 삭제하였습니다.");
 
-      System.out.println("영상을 삭제하였습니다.");
+      } else {
+        System.out.println("해당 번호의 영상이 없습니다.");
+      }
 
     } catch (Exception e) {
       System.out.println("영상을 삭제할 수 없습니다.");

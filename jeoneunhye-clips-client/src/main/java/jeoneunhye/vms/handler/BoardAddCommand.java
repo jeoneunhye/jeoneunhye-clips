@@ -1,6 +1,5 @@
 package jeoneunhye.vms.handler;
 // "/board/add" 명령어 처리
-import java.sql.Date;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
@@ -17,13 +16,9 @@ public class BoardAddCommand implements Command {
   @Override
   public void execute() {
     Board board = new Board();
-    board.setNo(prompt.inputInt("번호? "));
-    board.setVideoNo(prompt.inputInt("영상 번호? "));
     board.setTitle(prompt.inputString("제목? "));
     board.setContents(prompt.inputString("내용? "));
     board.setWriter(prompt.inputString("작성자? "));
-    board.setWriteDate(new Date(System.currentTimeMillis()));
-    board.setViewCount(0);
 
     try {
       boardDao.insert(board);

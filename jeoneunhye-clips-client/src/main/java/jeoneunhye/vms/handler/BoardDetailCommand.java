@@ -19,7 +19,6 @@ public class BoardDetailCommand implements Command {
       int no = prompt.inputInt("번호? ");
 
       Board board = boardDao.findByNo(no);
-      System.out.printf("영상번호: %d\n", board.getVideoNo());
       System.out.printf("제목: %s\n", board.getTitle());
       System.out.printf("내용: %s\n", board.getContents());
       System.out.printf("작성자: %s\n", board.getWriter());

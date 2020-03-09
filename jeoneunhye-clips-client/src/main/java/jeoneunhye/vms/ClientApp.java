@@ -1,9 +1,6 @@
 // VMS 클라이언트
 package jeoneunhye.vms;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -12,10 +9,12 @@ import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.proxy.BoardDaoProxy;
-import jeoneunhye.vms.dao.proxy.DaoProxyHelper;
-import jeoneunhye.vms.dao.proxy.MemberDaoProxy;
-import jeoneunhye.vms.dao.proxy.VideoDaoProxy;
+import jeoneunhye.vms.dao.BoardDao;
+import jeoneunhye.vms.dao.MemberDao;
+import jeoneunhye.vms.dao.VideoDao;
+import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
+import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
+import jeoneunhye.vms.dao.mariadb.VideoDaoImpl;
 import jeoneunhye.vms.handler.BoardAddCommand;
 import jeoneunhye.vms.handler.BoardDeleteCommand;
 import jeoneunhye.vms.handler.BoardDetailCommand;
@@ -49,21 +48,9 @@ public class ClientApp {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
 
-    try {
-      host = prompt.inputString("서버? ");
-      port = prompt.inputInt("포트? ");
-
-    } catch (Exception e) {
-      System.out.println("서버 주소 또는 포트 번호가 유효하지 않습니다!");
-      keyScan.close();
-      return;
-    }
-
-    DaoProxyHelper daoProxyHelper = new DaoProxyHelper(host, port);
-
-    VideoDaoProxy videoDao = new VideoDaoProxy(daoProxyHelper);
-    MemberDaoProxy memberDao = new MemberDaoProxy(daoProxyHelper);
-    BoardDaoProxy boardDao = new BoardDaoProxy(daoProxyHelper);
+    VideoDao videoDao = new VideoDaoImpl();
+    MemberDao memberDao = new MemberDaoImpl();
+    BoardDao boardDao = new BoardDaoImpl();
 
     commandMap.put("/video/list", new VideoListCommand(videoDao));
     commandMap.put("/video/add", new VideoAddCommand(prompt, videoDao));
@@ -82,22 +69,6 @@ public class ClientApp {
     commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardDao));
     commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardDao));
     commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardDao));
-
-      commandMap.put("/server/stop", () -> {
-        try {
-        try (Socket socket = new Socket(host, port);
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
-
-          System.out.println("서버와 연결하였습니다.");
-
-          out.writeUTF("/server/stop");
-          out.flush();
-          System.out.println("서버: " + in.readUTF());
-          System.out.println("안녕!");
-        }
-        } catch (Exception e) {}
-      });
   }
 
   public void service() {
@@ -130,15 +101,15 @@ public class ClientApp {
   }
 
   private void processCommand(String command) {
-      Command commandHandler = commandMap.get(command);
-      if (commandHandler == null) {
-        System.out.println("실행할 수 없는 명령입니다.");
-        return;
-      }
+    Command commandHandler = commandMap.get(command);
+    if (commandHandler == null) {
+      System.out.println("실행할 수 없는 명령입니다.");
+      return;
+    }
 
-      commandHandler.execute();
+    commandHandler.execute();
 
-      System.out.println("서버 연결을 종료합니다.");
+    System.out.println("서버 연결을 종료합니다.");
   }
 
   private void printCommandHistory(Iterator<String> iterator) {

@@ -18,7 +18,14 @@ public class VideoUpdateCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      Video oldVideo = videoDao.findByNo(no);
+      Video oldVideo = null;
+      try {
+        oldVideo = videoDao.findByNo(no);
+
+      } catch (Exception e) {
+        System.out.println("해당 번호의 영상을 찾을 수 없습니다.");
+        return;
+      }
 
       Video newVideo = new Video();
       newVideo.setNo(oldVideo.getNo());

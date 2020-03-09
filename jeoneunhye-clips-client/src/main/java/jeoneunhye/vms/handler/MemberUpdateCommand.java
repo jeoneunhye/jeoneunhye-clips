@@ -18,7 +18,14 @@ public class MemberUpdateCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      Member oldMember = memberDao.findByNo(no);
+      Member oldMember = null;
+      try {
+        oldMember = memberDao.findByNo(no);
+
+      } catch (Exception e) {
+        System.out.println("해당 번호의 회원을 찾을 수 없습니다.");
+        return;
+      }
 
       Member newMember = new Member();
       newMember.setNo(oldMember.getNo());

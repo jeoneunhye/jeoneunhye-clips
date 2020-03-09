@@ -18,12 +18,17 @@ public class BoardUpdateCommand implements Command {
     try {
       int no = prompt.inputInt("번호? ");
 
-      Board oldBoard = boardDao.findByNo(no);
+      Board oldBoard = null;
+      try {
+        oldBoard = boardDao.findByNo(no);
+
+      } catch (Exception e) {
+        System.out.println("해당 번호의 게시글이 없습니다.");
+        return;
+      }
 
       Board newBoard = new Board();
       newBoard.setNo(oldBoard.getNo());
-      newBoard.setVideoNo(prompt.inputInt(
-          String.format("영상번호(%d)? ", oldBoard.getVideoNo()), oldBoard.getVideoNo()));
       newBoard.setTitle(prompt.inputString(
           String.format("제목(%s)? ", oldBoard.getTitle()), oldBoard.getTitle()));
       newBoard.setContents(prompt.inputString(
@@ -33,13 +38,13 @@ public class BoardUpdateCommand implements Command {
       newBoard.setViewCount(oldBoard.getViewCount());
 
       if (oldBoard.equals(newBoard)) {
-        System.out.println("게시물 변경을 취소하였습니다.");
+        System.out.println("게시글 변경을 취소하였습니다.");
         return;
       }
 
       boardDao.update(newBoard);
 
-      System.out.println("게시물을 변경하였습니다.");
+      System.out.println("게시글을 변경하였습니다.");
 
     } catch (Exception e) {
       System.out.println("게시글을 변경할 수 없습니다.");
