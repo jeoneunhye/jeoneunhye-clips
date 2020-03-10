@@ -1,7 +1,6 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,15 +9,15 @@ import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoDaoImpl implements VideoDao {
+  Connection con;
+
+  public VideoDaoImpl(Connection con) {
+    this.con = con;
+  }
+
   @Override
   public int insert(Video video) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try(Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate(
           "insert into vms_video(subject, titl, url, playtime, uploader, upload_dt)"
@@ -32,12 +31,7 @@ public class VideoDaoImpl implements VideoDao {
 
   @Override
   public List<Video> findAll() throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
     try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -63,12 +57,7 @@ public class VideoDaoImpl implements VideoDao {
 
   @Override
   public Video findByNo(int no) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
     try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -95,13 +84,7 @@ public class VideoDaoImpl implements VideoDao {
 
   @Override
   public int update(Video video) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("update vms_video set"
           + " subject='" + video.getSubject() + "',"
@@ -118,13 +101,7 @@ public class VideoDaoImpl implements VideoDao {
 
   @Override
   public int delete(int no) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("delete from vms_video where video_id=" + no);
 

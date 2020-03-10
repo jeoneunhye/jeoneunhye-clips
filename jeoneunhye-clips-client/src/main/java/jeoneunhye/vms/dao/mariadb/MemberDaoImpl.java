@@ -1,7 +1,6 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,15 +9,15 @@ import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberDaoImpl implements MemberDao {
+  Connection con;
+
+  public MemberDaoImpl(Connection con) {
+    this.con = con;
+  }
+
   @Override
   public int insert(Member member) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("insert into vms_member(id, nickname, pwd, phone, email)"
           + " values('" + member.getId() + "', '" + member.getNickname() + "', '"
@@ -30,12 +29,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public List<Member> findAll() throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
     try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -60,12 +54,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public Member findByNo(int no) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
     try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -92,13 +81,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public int update(Member member) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("update vms_member set"
           + " nickname='" + member.getNickname() + "',"
@@ -113,13 +96,7 @@ public class MemberDaoImpl implements MemberDao {
 
   @Override
   public int delete(int no) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("delete from vms_member where member_id=" + no);
 

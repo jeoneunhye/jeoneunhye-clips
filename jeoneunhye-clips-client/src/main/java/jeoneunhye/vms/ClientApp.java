@@ -1,6 +1,8 @@
 // VMS 클라이언트
 package jeoneunhye.vms;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
@@ -39,18 +41,24 @@ public class ClientApp {
   Deque<String> commandStack;
   Queue<String> commandQueue;
 
+  Connection con;
+
   String host;
   int port;
 
   HashMap<String, Command> commandMap = new HashMap<>();
 
-  public ClientApp() {
+  public ClientApp() throws Exception {
     commandStack = new ArrayDeque<>();
     commandQueue = new LinkedList<>();
 
-    VideoDao videoDao = new VideoDaoImpl();
-    MemberDao memberDao = new MemberDaoImpl();
-    BoardDao boardDao = new BoardDaoImpl();
+    Class.forName("org.mariadb.jdbc.Driver");
+    con = DriverManager.getConnection(
+        "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
+
+    VideoDao videoDao = new VideoDaoImpl(con);
+    MemberDao memberDao = new MemberDaoImpl(con);
+    BoardDao boardDao = new BoardDaoImpl(con);
 
     commandMap.put("/video/list", new VideoListCommand(videoDao));
     commandMap.put("/video/add", new VideoAddCommand(prompt, videoDao));
@@ -64,8 +72,8 @@ public class ClientApp {
     commandMap.put("/member/update", new MemberUpdateCommand(prompt, memberDao));
     commandMap.put("/member/delete", new MemberDeleteCommand(prompt, memberDao));
 
-    commandMap.put("/board/add", new BoardAddCommand(prompt, boardDao));
     commandMap.put("/board/list", new BoardListCommand(boardDao));
+    commandMap.put("/board/add", new BoardAddCommand(prompt, boardDao));
     commandMap.put("/board/detail", new BoardDetailCommand(prompt, boardDao));
     commandMap.put("/board/update", new BoardUpdateCommand(prompt, boardDao));
     commandMap.put("/board/delete", new BoardDeleteCommand(prompt, boardDao));
@@ -128,7 +136,7 @@ public class ClientApp {
     }
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     System.out.println("영상 관리 시스템 클라이언트입니다.");
 
     ClientApp app = new ClientApp();

@@ -1,7 +1,6 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,15 +9,15 @@ import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardDaoImpl implements BoardDao {
+  Connection con;
+
+  public BoardDaoImpl(Connection con) {
+    this.con = con;
+  }
+
   @Override
   public int insert(Board board) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("insert into vms_board(titl, conts, writer)"
           + " values('" + board.getTitle() + "', '" + board.getContents() + "', '"
@@ -30,12 +29,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public List<Board> findAll() throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
     try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -60,12 +54,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public Board findByNo(int no) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
     try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -91,13 +80,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int update(Board board) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("update vms_board set"
           + " titl='" + board.getTitle() + "',"
@@ -111,13 +94,7 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int delete(int no) throws Exception {
-    Class.forName("org.mariadb.jdbc.Driver");
-
-    try (
-        Connection con = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3306/vmsdb", "eunhye", "1111");
-
-        Statement stmt = con.createStatement()) {
+    try (Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("delete from vms_board where board_id=" + no);
 
