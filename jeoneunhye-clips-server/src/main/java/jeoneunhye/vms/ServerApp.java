@@ -1,14 +1,13 @@
 // VMS 서버
 package jeoneunhye.vms;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -113,14 +112,19 @@ public class ServerApp {
 
   int processRequest(Socket clientSocket) {
     try (Socket socket = clientSocket;
-        ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-        ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) {
+        Scanner in = new Scanner(socket.getInputStream());
+        PrintStream out = new PrintStream(socket.getOutputStream())) {
 
-      System.out.println("클라이언트와 데이터 통신 시작");
+      System.out.println("데이터 통신 시작");
 
-        String request = in.readUTF();
-        System.out.println("클라이언트> " + request);
+      String request = in.nextLine();
+      System.out.printf("=> %s\n", request);
 
+      out.println("[서버] 안녕하세요!");
+      out.println("[서버] 반가워요!");
+      out.println("!end!");
+
+      /*
         Servlet servlet = servletMap.get(request);
         if (servlet != null) {
           try {
@@ -137,11 +141,12 @@ public class ServerApp {
         } else {
           notFound(out);
         }
+       */
 
-        out.flush();
-        System.out.println("클라이언트에게 응답 완료");
+      out.flush();
+      System.out.println("클라이언트에게 응답 완료");
 
-        return 0;
+      return 0;
 
     } catch (Exception e) {
       System.out.print("예외 발생: ");
@@ -150,10 +155,12 @@ public class ServerApp {
     }
   }
 
+  /*
   private void notFound(ObjectOutputStream out) throws IOException {
     out.writeUTF("FAIL");
     out.writeUTF("요청한 명령을 처리할 수 없습니다.");
   }
+   */
 
   public static void main(String[] args) {
     System.out.println("영상 관리 시스템 서버입니다.");
