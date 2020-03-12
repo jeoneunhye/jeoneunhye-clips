@@ -25,6 +25,7 @@ import jeoneunhye.vms.servlet.MemberAddServlet;
 import jeoneunhye.vms.servlet.MemberDeleteServlet;
 import jeoneunhye.vms.servlet.MemberDetailServlet;
 import jeoneunhye.vms.servlet.MemberListServlet;
+import jeoneunhye.vms.servlet.MemberSearchServlet;
 import jeoneunhye.vms.servlet.MemberUpdateServlet;
 import jeoneunhye.vms.servlet.Servlet;
 import jeoneunhye.vms.servlet.VideoAddServlet;
@@ -78,6 +79,7 @@ public class ServerApp {
     servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
     servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
     servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
+    servletMap.put("/member/search", new MemberSearchServlet(memberDao));
 
     servletMap.put("/board/add", new BoardAddServlet(boardDao));
     servletMap.put("/board/list", new BoardListServlet(boardDao));
