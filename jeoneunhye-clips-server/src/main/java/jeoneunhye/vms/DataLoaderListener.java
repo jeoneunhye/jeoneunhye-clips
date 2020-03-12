@@ -28,5 +28,10 @@ public class DataLoaderListener implements ApplicationContextListener {
   }
 
   @Override
-  public void contextDestroyed(Map<String, Object> context) {}
+  public void contextDestroyed(Map<String, Object> context) {
+    try {
+      con.close();
+
+    } catch (Exception e) {}
+  }
 }

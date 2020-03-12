@@ -41,6 +41,8 @@ public class ServerApp {
 
   ExecutorService executorService = Executors.newCachedThreadPool();
 
+  boolean serverStop = false;
+
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
   }
@@ -101,19 +103,37 @@ public class ServerApp {
           System.out.println("-----클라이언트 요청 처리 완료");
         });
 
-        System.out.println("-----클라이언트와의 연결을 종료하였습니다.");
+        System.out.println("-----클라이언트가 연결을 종료하였습니다.");
+        if (serverStop) {
+          break;
+        }
       }
 
     } catch (Exception e) {
       System.out.println("연결 중 오류 발생!");
     }
 
+    executorService.shutdown();
+
+    while (true) {
+      if (executorService.isTerminated()) {
+        break;
+      }
+
+      try {
+        Thread.sleep(500);
+
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+
     notifyApplicationDestroyed();
 
-    executorService.shutdown();
+    System.out.println("서버를 종료합니다.");
   }
 
-  int processRequest(Socket clientSocket) {
+  void processRequest(Socket clientSocket) {
     try (
         Socket socket = clientSocket;
         Scanner in = new Scanner(socket.getInputStream());
@@ -123,6 +143,14 @@ public class ServerApp {
 
       String request = in.nextLine();
       System.out.printf("=> %s\n", request);
+
+      if (request.equalsIgnoreCase("/server/stop")) {
+        serverStop = true;
+        out.println("OK");
+        out.println("!end!");
+        out.flush();
+        return;
+      }
 
       Servlet servlet = servletMap.get(request);
       if (servlet != null) {
@@ -145,12 +173,9 @@ public class ServerApp {
       out.flush();
       System.out.println("클라이언트에게 응답 완료");
 
-      return 0;
-
     } catch (Exception e) {
       System.out.print("예외 발생: ");
       e.printStackTrace();
-      return -1;
     }
   }
 
