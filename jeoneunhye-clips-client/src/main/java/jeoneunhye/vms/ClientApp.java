@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.handler.Command;
 
@@ -56,37 +58,43 @@ public class ClientApp {
     keyScan.close();
   }
 
+  @SuppressWarnings("unused")
   private void processCommand(String command) {
+    String protocol = null;
     String host = null;
     int port = 9999;
     String servletPath = null;
 
     try {
-      if (!command.startsWith("http://")) {
-        throw new Exception("명령어 형식이 옳지 않습니다.");
+      Pattern[] pattern = new Pattern[2];
+      pattern[0] = Pattern.compile("^([a-zA-Z]*)://([\\w\\d.]*):([0-9]{0,5})(.*)$");
+      pattern[1] = Pattern.compile("^([a-zA-Z]*)://([\\w\\d.]*)(.*)$");
+
+      Matcher matcher = null;
+      for (Pattern p : pattern) {
+        matcher = p.matcher(command);
+        if (matcher.find())
+          break;
       }
 
-      String url = command.substring(7);
+      protocol = matcher.group(1);
+      host = matcher.group(2);
 
-      int index = url.indexOf('/');
-      String[] str =
-          url.substring(0, index)
-          .split(":"); // {"localhost", "9999"}
+      if (matcher.groupCount() == 3) {
+        servletPath = matcher.group(3);
 
-      host = str[0];
-      if (str.length == 2) {
-        port = Integer.parseInt(str[1]);
+      } else {
+        port = Integer.parseInt(matcher.group(3));
+        servletPath = matcher.group(4);
       }
-
-      servletPath = url.substring(index);
-      System.out.printf("=> %s\n", servletPath);
 
     } catch (Exception e) {
       System.out.println(e.getMessage());
       return;
     }
 
-    try (Socket socket = new Socket(host, port);
+    try (
+        Socket socket = new Socket(host, port);
         PrintStream out = new PrintStream(socket.getOutputStream());
         Scanner in = new Scanner(socket.getInputStream())) {
 
@@ -98,9 +106,14 @@ public class ClientApp {
         if (response.equals("!end!")) {
           System.out.println("서버 연결을 종료합니다.");
           break;
-        }
 
-        System.out.println(response);
+        } else if (response.equals("!{}!")) {
+          String input = prompt.inputString("");
+          out.println(input);
+
+        } else {
+          System.out.println(response);
+        }
       }
 
     } catch (Exception e) {

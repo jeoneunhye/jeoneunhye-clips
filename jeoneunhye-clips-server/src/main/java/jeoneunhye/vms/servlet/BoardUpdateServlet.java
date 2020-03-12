@@ -1,7 +1,7 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
@@ -13,15 +13,40 @@ public class BoardUpdateServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    Board board = (Board) in.readObject();
+  public void service(Scanner in, PrintStream out) throws Exception {
+    out.println("번호? ");
+    out.println("!{}!");
+    out.flush();
+    int no = Integer.parseInt(in.nextLine());
 
-    if (boardDao.update(board) > 0) {
-      out.writeUTF("OK");
+    Board oldBoard = boardDao.findByNo(no);
+    if (oldBoard == null) {
+      out.println("해당 번호의 게시글이 없습니다.");
+      return;
+    }
+
+    Board newBoard = new Board();
+    newBoard.setNo(no);
+
+    out.printf("제목(%s)? \n", oldBoard.getTitle());
+    out.println("!{}!");
+    out.flush();
+    newBoard.setTitle(in.nextLine());
+
+    out.printf("내용(%s)? \n", oldBoard.getContents());
+    out.println("!{}!");
+    out.flush();
+    newBoard.setContents(in.nextLine());
+
+    newBoard.setWriter(oldBoard.getWriter());
+    newBoard.setWriteDate(oldBoard.getWriteDate());
+    newBoard.setViewCount(oldBoard.getViewCount());
+
+    if (boardDao.update(newBoard) > 0) {
+      out.println("게시글을 변경하였습니다.");
 
     } else {
-      out.writeUTF("FAIL");
-      out.writeUTF("해당 번호의 게시글이 없습니다.");
+      out.println("게시글을 변경할 수 없습니다.");
     }
   }
 }

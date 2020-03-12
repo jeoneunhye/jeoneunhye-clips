@@ -91,8 +91,8 @@ public class VideoDaoImpl implements VideoDao {
           + " titl='" + video.getTitle() + "',"
           + " url='" + video.getUrl() + "',"
           + " playtime='" + video.getPlayTime() + "',"
-          + " writer='" + video.getWriter() + "',"
-          + " uploadDate='" + video.getUploadDate() + "'"
+          + " uploader='" + video.getWriter() + "',"
+          + " upload_dt='" + video.getUploadDate() + "'"
           + " where video_id=" + video.getNo());
 
       return result;

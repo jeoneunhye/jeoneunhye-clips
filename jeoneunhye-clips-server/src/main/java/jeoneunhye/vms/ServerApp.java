@@ -16,10 +16,22 @@ import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.VideoDao;
+import jeoneunhye.vms.servlet.BoardAddServlet;
+import jeoneunhye.vms.servlet.BoardDeleteServlet;
+import jeoneunhye.vms.servlet.BoardDetailServlet;
 import jeoneunhye.vms.servlet.BoardListServlet;
+import jeoneunhye.vms.servlet.BoardUpdateServlet;
+import jeoneunhye.vms.servlet.MemberAddServlet;
+import jeoneunhye.vms.servlet.MemberDeleteServlet;
+import jeoneunhye.vms.servlet.MemberDetailServlet;
 import jeoneunhye.vms.servlet.MemberListServlet;
+import jeoneunhye.vms.servlet.MemberUpdateServlet;
 import jeoneunhye.vms.servlet.Servlet;
+import jeoneunhye.vms.servlet.VideoAddServlet;
+import jeoneunhye.vms.servlet.VideoDeleteServlet;
+import jeoneunhye.vms.servlet.VideoDetailServlet;
 import jeoneunhye.vms.servlet.VideoListServlet;
+import jeoneunhye.vms.servlet.VideoUpdateServlet;
 
 public class ServerApp {
   Set<ApplicationContextListener> listeners = new HashSet<>();
@@ -55,26 +67,23 @@ public class ServerApp {
     MemberDao memberDao = (MemberDao) context.get("memberDao");
     BoardDao boardDao = (BoardDao) context.get("boardDao");
 
-    /*
     servletMap.put("/video/add", new VideoAddServlet(videoDao));
+    servletMap.put("/video/list", new VideoListServlet(videoDao));
     servletMap.put("/video/detail", new VideoDetailServlet(videoDao));
     servletMap.put("/video/update", new VideoUpdateServlet(videoDao));
     servletMap.put("/video/delete", new VideoDeleteServlet(videoDao));
 
     servletMap.put("/member/add", new MemberAddServlet(memberDao));
+    servletMap.put("/member/list", new MemberListServlet(memberDao));
     servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
     servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
     servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
 
     servletMap.put("/board/add", new BoardAddServlet(boardDao));
+    servletMap.put("/board/list", new BoardListServlet(boardDao));
     servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
     servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
     servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
-     */
-
-    servletMap.put("/video/list", new VideoListServlet(videoDao));
-    servletMap.put("/member/list", new MemberListServlet(memberDao));
-    servletMap.put("/board/list", new BoardListServlet(boardDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 

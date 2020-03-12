@@ -18,7 +18,7 @@ public class BoardListServlet implements Servlet {
     List<Board> boards = boardDao.findAll();
     for (Board b : boards) {
       out.printf("%d, %s, %s, %s, %d\n",
-          b.getNo(), b.getTitle(), b.getContents(), b.getWriteDate(), b.getViewCount());
+          b.getNo(), b.getTitle(), b.getWriter(), b.getWriteDate(), b.getViewCount());
     }
   }
 }

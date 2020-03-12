@@ -1,7 +1,8 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.sql.Date;
+import java.util.Scanner;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
@@ -13,15 +14,44 @@ public class VideoAddServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    Video video = (Video) in.readObject();
+  public void service(Scanner in, PrintStream out) throws Exception {
+    Video video = new Video();
+
+    out.println("주제? ");
+    out.println("!{}!");
+    out.flush();
+    video.setSubject(in.nextLine());
+
+    out.println("제목? ");
+    out.println("!{}!");
+    out.flush();
+    video.setTitle(in.nextLine());
+
+    out.println("주소? ");
+    out.println("!{}!");
+    out.flush();
+    video.setUrl(in.nextLine());
+
+    out.println("재생시간? ");
+    out.println("!{}!");
+    out.flush();
+    video.setPlayTime(in.nextLine());
+
+    out.println("업로더? ");
+    out.println("!{}!");
+    out.flush();
+    video.setWriter(in.nextLine());
+
+    out.println("업로드 날짜? ");
+    out.println("!{}!");
+    out.flush();
+    video.setUploadDate(Date.valueOf(in.nextLine()));
 
     if (videoDao.insert(video) > 0) {
-      out.writeUTF("OK");
+      out.println("영상을 저장하였습니다.");
 
     } else {
-      out.writeUTF("FAIL");
-      out.writeUTF("같은 번호의 영상이 있습니다.");
+      out.println("영상을 저장할 수 없습니다.");
     }
   }
 }

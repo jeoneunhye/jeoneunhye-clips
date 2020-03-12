@@ -1,7 +1,7 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
@@ -13,15 +13,29 @@ public class BoardAddServlet implements Servlet {
   }
 
   @Override
-  public void service(ObjectInputStream in, ObjectOutputStream out) throws Exception {
-    Board board = (Board) in.readObject();
+  public void service(Scanner in, PrintStream out) throws Exception {
+    Board board = new Board();
+
+    out.println("제목? ");
+    out.println("!{}!");
+    out.flush();
+    board.setTitle(in.nextLine());
+
+    out.println("내용? ");
+    out.println("!{}!");
+    out.flush();
+    board.setContents(in.nextLine());
+
+    out.println("작성자? ");
+    out.println("!{}!");
+    out.flush();
+    board.setWriter(in.nextLine());
 
     if (boardDao.insert(board) > 0) {
-      out.writeUTF("OK");
+      out.println("게시글을 저장하였습니다.");
 
     } else {
-      out.writeUTF("FAIL");
-      out.writeUTF("같은 번호의 게시글이 있습니다.");
+      out.println("게시글을 저장할 수 없습니다.");
     }
   }
 }
