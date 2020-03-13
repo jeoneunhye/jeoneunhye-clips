@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
+import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.servlet.BoardAddServlet;
 import jeoneunhye.vms.servlet.BoardDeleteServlet;
@@ -27,6 +28,11 @@ import jeoneunhye.vms.servlet.MemberDetailServlet;
 import jeoneunhye.vms.servlet.MemberListServlet;
 import jeoneunhye.vms.servlet.MemberSearchServlet;
 import jeoneunhye.vms.servlet.MemberUpdateServlet;
+import jeoneunhye.vms.servlet.PhotoBoardAddServlet;
+import jeoneunhye.vms.servlet.PhotoBoardDeleteServlet;
+import jeoneunhye.vms.servlet.PhotoBoardDetailServlet;
+import jeoneunhye.vms.servlet.PhotoBoardListServlet;
+import jeoneunhye.vms.servlet.PhotoBoardUpdateServlet;
 import jeoneunhye.vms.servlet.Servlet;
 import jeoneunhye.vms.servlet.VideoAddServlet;
 import jeoneunhye.vms.servlet.VideoDeleteServlet;
@@ -69,6 +75,7 @@ public class ServerApp {
     VideoDao videoDao = (VideoDao) context.get("videoDao");
     MemberDao memberDao = (MemberDao) context.get("memberDao");
     BoardDao boardDao = (BoardDao) context.get("boardDao");
+    PhotoBoardDao photoBoardDao = (PhotoBoardDao) context.get("photoBoardDao");
 
     servletMap.put("/video/add", new VideoAddServlet(videoDao));
     servletMap.put("/video/list", new VideoListServlet(videoDao));
@@ -88,6 +95,12 @@ public class ServerApp {
     servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
     servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
     servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
+
+    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardDao));
+    servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, videoDao));
+    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 

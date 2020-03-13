@@ -6,6 +6,7 @@ import java.util.Map;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
+import jeoneunhye.vms.dao.mariadb.PhotoBoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.VideoDaoImpl;
 
 public class DataLoaderListener implements ApplicationContextListener {
@@ -25,6 +26,7 @@ public class DataLoaderListener implements ApplicationContextListener {
     context.put("videoDao", new VideoDaoImpl(con));
     context.put("memberDao", new MemberDaoImpl(con));
     context.put("boardDao", new BoardDaoImpl(con));
+    context.put("photoBoardDao", new PhotoBoardDaoImpl(con));
   }
 
   @Override
