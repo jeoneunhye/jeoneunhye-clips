@@ -22,8 +22,16 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
       int result = stmt.executeUpdate(
           "insert into vms_photo(titl,conts,video_id) values('"
-              + photoBoard.getTitle() + "', '" + photoBoard.getContent() + "', '"
-              + photoBoard.getVideo().getNo() + ")");
+              + photoBoard.getTitle() + "', '" + photoBoard.getContent() + "', "
+              + photoBoard.getVideo().getNo() + ")"
+              , Statement.RETURN_GENERATED_KEYS);
+
+      try (ResultSet generatedKeySet = stmt.getGeneratedKeys()) {
+
+        generatedKeySet.next();
+
+        photoBoard.setNo(generatedKeySet.getInt(1));
+      }
 
       return result;
     }

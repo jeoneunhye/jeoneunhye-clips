@@ -3,12 +3,15 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.vms.dao.PhotoBoardDao;
+import jeoneunhye.vms.dao.PhotoFileDao;
 
 public class PhotoBoardDeleteServlet implements Servlet {
   PhotoBoardDao photoBoardDao;
+  PhotoFileDao photoFileDao;
 
-  public PhotoBoardDeleteServlet(  PhotoBoardDao photoBoardDao) {
+  public PhotoBoardDeleteServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
     this.photoBoardDao = photoBoardDao;
+    this.photoFileDao = photoFileDao;
   }
 
   @Override
@@ -18,6 +21,8 @@ public class PhotoBoardDeleteServlet implements Servlet {
     out.flush();
 
     int no = Integer.parseInt(in.nextLine());
+
+    photoFileDao.deleteAll(no);
 
     if (photoBoardDao.delete(no) > 0) {
       out.println("사진 게시글을 삭제하였습니다.");

@@ -16,6 +16,7 @@ import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
+import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.servlet.BoardAddServlet;
 import jeoneunhye.vms.servlet.BoardDeleteServlet;
@@ -76,6 +77,7 @@ public class ServerApp {
     MemberDao memberDao = (MemberDao) context.get("memberDao");
     BoardDao boardDao = (BoardDao) context.get("boardDao");
     PhotoBoardDao photoBoardDao = (PhotoBoardDao) context.get("photoBoardDao");
+    PhotoFileDao photoFileDao = (PhotoFileDao) context.get("photoFileDao");
 
     servletMap.put("/video/add", new VideoAddServlet(videoDao));
     servletMap.put("/video/list", new VideoListServlet(videoDao));
@@ -96,11 +98,11 @@ public class ServerApp {
     servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
     servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
-    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardDao));
+    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardDao, videoDao, photoFileDao));
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, videoDao));
-    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao));
+    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 
