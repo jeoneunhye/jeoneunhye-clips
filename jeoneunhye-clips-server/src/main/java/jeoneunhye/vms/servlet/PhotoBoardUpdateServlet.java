@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.vms.DataLoaderListener;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.domain.PhotoBoard;
@@ -38,7 +39,13 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setCreatedDate(oldPhotoBoard.getCreatedDate());
     newPhotoBoard.setViewCount(oldPhotoBoard.getViewCount());
 
-    if (photoBoardDao.update(newPhotoBoard) > 0) {
+    DataLoaderListener.con.setAutoCommit(false);
+
+    try {
+      if (photoBoardDao.update(newPhotoBoard) == 0) {
+        throw new Exception("사진 게시글을 변경할 수 없습니다.");
+      }
+
       printPhotoFiles(out, no);
 
       out.println();
@@ -57,10 +64,15 @@ public class PhotoBoardUpdateServlet implements Servlet {
         }
       }
 
+      DataLoaderListener.con.commit();
       out.println("사진 게시글을 변경하였습니다.");
 
-    } else {
-      out.println("사진 게시글을 변경할 수 없습니다.");
+    } catch (Exception e) {
+      DataLoaderListener.con.rollback();
+      out.println(e.getMessage());
+
+    } finally {
+      DataLoaderListener.con.setAutoCommit(true);
     }
   }
 
