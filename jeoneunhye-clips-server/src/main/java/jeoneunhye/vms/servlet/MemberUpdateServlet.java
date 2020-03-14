@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
@@ -14,10 +15,7 @@ public class MemberUpdateServlet implements Servlet {
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
-    out.println("번호? ");
-    out.println("!{}!");
-    out.flush();
-    int no = Integer.parseInt(in.nextLine());
+    int no = (Prompt.getInt(in, out, "번호? "));
 
     Member oldMember = memberDao.findByNo(no);
     if (oldMember == null) {
@@ -28,27 +26,14 @@ public class MemberUpdateServlet implements Servlet {
     Member newMember = new Member();
     newMember.setNo(no);
     newMember.setId(oldMember.getId());
-
-    out.printf("닉네임(%s)? \n", oldMember.getNickname());
-    out.println("!{}!");
-    out.flush();
-    newMember.setNickname(in.nextLine());
-
-    out.printf("암호(%s)? \n", oldMember.getPassword());
-    out.println("!{}!");
-    out.flush();
-    newMember.setPassword(in.nextLine());
-
-    out.printf("휴대폰번호(%s)? \n", oldMember.getPhone());
-    out.println("!{}!");
-    out.flush();
-    newMember.setPhone(in.nextLine());
-
-    out.printf("이메일(%s)? \n", oldMember.getEmail());
-    out.println("!{}!");
-    out.flush();
-    newMember.setEmail(in.nextLine());
-
+    newMember.setNickname(Prompt.getString(in, out, String.format("닉네임(%s)? \n", oldMember.getNickname()),
+        oldMember.getNickname()));
+    newMember.setPassword(Prompt.getString(in, out, String.format("암호(%s)? \n", oldMember.getPassword()),
+        oldMember.getPassword()));
+    newMember.setPhone(Prompt.getString(in, out, String.format("휴대폰번호(%s)? \n", oldMember.getPhone()),
+        oldMember.getPhone()));
+    newMember.setEmail(Prompt.getString(in, out, String.format("이메일(%s)? \n", oldMember.getEmail()),
+        oldMember.getEmail()));
     newMember.setRegisteredDate(oldMember.getRegisteredDate());
 
     if (memberDao.update(newMember) > 0) {

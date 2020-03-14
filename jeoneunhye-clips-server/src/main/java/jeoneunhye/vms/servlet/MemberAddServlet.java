@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
@@ -15,31 +16,11 @@ public class MemberAddServlet implements Servlet {
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     Member member = new Member();
-
-    out.println("아이디? ");
-    out.println("!{}!");
-    out.flush();
-    member.setId(in.nextLine());
-
-    out.println("닉네임? ");
-    out.println("!{}!");
-    out.flush();
-    member.setNickname(in.nextLine());
-
-    out.println("암호? ");
-    out.println("!{}!");
-    out.flush();
-    member.setPassword(in.nextLine());
-
-    out.println("휴대폰번호? ");
-    out.println("!{}!");
-    out.flush();
-    member.setPhone(in.nextLine());
-
-    out.println("이메일? ");
-    out.println("!{}!");
-    out.flush();
-    member.setEmail(in.nextLine());
+    member.setId(Prompt.getString(in, out, "아이디? "));
+    member.setNickname(Prompt.getString(in, out, "닉네임? "));
+    member.setPassword(Prompt.getString(in, out, "암호? "));
+    member.setPhone(Prompt.getString(in, out, "휴대폰번호? "));
+    member.setEmail(Prompt.getString(in, out, "이메일? "));
 
     if (memberDao.insert(member) > 0) {
       out.println("회원을 저장하였습니다.");

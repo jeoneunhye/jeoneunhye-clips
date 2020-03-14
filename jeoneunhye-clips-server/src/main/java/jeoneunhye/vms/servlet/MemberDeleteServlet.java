@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.MemberDao;
 
 public class MemberDeleteServlet implements Servlet {
@@ -13,11 +14,7 @@ public class MemberDeleteServlet implements Servlet {
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
-    out.println("번호? ");
-    out.println("!{}!");
-    out.flush();
-
-    int no = Integer.parseInt(in.nextLine());
+    int no = Prompt.getInt(in, out, "번호? ");
 
     if (memberDao.delete(no) > 0) {
       out.println("회원을 삭제하였습니다.");

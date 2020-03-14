@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 
@@ -16,11 +17,7 @@ public class PhotoBoardDeleteServlet implements Servlet {
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
-    out.println("번호? ");
-    out.println("!{}!");
-    out.flush();
-
-    int no = Integer.parseInt(in.nextLine());
+    int no = Prompt.getInt(in, out, "번호? ");
 
     photoFileDao.deleteAll(no);
 

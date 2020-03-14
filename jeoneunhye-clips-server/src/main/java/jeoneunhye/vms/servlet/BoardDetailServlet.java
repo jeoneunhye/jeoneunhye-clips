@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
@@ -14,10 +15,7 @@ public class BoardDetailServlet implements Servlet {
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
-    out.println("번호? ");
-    out.println("!{}!");
-    out.flush();
-    int no = Integer.parseInt(in.nextLine());
+    int no = (Prompt.getInt(in, out, "번호? "));
 
     Board board = boardDao.findByNo(no);
     if (board != null) {

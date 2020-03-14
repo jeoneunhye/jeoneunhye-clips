@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
@@ -14,10 +15,7 @@ public class BoardUpdateServlet implements Servlet {
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
-    out.println("번호? ");
-    out.println("!{}!");
-    out.flush();
-    int no = Integer.parseInt(in.nextLine());
+    int no = (Prompt.getInt(in, out, "번호? "));
 
     Board oldBoard = boardDao.findByNo(no);
     if (oldBoard == null) {
@@ -27,17 +25,10 @@ public class BoardUpdateServlet implements Servlet {
 
     Board newBoard = new Board();
     newBoard.setNo(no);
-
-    out.printf("제목(%s)? \n", oldBoard.getTitle());
-    out.println("!{}!");
-    out.flush();
-    newBoard.setTitle(in.nextLine());
-
-    out.printf("내용(%s)? \n", oldBoard.getContents());
-    out.println("!{}!");
-    out.flush();
-    newBoard.setContents(in.nextLine());
-
+    newBoard.setTitle(Prompt.getString(in, out, String.format("제목(%s)? \n", oldBoard.getTitle())
+        , oldBoard.getTitle()));
+    newBoard.setContents(Prompt.getString(in, out, String.format("내용(%s)? \n", oldBoard.getContents())
+        , oldBoard.getContents()));
     newBoard.setWriter(oldBoard.getWriter());
     newBoard.setWriteDate(oldBoard.getWriteDate());
     newBoard.setViewCount(oldBoard.getViewCount());

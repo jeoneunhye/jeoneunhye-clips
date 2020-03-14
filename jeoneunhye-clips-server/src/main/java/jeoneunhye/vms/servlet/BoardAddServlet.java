@@ -2,6 +2,7 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
@@ -15,21 +16,9 @@ public class BoardAddServlet implements Servlet {
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     Board board = new Board();
-
-    out.println("제목? ");
-    out.println("!{}!");
-    out.flush();
-    board.setTitle(in.nextLine());
-
-    out.println("내용? ");
-    out.println("!{}!");
-    out.flush();
-    board.setContents(in.nextLine());
-
-    out.println("작성자? ");
-    out.println("!{}!");
-    out.flush();
-    board.setWriter(in.nextLine());
+    board.setTitle(Prompt.getString(in, out, "제목? "));
+    board.setContents(Prompt.getString(in, out, "내용? "));
+    board.setWriter(Prompt.getString(in, out, "작성자? "));
 
     if (boardDao.insert(board) > 0) {
       out.println("게시글을 저장하였습니다.");
