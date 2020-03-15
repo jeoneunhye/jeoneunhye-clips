@@ -1,6 +1,7 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -10,15 +11,22 @@ import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.Video;
 
 public class PhotoBoardDaoImpl implements PhotoBoardDao {
-  Connection con;
+  String jdbcUrl;
+  String username;
+  String password;
 
-  public PhotoBoardDaoImpl(Connection con) {
-    this.con = con;
+  public PhotoBoardDaoImpl(String jdbcUrl, String username, String password) {
+    this.jdbcUrl = jdbcUrl;
+    this.username = username;
+    this.password = password;
   }
 
   @Override
   public int insert(PhotoBoard photoBoard) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate(
           "insert into vms_photo(titl,conts,video_id) values('"
@@ -40,6 +48,8 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
   @Override
   public List<PhotoBoard> findAllByVideoNo(int videoNo) throws Exception {
     try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -67,6 +77,8 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
   @Override
   public PhotoBoard findByNo(int no) throws Exception {
     try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -106,7 +118,10 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public int update(PhotoBoard photoBoard) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate(
           "update vms_photo set"
@@ -120,7 +135,10 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
 
   @Override
   public int delete(int no) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate(
           "delete from vms_photo where photo_id=" + no);

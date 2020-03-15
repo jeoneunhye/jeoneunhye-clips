@@ -1,6 +1,7 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -9,15 +10,22 @@ import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardDaoImpl implements BoardDao {
-  Connection con;
+  String jdbcUrl;
+  String username;
+  String password;
 
-  public BoardDaoImpl(Connection con) {
-    this.con = con;
+  public BoardDaoImpl(String jdbcUrl, String username, String password) {
+    this.jdbcUrl = jdbcUrl;
+    this.username = username;
+    this.password = password;
   }
 
   @Override
   public int insert(Board board) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("insert into vms_board(titl, conts, writer)"
           + " values('" + board.getTitle() + "', '" + board.getContents() + "', '"
@@ -30,6 +38,8 @@ public class BoardDaoImpl implements BoardDao {
   @Override
   public List<Board> findAll() throws Exception {
     try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -55,6 +65,8 @@ public class BoardDaoImpl implements BoardDao {
   @Override
   public Board findByNo(int no) throws Exception {
     try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -80,7 +92,10 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int update(Board board) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("update vms_board set"
           + " titl='" + board.getTitle() + "',"
@@ -94,7 +109,10 @@ public class BoardDaoImpl implements BoardDao {
 
   @Override
   public int delete(int no) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("delete from vms_board where board_id=" + no);
 

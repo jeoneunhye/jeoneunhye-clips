@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.DataLoaderListener;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.dao.VideoDao;
@@ -41,8 +40,6 @@ public class PhotoBoardAddServlet implements Servlet {
 
     photoBoard.setVideo(video);
 
-    DataLoaderListener.con.setAutoCommit(false);
-
     try {
       if (photoBoardDao.insert(photoBoard) == 0) {
         throw new Exception("사진 게시글을 저장할 수 없습니다.");
@@ -55,15 +52,10 @@ public class PhotoBoardAddServlet implements Servlet {
         photoFileDao.insert(photoFile);
       }
 
-      DataLoaderListener.con.commit();
       out.println("사진 게시글을 저장하였습니다.");
 
     } catch (Exception e) {
-      DataLoaderListener.con.rollback();
       out.println(e.getMessage());
-
-    } finally {
-      DataLoaderListener.con.setAutoCommit(true);
     }
   }
 

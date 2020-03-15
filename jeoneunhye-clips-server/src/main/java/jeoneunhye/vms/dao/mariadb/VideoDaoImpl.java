@@ -1,6 +1,7 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -9,15 +10,22 @@ import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoDaoImpl implements VideoDao {
-  Connection con;
+  String jdbcUrl;
+  String username;
+  String password;
 
-  public VideoDaoImpl(Connection con) {
-    this.con = con;
+  public VideoDaoImpl(String jdbcUrl, String username, String password) {
+    this.jdbcUrl = jdbcUrl;
+    this.username = username;
+    this.password = password;
   }
 
   @Override
   public int insert(Video video) throws Exception {
-    try(Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate(
           "insert into vms_video(subject, titl, url, playtime, uploader, upload_dt)"
@@ -32,6 +40,8 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public List<Video> findAll() throws Exception {
     try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -58,6 +68,8 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public Video findByNo(int no) throws Exception {
     try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -84,7 +96,10 @@ public class VideoDaoImpl implements VideoDao {
 
   @Override
   public int update(Video video) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("update vms_video set"
           + " subject='" + video.getSubject() + "',"
@@ -101,7 +116,10 @@ public class VideoDaoImpl implements VideoDao {
 
   @Override
   public int delete(int no) throws Exception {
-    try (Statement stmt = con.createStatement()) {
+    try (
+        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+
+        Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("delete from vms_video where video_id=" + no);
 
