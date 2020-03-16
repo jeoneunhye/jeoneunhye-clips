@@ -1,29 +1,25 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoDaoImpl implements VideoDao {
-  String jdbcUrl;
-  String username;
-  String password;
+  ConnectionFactory conFactory;
 
-  public VideoDaoImpl(String jdbcUrl, String username, String password) {
-    this.jdbcUrl = jdbcUrl;
-    this.username = username;
-    this.password = password;
+  public VideoDaoImpl(ConnectionFactory conFactory) {
+    this.conFactory = conFactory;
   }
 
   @Override
   public int insert(Video video) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Connection con = conFactory.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -40,7 +36,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public List<Video> findAll() throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Connection con = conFactory.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -68,7 +64,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public Video findByNo(int no) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Connection con = conFactory.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -97,7 +93,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public int update(Video video) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Connection con = conFactory.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -117,7 +113,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public int delete(int no) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
+        Connection con = conFactory.getConnection();
 
         Statement stmt = con.createStatement()) {
 

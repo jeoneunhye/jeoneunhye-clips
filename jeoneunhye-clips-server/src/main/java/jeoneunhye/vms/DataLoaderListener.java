@@ -2,6 +2,7 @@ package jeoneunhye.vms;
 
 import java.util.Map;
 import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
 import jeoneunhye.vms.dao.mariadb.PhotoBoardDaoImpl;
@@ -15,11 +16,14 @@ public class DataLoaderListener implements ApplicationContextListener {
     String username = "eunhye";
     String password = "1111";
 
-    context.put("videoDao", new VideoDaoImpl(jdbcUrl, username, password));
-    context.put("memberDao", new MemberDaoImpl(jdbcUrl, username, password));
-    context.put("boardDao", new BoardDaoImpl(jdbcUrl, username, password));
-    context.put("photoBoardDao", new PhotoBoardDaoImpl(jdbcUrl, username, password));
-    context.put("photoFileDao", new PhotoFileDaoImpl(jdbcUrl, username, password));
+    ConnectionFactory conFactory = new ConnectionFactory(
+        jdbcUrl, username, password);
+
+    context.put("videoDao", new VideoDaoImpl(conFactory));
+    context.put("memberDao", new MemberDaoImpl(conFactory));
+    context.put("boardDao", new BoardDaoImpl(conFactory));
+    context.put("photoBoardDao", new PhotoBoardDaoImpl(conFactory));
+    context.put("photoFileDao", new PhotoFileDaoImpl(conFactory));
   }
 
   @Override

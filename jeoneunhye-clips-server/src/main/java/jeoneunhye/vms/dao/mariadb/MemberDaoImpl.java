@@ -1,30 +1,26 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 
 public class MemberDaoImpl implements MemberDao {
-  String jdbcUrl;
-  String username;
-  String password;
+  ConnectionFactory conFactory;
 
-  public MemberDaoImpl(String jdbcUrl, String username, String password) {
-    this.jdbcUrl = jdbcUrl;
-    this.username = username;
-    this.password = password;
+  public MemberDaoImpl(ConnectionFactory conFactory) {
+    this.conFactory = conFactory;
   }
 
   @Override
   public int insert(Member member) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
-        
+        Connection con = conFactory.getConnection();
+
         Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("insert into vms_member(id, nickname, pwd, phone, email)"
@@ -38,8 +34,8 @@ public class MemberDaoImpl implements MemberDao {
   @Override
   public List<Member> findAll() throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
-        
+        Connection con = conFactory.getConnection();
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -65,8 +61,8 @@ public class MemberDaoImpl implements MemberDao {
   @Override
   public Member findByNo(int no) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
-        
+        Connection con = conFactory.getConnection();
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
@@ -94,8 +90,8 @@ public class MemberDaoImpl implements MemberDao {
   @Override
   public int update(Member member) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
-        
+        Connection con = conFactory.getConnection();
+
         Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("update vms_member set"
@@ -112,8 +108,8 @@ public class MemberDaoImpl implements MemberDao {
   @Override
   public int delete(int no) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
-        
+        Connection con = conFactory.getConnection();
+
         Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("delete from vms_member where member_id=" + no);
@@ -125,8 +121,8 @@ public class MemberDaoImpl implements MemberDao {
   @Override
   public List<Member> findByKeyword(String keyword) throws Exception {
     try (
-        Connection con = DriverManager.getConnection(jdbcUrl, username, password);
-        
+        Connection con = conFactory.getConnection();
+
         Statement stmt = con.createStatement();
 
         ResultSet rs = stmt.executeQuery(
