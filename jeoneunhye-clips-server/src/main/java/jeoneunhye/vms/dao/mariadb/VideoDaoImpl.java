@@ -5,21 +5,21 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import jeoneunhye.util.ConnectionFactory;
+import jeoneunhye.sql.DataSource;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 
 public class VideoDaoImpl implements VideoDao {
-  ConnectionFactory conFactory;
+  DataSource dataSource;
 
-  public VideoDaoImpl(ConnectionFactory conFactory) {
-    this.conFactory = conFactory;
+  public VideoDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(Video video) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -36,7 +36,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public List<Video> findAll() throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -64,7 +64,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public Video findByNo(int no) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -93,7 +93,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public int update(Video video) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -113,7 +113,7 @@ public class VideoDaoImpl implements VideoDao {
   @Override
   public int delete(int no) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 

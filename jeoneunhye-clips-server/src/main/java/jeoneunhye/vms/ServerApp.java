@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,9 +13,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.sql.ConnectionProxy;
+import jeoneunhye.sql.DataSource;
 import jeoneunhye.sql.PlatformTransactionManager;
-import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
@@ -77,7 +75,7 @@ public class ServerApp {
   public void service() {
     notifyApplicationInitialized();
 
-    ConnectionFactory conFactory = (ConnectionFactory) context.get("connectionFactory");
+    DataSource dataSource = (DataSource) context.get("dataSource");
 
     VideoDao videoDao = (VideoDao) context.get("videoDao");
     MemberDao memberDao = (MemberDao) context.get("memberDao");
@@ -124,13 +122,7 @@ public class ServerApp {
         executorService.submit(() -> {
           processRequest(socket);
 
-          ConnectionProxy con = (ConnectionProxy) conFactory.removeConnection();
-          if (con != null) {
-            try {
-              con.realClose();
-
-            } catch (SQLException e) {}
-          }
+          dataSource.removeConnection();
 
           System.out.println("-----클라이언트 요청 처리 완료");
         });

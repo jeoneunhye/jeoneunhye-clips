@@ -5,21 +5,21 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import jeoneunhye.util.ConnectionFactory;
+import jeoneunhye.sql.DataSource;
 import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.domain.PhotoFile;
 
 public class PhotoFileDaoImpl implements PhotoFileDao {
-  ConnectionFactory conFactory;
+  DataSource dataSource;
 
-  public PhotoFileDaoImpl(ConnectionFactory conFactory) {
-    this.conFactory = conFactory;
+  public PhotoFileDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(PhotoFile photoFile) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -34,7 +34,7 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
   @Override
   public List<PhotoFile> findAll(int boardNo) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -60,7 +60,7 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
   @Override
   public int deleteAll(int boardNo) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 

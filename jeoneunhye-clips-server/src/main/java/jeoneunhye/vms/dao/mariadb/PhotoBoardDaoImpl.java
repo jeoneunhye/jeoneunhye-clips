@@ -5,22 +5,22 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import jeoneunhye.util.ConnectionFactory;
+import jeoneunhye.sql.DataSource;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.Video;
 
 public class PhotoBoardDaoImpl implements PhotoBoardDao {
-  ConnectionFactory conFactory;
+  DataSource dataSource;
 
-  public PhotoBoardDaoImpl(ConnectionFactory conFactory) {
-    this.conFactory = conFactory;
+  public PhotoBoardDaoImpl(DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
   public int insert(PhotoBoard photoBoard) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -44,7 +44,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
   @Override
   public List<PhotoBoard> findAllByVideoNo(int videoNo) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -73,7 +73,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
   @Override
   public PhotoBoard findByNo(int no) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement();
 
@@ -115,7 +115,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
   @Override
   public int update(PhotoBoard photoBoard) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 
@@ -132,7 +132,7 @@ public class PhotoBoardDaoImpl implements PhotoBoardDao {
   @Override
   public int delete(int no) throws Exception {
     try (
-        Connection con = conFactory.getConnection();
+        Connection con = dataSource.getConnection();
 
         Statement stmt = con.createStatement()) {
 

@@ -2,8 +2,8 @@ package jeoneunhye.vms;
 
 import java.util.Map;
 import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.sql.DataSource;
 import jeoneunhye.sql.PlatformTransactionManager;
-import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
 import jeoneunhye.vms.dao.mariadb.PhotoBoardDaoImpl;
@@ -17,21 +17,23 @@ public class DataLoaderListener implements ApplicationContextListener {
     String username = "eunhye";
     String password = "1111";
 
-    ConnectionFactory conFactory = new ConnectionFactory(
+    DataSource dataSource = new DataSource(
         jdbcUrl, username, password);
-    context.put("connectionFactory", conFactory);
+    context.put("dataSource", dataSource);
 
-    context.put("videoDao", new VideoDaoImpl(conFactory));
-    context.put("memberDao", new MemberDaoImpl(conFactory));
-    context.put("boardDao", new BoardDaoImpl(conFactory));
-    context.put("photoBoardDao", new PhotoBoardDaoImpl(conFactory));
-    context.put("photoFileDao", new PhotoFileDaoImpl(conFactory));
+    context.put("videoDao", new VideoDaoImpl(dataSource));
+    context.put("memberDao", new MemberDaoImpl(dataSource));
+    context.put("boardDao", new BoardDaoImpl(dataSource));
+    context.put("photoBoardDao", new PhotoBoardDaoImpl(dataSource));
+    context.put("photoFileDao", new PhotoFileDaoImpl(dataSource));
 
-    PlatformTransactionManager txManager = new PlatformTransactionManager(conFactory);
+    PlatformTransactionManager txManager = new PlatformTransactionManager(dataSource);
     context.put("transactionManager", txManager);
   }
 
   @Override
   public void contextDestroyed(Map<String, Object> context) {
+    DataSource dataSource = (DataSource) context.get("dataSource");
+    dataSource.clean();
   }
 }
