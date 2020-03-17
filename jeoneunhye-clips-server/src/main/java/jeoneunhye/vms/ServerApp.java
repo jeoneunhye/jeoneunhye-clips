@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
@@ -73,6 +74,8 @@ public class ServerApp {
   public void service() {
     notifyApplicationInitialized();
 
+    ConnectionFactory conFactory = (ConnectionFactory) context.get("connectionFactory");
+
     VideoDao videoDao = (VideoDao) context.get("videoDao");
     MemberDao memberDao = (MemberDao) context.get("memberDao");
     BoardDao boardDao = (BoardDao) context.get("boardDao");
@@ -115,6 +118,9 @@ public class ServerApp {
 
         executorService.submit(() -> {
           processRequest(socket);
+
+          conFactory.removeConnection();
+
           System.out.println("-----클라이언트 요청 처리 완료");
         });
 
