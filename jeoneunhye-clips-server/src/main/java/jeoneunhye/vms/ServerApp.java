@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.sql.ConnectionProxy;
 import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
@@ -119,7 +121,13 @@ public class ServerApp {
         executorService.submit(() -> {
           processRequest(socket);
 
-          conFactory.removeConnection();
+          ConnectionProxy con = (ConnectionProxy) conFactory.removeConnection();
+          if (con != null) {
+            try {
+              con.realClose();
+
+            } catch (SQLException e) {}
+          }
 
           System.out.println("-----클라이언트 요청 처리 완료");
         });

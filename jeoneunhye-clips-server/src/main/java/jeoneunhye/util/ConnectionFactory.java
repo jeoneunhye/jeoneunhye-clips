@@ -2,6 +2,7 @@ package jeoneunhye.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import jeoneunhye.sql.ConnectionProxy;
 
 public class ConnectionFactory {
   String jdbcUrl;
@@ -24,7 +25,7 @@ public class ConnectionFactory {
       return con;
     }
 
-    con = DriverManager.getConnection(jdbcUrl, username, password);
+    con = new ConnectionProxy(DriverManager.getConnection(jdbcUrl, username, password));
     System.out.println("새 Connection을 사용합니다.");
 
     connectionLocal.set(con);
@@ -32,10 +33,12 @@ public class ConnectionFactory {
     return con;
   }
 
-  public void removeConnection() {
+  public Connection removeConnection() {
     Connection con = connectionLocal.get();
     if (con != null) {
       connectionLocal.remove();
     }
+
+    return con;
   }
 }
