@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.ConnectionProxy;
+import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
@@ -84,6 +85,8 @@ public class ServerApp {
     PhotoBoardDao photoBoardDao = (PhotoBoardDao) context.get("photoBoardDao");
     PhotoFileDao photoFileDao = (PhotoFileDao) context.get("photoFileDao");
 
+    PlatformTransactionManager txManager = (PlatformTransactionManager) context.get("transactionManager");
+
     servletMap.put("/video/add", new VideoAddServlet(videoDao));
     servletMap.put("/video/list", new VideoListServlet(videoDao));
     servletMap.put("/video/detail", new VideoDetailServlet(videoDao));
@@ -103,11 +106,11 @@ public class ServerApp {
     servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
     servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
-    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(conFactory, photoBoardDao, videoDao, photoFileDao));
+    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(txManager, photoBoardDao, videoDao, photoFileDao));
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, videoDao));
     servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(conFactory, photoBoardDao, photoFileDao));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(conFactory, photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(txManager, photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(txManager, photoBoardDao, photoFileDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 

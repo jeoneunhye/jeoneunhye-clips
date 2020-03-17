@@ -2,6 +2,7 @@ package jeoneunhye.vms;
 
 import java.util.Map;
 import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
@@ -25,6 +26,9 @@ public class DataLoaderListener implements ApplicationContextListener {
     context.put("boardDao", new BoardDaoImpl(conFactory));
     context.put("photoBoardDao", new PhotoBoardDaoImpl(conFactory));
     context.put("photoFileDao", new PhotoFileDaoImpl(conFactory));
+
+    PlatformTransactionManager txManager = new PlatformTransactionManager(conFactory);
+    context.put("transactionManager", txManager);
   }
 
   @Override

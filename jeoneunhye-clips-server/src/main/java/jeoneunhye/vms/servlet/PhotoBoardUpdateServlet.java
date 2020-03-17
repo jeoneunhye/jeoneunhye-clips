@@ -1,11 +1,10 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import jeoneunhye.util.ConnectionFactory;
+import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
@@ -13,13 +12,13 @@ import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 
 public class PhotoBoardUpdateServlet implements Servlet {
-  ConnectionFactory conFactory;
+  PlatformTransactionManager txManager;
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
 
-  public PhotoBoardUpdateServlet(ConnectionFactory conFactory,
+  public PhotoBoardUpdateServlet(PlatformTransactionManager txManager,
       PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
-    this.conFactory = conFactory;
+    this.txManager = txManager;
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
   }
@@ -43,8 +42,7 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setCreatedDate(oldPhotoBoard.getCreatedDate());
     newPhotoBoard.setViewCount(oldPhotoBoard.getViewCount());
 
-    Connection con = conFactory.getConnection();
-    con.setAutoCommit(false);
+    txManager.beginTransaction();
 
     try {
       if (photoBoardDao.update(newPhotoBoard) == 0) {
@@ -69,15 +67,12 @@ public class PhotoBoardUpdateServlet implements Servlet {
         }
       }
 
-      con.commit();
+      txManager.commit();
       out.println("사진 게시글을 변경하였습니다.");
 
     } catch (Exception e) {
-      con.rollback();
+      txManager.rollback();
       out.println(e.getMessage());
-
-    } finally {
-      con.setAutoCommit(true);
     }
   }
 
