@@ -103,11 +103,11 @@ public class ServerApp {
     servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
     servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
 
-    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardDao, videoDao, photoFileDao));
+    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(conFactory, photoBoardDao, videoDao, photoFileDao));
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, videoDao));
     servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardDao, photoFileDao));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(conFactory, photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(conFactory, photoBoardDao, photoFileDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 

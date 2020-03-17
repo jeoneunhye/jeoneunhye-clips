@@ -1,9 +1,11 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
@@ -13,12 +15,14 @@ import jeoneunhye.vms.domain.PhotoFile;
 import jeoneunhye.vms.domain.Video;
 
 public class PhotoBoardAddServlet implements Servlet {
+  ConnectionFactory conFactory;
   PhotoBoardDao photoBoardDao;
   VideoDao videoDao;
   PhotoFileDao photoFileDao;
 
-  public PhotoBoardAddServlet(PhotoBoardDao photoBoardDao, VideoDao videoDao,
-      PhotoFileDao photoFileDao) {
+  public PhotoBoardAddServlet(ConnectionFactory conFactory, PhotoBoardDao photoBoardDao,
+      VideoDao videoDao, PhotoFileDao photoFileDao) {
+    this.conFactory = conFactory;
     this.photoBoardDao = photoBoardDao;
     this.videoDao = videoDao;
     this.photoFileDao = photoFileDao;
@@ -40,6 +44,9 @@ public class PhotoBoardAddServlet implements Servlet {
 
     photoBoard.setVideo(video);
 
+    Connection con = conFactory.getConnection();
+    con.setAutoCommit(false);
+
     try {
       if (photoBoardDao.insert(photoBoard) == 0) {
         throw new Exception("사진 게시글을 저장할 수 없습니다.");
@@ -52,10 +59,15 @@ public class PhotoBoardAddServlet implements Servlet {
         photoFileDao.insert(photoFile);
       }
 
+      con.commit();
       out.println("사진 게시글을 저장하였습니다.");
 
     } catch (Exception e) {
+      con.rollback();
       out.println(e.getMessage());
+
+    } finally {
+      con.setAutoCommit(true);
     }
   }
 

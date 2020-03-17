@@ -1,16 +1,21 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.util.Scanner;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 
 public class PhotoBoardDeleteServlet implements Servlet {
+  ConnectionFactory conFactory;
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
 
-  public PhotoBoardDeleteServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
+  public PhotoBoardDeleteServlet(ConnectionFactory conFactory,
+      PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
+    this.conFactory = conFactory;
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
   }
@@ -19,6 +24,9 @@ public class PhotoBoardDeleteServlet implements Servlet {
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = Prompt.getInt(in, out, "번호? ");
 
+    Connection con = conFactory.getConnection();
+    con.setAutoCommit(false);
+
     try {
       photoFileDao.deleteAll(no);
 
@@ -26,10 +34,15 @@ public class PhotoBoardDeleteServlet implements Servlet {
         throw new Exception("해당 번호의 사진 게시글이 없습니다.");
       }
 
+      con.commit();
       out.println("사진 게시글을 삭제하였습니다.");
 
     } catch (Exception e) {
+      con.rollback();
       out.println(e.getMessage());
+
+    } finally {
+      con.setAutoCommit(true);
     }
   }
 }

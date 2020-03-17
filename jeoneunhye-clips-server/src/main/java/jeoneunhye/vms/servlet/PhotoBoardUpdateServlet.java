@@ -1,9 +1,11 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.ConnectionFactory;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
@@ -11,10 +13,13 @@ import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 
 public class PhotoBoardUpdateServlet implements Servlet {
+  ConnectionFactory conFactory;
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
 
-  public PhotoBoardUpdateServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
+  public PhotoBoardUpdateServlet(ConnectionFactory conFactory,
+      PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
+    this.conFactory = conFactory;
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
   }
@@ -37,6 +42,9 @@ public class PhotoBoardUpdateServlet implements Servlet {
         oldPhotoBoard.getContent()));
     newPhotoBoard.setCreatedDate(oldPhotoBoard.getCreatedDate());
     newPhotoBoard.setViewCount(oldPhotoBoard.getViewCount());
+
+    Connection con = conFactory.getConnection();
+    con.setAutoCommit(false);
 
     try {
       if (photoBoardDao.update(newPhotoBoard) == 0) {
@@ -61,10 +69,15 @@ public class PhotoBoardUpdateServlet implements Servlet {
         }
       }
 
+      con.commit();
       out.println("사진 게시글을 변경하였습니다.");
 
     } catch (Exception e) {
+      con.rollback();
       out.println(e.getMessage());
+
+    } finally {
+      con.setAutoCommit(true);
     }
   }
 
