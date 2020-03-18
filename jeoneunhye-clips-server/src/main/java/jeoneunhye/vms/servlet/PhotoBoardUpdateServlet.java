@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.sql.PlatformTransactionManager;
+import jeoneunhye.sql.TransactionTemplate;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
@@ -12,13 +13,13 @@ import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 
 public class PhotoBoardUpdateServlet implements Servlet {
-  PlatformTransactionManager txManager;
+  TransactionTemplate transactionTemplate;
   PhotoBoardDao photoBoardDao;
   PhotoFileDao photoFileDao;
 
   public PhotoBoardUpdateServlet(PlatformTransactionManager txManager,
       PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
-    this.txManager = txManager;
+    this.transactionTemplate = new TransactionTemplate(txManager);
     this.photoBoardDao = photoBoardDao;
     this.photoFileDao = photoFileDao;
   }
@@ -42,9 +43,7 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setCreatedDate(oldPhotoBoard.getCreatedDate());
     newPhotoBoard.setViewCount(oldPhotoBoard.getViewCount());
 
-    txManager.beginTransaction();
-
-    try {
+    transactionTemplate.execute(() -> {
       if (photoBoardDao.update(newPhotoBoard) == 0) {
         throw new Exception("사진 게시글을 변경할 수 없습니다.");
       }
@@ -67,13 +66,10 @@ public class PhotoBoardUpdateServlet implements Servlet {
         }
       }
 
-      txManager.commit();
       out.println("사진 게시글을 변경하였습니다.");
 
-    } catch (Exception e) {
-      txManager.rollback();
-      out.println(e.getMessage());
-    }
+      return null;
+    });
   }
 
   private ArrayList<PhotoFile> inputPhotoFiles(Scanner in, PrintStream out) {

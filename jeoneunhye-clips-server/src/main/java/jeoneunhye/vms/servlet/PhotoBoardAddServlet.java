@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.sql.PlatformTransactionManager;
+import jeoneunhye.sql.TransactionCallback;
+import jeoneunhye.sql.TransactionTemplate;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
@@ -14,14 +16,14 @@ import jeoneunhye.vms.domain.PhotoFile;
 import jeoneunhye.vms.domain.Video;
 
 public class PhotoBoardAddServlet implements Servlet {
-  PlatformTransactionManager txManager;
+  TransactionTemplate transactionTemplate;
   PhotoBoardDao photoBoardDao;
   VideoDao videoDao;
   PhotoFileDao photoFileDao;
 
   public PhotoBoardAddServlet(PlatformTransactionManager txManager, PhotoBoardDao photoBoardDao,
       VideoDao videoDao, PhotoFileDao photoFileDao) {
-    this.txManager = txManager;
+    this.transactionTemplate = new TransactionTemplate(txManager);
     this.photoBoardDao = photoBoardDao;
     this.videoDao = videoDao;
     this.photoFileDao = photoFileDao;
@@ -43,27 +45,26 @@ public class PhotoBoardAddServlet implements Servlet {
 
     photoBoard.setVideo(video);
 
-    txManager.beginTransaction();
+    List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
 
-    try {
-      if (photoBoardDao.insert(photoBoard) == 0) {
-        throw new Exception("사진 게시글을 저장할 수 없습니다.");
+    transactionTemplate.execute(new TransactionCallback() {
+      @Override
+      public Object doInTransaction() throws Exception {
+        if (photoBoardDao.insert(photoBoard) == 0) {
+          throw new Exception("사진 게시글을 등록할 수 없습니다.");
+        }
+
+        for (PhotoFile photoFile : photoFiles) {
+          photoFile.setBoardNo(photoBoard.getNo());
+
+          photoFileDao.insert(photoFile);
+        }
+
+        out.println("사진 게시글을 등록하였습니다.");
+
+        return null;
       }
-
-      List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
-      for (PhotoFile photoFile : photoFiles) {
-        photoFile.setBoardNo(photoBoard.getNo());
-
-        photoFileDao.insert(photoFile);
-      }
-
-      txManager.commit();
-      out.println("사진 게시글을 저장하였습니다.");
-
-    } catch (Exception e) {
-      txManager.rollback();
-      out.println(e.getMessage());
-    }
+    });
   }
 
   private ArrayList<PhotoFile> inputPhotoFiles(Scanner in, PrintStream out) {
