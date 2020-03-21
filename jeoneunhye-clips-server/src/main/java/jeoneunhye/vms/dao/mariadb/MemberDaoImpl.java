@@ -24,8 +24,8 @@ public class MemberDaoImpl implements MemberDao {
         Statement stmt = con.createStatement()) {
 
       int result = stmt.executeUpdate("insert into vms_member(id, nickname, pwd, phone, email)"
-          + " values('" + member.getId() + "', '" + member.getNickname() + "', '"
-          + member.getPassword() + "', '" + member.getPhone() + "', '" + member.getEmail() + "')");
+          + " values('" + member.getId() + "', '" + member.getNickname() + "', password('"
+          + member.getPassword() + "'), '" + member.getPhone() + "', '" + member.getEmail() + "')");
 
       return result;
     }
@@ -96,7 +96,7 @@ public class MemberDaoImpl implements MemberDao {
 
       int result = stmt.executeUpdate("update vms_member set"
           + " nickname='" + member.getNickname() + "',"
-          + " pwd='" + member.getPassword() + "',"
+          + " pwd=password('" + member.getPassword() + "'),"
           + " phone='" + member.getPhone() + "',"
           + " email='" + member.getEmail() + "'"
           + " where member_id=" + member.getNo());
@@ -145,6 +145,35 @@ public class MemberDaoImpl implements MemberDao {
       }
 
       return list;
+    }
+  }
+  
+  @Override
+  public Member findByEmailAndPassword(String email, String password) throws Exception {
+    try (
+        Connection con = dataSource.getConnection();
+
+        Statement stmt = con.createStatement();
+
+        ResultSet rs = stmt.executeQuery(
+            "select member_id, id, nickname, pwd, phone, email, cdt from vms_member"
+                + " where email='" + email + "' and pwd=password('" + password + "')")) {
+
+      if (rs.next()) {
+        Member member = new Member();
+        member.setNo(rs.getInt("member_id"));
+        member.setId(rs.getString("id"));
+        member.setNickname(rs.getString("nickname"));
+        member.setPassword(rs.getString("pwd"));
+        member.setPhone(rs.getString("phone"));
+        member.setEmail(rs.getString("email"));
+        member.setRegisteredDate(rs.getDate("cdt"));
+        
+        return member;
+
+      } else {
+        return null;
+      }
     }
   }
 }

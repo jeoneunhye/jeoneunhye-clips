@@ -25,6 +25,7 @@ import jeoneunhye.vms.servlet.BoardDeleteServlet;
 import jeoneunhye.vms.servlet.BoardDetailServlet;
 import jeoneunhye.vms.servlet.BoardListServlet;
 import jeoneunhye.vms.servlet.BoardUpdateServlet;
+import jeoneunhye.vms.servlet.LoginServlet;
 import jeoneunhye.vms.servlet.MemberAddServlet;
 import jeoneunhye.vms.servlet.MemberDeleteServlet;
 import jeoneunhye.vms.servlet.MemberDetailServlet;
@@ -109,6 +110,8 @@ public class ServerApp {
     servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
     servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(txManager, photoBoardDao, photoFileDao));
     servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(txManager, photoBoardDao, photoFileDao));
+
+    servletMap.put("/auth/login", new LoginServlet(memberDao));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 
