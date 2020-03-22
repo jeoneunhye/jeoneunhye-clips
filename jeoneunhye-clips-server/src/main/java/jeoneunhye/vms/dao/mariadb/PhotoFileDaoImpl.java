@@ -1,8 +1,8 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import jeoneunhye.sql.DataSource;
@@ -21,13 +21,13 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "insert into vms_photo_file(photo_id,file_path) values(?,?)")) {
 
-      int result = stmt.executeUpdate(
-          "insert into vms_photo_file(photo_id,file_path) values("
-              + photoFile.getBoardNo() + ", '" + photoFile.getFilepath() + "')");
+      stmt.setInt(1, photoFile.getBoardNo());
+      stmt.setString(2, photoFile.getFilepath());
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 
@@ -36,24 +36,26 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
+        PreparedStatement stmt = con.prepareStatement(
+            "select photo_file_id, photo_id, file_path from vms_photo_file"
+            + " where photo_id=?"
+            + " order by photo_file_id asc")) {
+        
+        stmt.setInt(1, boardNo);
 
-        ResultSet rs = stmt.executeQuery(
-            "select photo_file_id, photo_id, file_path"
-                + " from vms_photo_file"
-                + " where photo_id=" + boardNo
-                + " order by photo_file_id asc")) {
-
-      ArrayList<PhotoFile> list = new ArrayList<>();
-
-      while (rs.next()) {
-        list.add(new PhotoFile()
-            .setNo(rs.getInt("photo_file_id"))
-            .setFilepath(rs.getString("file_path"))
-            .setBoardNo(rs.getInt("photo_id")));
+          try (ResultSet rs = stmt.executeQuery()) {
+  
+        ArrayList<PhotoFile> list = new ArrayList<>();
+  
+        while (rs.next()) {
+          list.add(new PhotoFile()
+              .setNo(rs.getInt("photo_file_id"))
+              .setFilepath(rs.getString("file_path"))
+              .setBoardNo(rs.getInt("photo_id")));
+        }
+  
+        return list;
       }
-
-      return list;
     }
   }
 
@@ -62,13 +64,12 @@ public class PhotoFileDaoImpl implements PhotoFileDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "delete from vms_photo_file where photo_id=?")) {
+      
+      stmt.setInt(1, boardNo);
 
-      int result = stmt.executeUpdate(
-          "delete from vms_photo_file"
-              + " where photo_id=" + boardNo);
-
-      return result;
+      return stmt.executeUpdate();
     }
   }
 }

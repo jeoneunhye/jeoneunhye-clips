@@ -1,8 +1,8 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import jeoneunhye.sql.DataSource;
@@ -21,13 +21,14 @@ public class BoardDaoImpl implements BoardDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+                "insert into vms_board(titl, conts, writer) values(?,?,?)")) {
 
-      int result = stmt.executeUpdate("insert into vms_board(titl, conts, writer)"
-          + " values('" + board.getTitle() + "', '" + board.getContents() + "', '"
-          + board.getWriter() + "')");
+      stmt.setString(1, board.getTitle());
+      stmt.setString(2, board.getContents());
+      stmt.setString(3, board.getWriter());
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 
@@ -36,10 +37,10 @@ public class BoardDaoImpl implements BoardDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
+        PreparedStatement stmt = con.prepareStatement(
+                "select board_id, titl, writer, cdt, vw_cnt from vms_board");
 
-        ResultSet rs = stmt.executeQuery(
-            "select board_id, titl, writer, cdt, vw_cnt from vms_board")) {
+        ResultSet rs = stmt.executeQuery()) {
 
       ArrayList<Board> list = new ArrayList<>();
 
@@ -55,7 +56,7 @@ public class BoardDaoImpl implements BoardDao {
       }
 
       return list;
-    }
+      }
   }
 
   @Override
@@ -63,25 +64,28 @@ public class BoardDaoImpl implements BoardDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
-
-        ResultSet rs = stmt.executeQuery(
+        PreparedStatement stmt = con.prepareStatement(
             "select board_id, titl, conts, writer, cdt, vw_cnt from vms_board"
-                + " where board_id=" + no)) {
+                + " where board_id=?")) {
 
-      if (rs.next()) {
-        Board board = new Board();
-        board.setNo(rs.getInt("board_id"));
-        board.setTitle(rs.getString("titl"));
-        board.setContents(rs.getString("conts"));
-        board.setWriter(rs.getString("writer"));
-        board.setWriteDate(rs.getDate("cdt"));
-        board.setViewCount(rs.getInt("vw_cnt"));
+      stmt.setInt(1, no);
 
-        return board;
+      try (ResultSet rs = stmt.executeQuery()) {
 
-      } else {
-        return null;
+        if (rs.next()) {
+          Board board = new Board();
+          board.setNo(rs.getInt("board_id"));
+          board.setTitle(rs.getString("titl"));
+          board.setContents(rs.getString("conts"));
+          board.setWriter(rs.getString("writer"));
+          board.setWriteDate(rs.getDate("cdt"));
+          board.setViewCount(rs.getInt("vw_cnt"));
+
+          return board;
+
+        } else {
+          return null;
+        }
       }
     }
   }
@@ -91,15 +95,15 @@ public class BoardDaoImpl implements BoardDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "update vms_board set titl=?, conts=?, writer=? where board_id=?")) {
 
-      int result = stmt.executeUpdate("update vms_board set"
-          + " titl='" + board.getTitle() + "',"
-          + " conts='" + board.getContents() + "',"
-          + " writer='" + board.getWriter() + "'"
-          + " where board_id=" + board.getNo());
+      stmt.setString(1, board.getTitle());
+      stmt.setString(2, board.getContents());
+      stmt.setString(3, board.getWriter());
+      stmt.setInt(4, board.getNo());
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 
@@ -108,11 +112,12 @@ public class BoardDaoImpl implements BoardDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "delete from vms_board where board_id=?")) {
 
-      int result = stmt.executeUpdate("delete from vms_board where board_id=" + no);
+      stmt.setInt(1, no);
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 }

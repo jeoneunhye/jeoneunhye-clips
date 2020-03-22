@@ -1,8 +1,8 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import jeoneunhye.sql.DataSource;
@@ -21,13 +21,17 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "insert into vms_member(id, nickname, pwd, phone, email)"
+                + " values(?,?,password(?),?,?)")) {
 
-      int result = stmt.executeUpdate("insert into vms_member(id, nickname, pwd, phone, email)"
-          + " values('" + member.getId() + "', '" + member.getNickname() + "', password('"
-          + member.getPassword() + "'), '" + member.getPhone() + "', '" + member.getEmail() + "')");
+      stmt.setString(1, member.getId());
+      stmt.setString(2, member.getNickname());
+      stmt.setString(3, member.getPassword());
+      stmt.setString(4, member.getPhone());
+      stmt.setString(5, member.getEmail());
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 
@@ -36,10 +40,10 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
+        PreparedStatement stmt = con.prepareStatement(
+            "select member_id, id, phone, email, cdt from vms_member");
 
-        ResultSet rs = stmt.executeQuery(
-            "select member_id, id, phone, email, cdt from vms_member")) {
+        ResultSet rs = stmt.executeQuery()) {
 
       ArrayList<Member> list = new ArrayList<>();
 
@@ -63,26 +67,29 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
-
-        ResultSet rs = stmt.executeQuery(
+        PreparedStatement stmt = con.prepareStatement(
             "select member_id, id, nickname, pwd, phone, email, cdt from vms_member"
-                + " where member_id=" + no)) {
+                + " where member_id=?")) {
 
-      if (rs.next()) {
-        Member member = new Member();
-        member.setNo(rs.getInt("member_id"));
-        member.setId(rs.getString("id"));
-        member.setNickname(rs.getString("nickname"));
-        member.setPassword(rs.getString("pwd"));
-        member.setPhone(rs.getString("phone"));
-        member.setEmail(rs.getString("email"));
-        member.setRegisteredDate(rs.getDate("cdt"));
+      stmt.setInt(1, no);
 
-        return member;
+      try (ResultSet rs = stmt.executeQuery()) {
 
-      } else {
-        return null;
+        if (rs.next()) {
+          Member member = new Member();
+          member.setNo(rs.getInt("member_id"));
+          member.setId(rs.getString("id"));
+          member.setNickname(rs.getString("nickname"));
+          member.setPassword(rs.getString("pwd"));
+          member.setPhone(rs.getString("phone"));
+          member.setEmail(rs.getString("email"));
+          member.setRegisteredDate(rs.getDate("cdt"));
+
+          return member;
+
+        } else {
+          return null;
+        }
       }
     }
   }
@@ -92,16 +99,17 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "update vms_member set"
+                + " nickname=?, pwd=password(?), phone=?, email=? where member_id=?")) {
 
-      int result = stmt.executeUpdate("update vms_member set"
-          + " nickname='" + member.getNickname() + "',"
-          + " pwd=password('" + member.getPassword() + "'),"
-          + " phone='" + member.getPhone() + "',"
-          + " email='" + member.getEmail() + "'"
-          + " where member_id=" + member.getNo());
+      stmt.setString(1, member.getNickname());
+      stmt.setString(2, member.getPassword());
+      stmt.setString(3, member.getPhone());
+      stmt.setString(4, member.getEmail());
+      stmt.setInt(5, member.getNo());
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 
@@ -110,11 +118,12 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement()) {
+        PreparedStatement stmt = con.prepareStatement(
+            "delete from vms_member where member_id=?")) {
 
-      int result = stmt.executeUpdate("delete from vms_member where member_id=" + no);
+      stmt.setInt(1, no);
 
-      return result;
+      return stmt.executeUpdate();
     }
   }
 
@@ -123,28 +132,32 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
-
-        ResultSet rs = stmt.executeQuery(
+        PreparedStatement stmt = con.prepareStatement(
             "select member_id, id, phone, email, cdt from vms_member"
-                + " where id like '%" + keyword + "%'"
-                + " or phone like '%" + keyword + "%'"
-                + " or email like '%" + keyword + "%'")) {
+                + " where id like ? or phone like ? or email like ?")) {
 
-      ArrayList<Member> list = new ArrayList<>();
+      String value = "%" + keyword + "%";
+      stmt.setString(1, value);
+      stmt.setString(2, value);
+      stmt.setString(3, value);
 
-      while (rs.next()) {
-        Member member = new Member();
-        member.setNo(rs.getInt("member_id"));
-        member.setId(rs.getString("id"));
-        member.setPhone(rs.getString("phone"));
-        member.setEmail(rs.getString("email"));
-        member.setRegisteredDate(rs.getDate("cdt"));
+      try (ResultSet rs = stmt.executeQuery()) {
 
-        list.add(member);
+        ArrayList<Member> list = new ArrayList<>();
+
+        while (rs.next()) {
+          Member member = new Member();
+          member.setNo(rs.getInt("member_id"));
+          member.setId(rs.getString("id"));
+          member.setPhone(rs.getString("phone"));
+          member.setEmail(rs.getString("email"));
+          member.setRegisteredDate(rs.getDate("cdt"));
+
+          list.add(member);
+        }
+
+        return list;
       }
-
-      return list;
     }
   }
   
@@ -153,26 +166,30 @@ public class MemberDaoImpl implements MemberDao {
     try (
         Connection con = dataSource.getConnection();
 
-        Statement stmt = con.createStatement();
-
-        ResultSet rs = stmt.executeQuery(
+        PreparedStatement stmt = con.prepareStatement(
             "select member_id, id, nickname, pwd, phone, email, cdt from vms_member"
-                + " where email='" + email + "' and pwd=password('" + password + "')")) {
+                + " where email=? and pwd=password(?)")) {
 
-      if (rs.next()) {
-        Member member = new Member();
-        member.setNo(rs.getInt("member_id"));
-        member.setId(rs.getString("id"));
-        member.setNickname(rs.getString("nickname"));
-        member.setPassword(rs.getString("pwd"));
-        member.setPhone(rs.getString("phone"));
-        member.setEmail(rs.getString("email"));
-        member.setRegisteredDate(rs.getDate("cdt"));
-        
-        return member;
+      stmt.setString(1, email);
+      stmt.setString(2, password);
 
-      } else {
-        return null;
+      try (ResultSet rs = stmt.executeQuery()) {
+
+        if (rs.next()) {
+          Member member = new Member();
+          member.setNo(rs.getInt("member_id"));
+          member.setId(rs.getString("id"));
+          member.setNickname(rs.getString("nickname"));
+          member.setPassword(rs.getString("pwd"));
+          member.setPhone(rs.getString("phone"));
+          member.setEmail(rs.getString("email"));
+          member.setRegisteredDate(rs.getDate("cdt"));
+
+          return member;
+
+        } else {
+          return null;
+        }
       }
     }
   }
