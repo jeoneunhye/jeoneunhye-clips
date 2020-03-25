@@ -1,21 +1,17 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.dao.PhotoBoardDao;
-import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 
 public class PhotoBoardDetailServlet implements Servlet {
   PhotoBoardDao photoBoardDao;
-  PhotoFileDao photoFileDao;
 
-  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
+  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao) {
     this.photoBoardDao = photoBoardDao;
-    this.photoFileDao = photoFileDao;
   }
 
   @Override
@@ -30,8 +26,7 @@ public class PhotoBoardDetailServlet implements Servlet {
       out.printf("작성일: %s\n", photoBoard.getCreatedDate());
       out.printf("조회수: %d\n", photoBoard.getViewCount());
 
-      List<PhotoFile> photoFiles = photoFileDao.findAll(photoBoard.getNo());
-      for (PhotoFile photoFile : photoFiles) {
+      for (PhotoFile photoFile : photoBoard.getFiles()) {
         out.printf("> %s\n", photoFile.getFilepath());
       }
 

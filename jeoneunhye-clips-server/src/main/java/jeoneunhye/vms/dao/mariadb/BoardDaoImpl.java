@@ -1,123 +1,59 @@
 package jeoneunhye.vms.dao.mariadb;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.List;
-import jeoneunhye.sql.DataSource;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 
 public class BoardDaoImpl implements BoardDao {
-  DataSource dataSource;
+  SqlSessionFactory sqlSessionFactory;
 
-  public BoardDaoImpl(DataSource dataSource) {
-    this.dataSource = dataSource;
+  public BoardDaoImpl(SqlSessionFactory sqlSessionFactory) {
+    this.sqlSessionFactory = sqlSessionFactory;
   }
 
   @Override
   public int insert(Board board) throws Exception {
-    try (
-        Connection con = dataSource.getConnection();
+    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      int count = sqlSession.insert("BoardMapper.insertBoard", board);
+      sqlSession.commit();
 
-        PreparedStatement stmt = con.prepareStatement(
-                "insert into vms_board(titl, conts, writer) values(?,?,?)")) {
-
-      stmt.setString(1, board.getTitle());
-      stmt.setString(2, board.getContents());
-      stmt.setString(3, board.getWriter());
-
-      return stmt.executeUpdate();
+      return count;
     }
   }
 
   @Override
   public List<Board> findAll() throws Exception {
-    try (
-        Connection con = dataSource.getConnection();
-
-        PreparedStatement stmt = con.prepareStatement(
-                "select board_id, titl, writer, cdt, vw_cnt from vms_board");
-
-        ResultSet rs = stmt.executeQuery()) {
-
-      ArrayList<Board> list = new ArrayList<>();
-
-      while (rs.next()) {
-        Board board = new Board();
-        board.setNo(rs.getInt("board_id"));
-        board.setTitle(rs.getString("titl"));
-        board.setWriter(rs.getString("writer"));
-        board.setWriteDate(rs.getDate("cdt"));
-        board.setViewCount(rs.getInt("vw_cnt"));
-
-        list.add(board);
-      }
-
-      return list;
-      }
+    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      return sqlSession.selectList("BoardMapper.selectBoard");
+    }
   }
 
   @Override
   public Board findByNo(int no) throws Exception {
-    try (
-        Connection con = dataSource.getConnection();
-
-        PreparedStatement stmt = con.prepareStatement(
-            "select board_id, titl, conts, writer, cdt, vw_cnt from vms_board"
-                + " where board_id=?")) {
-
-      stmt.setInt(1, no);
-
-      try (ResultSet rs = stmt.executeQuery()) {
-
-        if (rs.next()) {
-          Board board = new Board();
-          board.setNo(rs.getInt("board_id"));
-          board.setTitle(rs.getString("titl"));
-          board.setContents(rs.getString("conts"));
-          board.setWriter(rs.getString("writer"));
-          board.setWriteDate(rs.getDate("cdt"));
-          board.setViewCount(rs.getInt("vw_cnt"));
-
-          return board;
-
-        } else {
-          return null;
-        }
-      }
+    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      return sqlSession.selectOne("BoardMapper.selectDetail", no);
     }
   }
 
   @Override
   public int update(Board board) throws Exception {
-    try (
-        Connection con = dataSource.getConnection();
+    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      int count = sqlSession.update("BoardMapper.updateBoard", board);
+      sqlSession.commit();
 
-        PreparedStatement stmt = con.prepareStatement(
-            "update vms_board set titl=?, conts=?, writer=? where board_id=?")) {
-
-      stmt.setString(1, board.getTitle());
-      stmt.setString(2, board.getContents());
-      stmt.setString(3, board.getWriter());
-      stmt.setInt(4, board.getNo());
-
-      return stmt.executeUpdate();
+      return count;
     }
   }
 
   @Override
   public int delete(int no) throws Exception {
-    try (
-        Connection con = dataSource.getConnection();
+    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      int count = sqlSession.delete("BoardMapper.deleteBoard", no);
+      sqlSession.commit();
 
-        PreparedStatement stmt = con.prepareStatement(
-            "delete from vms_board where board_id=?")) {
-
-      stmt.setInt(1, no);
-
-      return stmt.executeUpdate();
+      return count;
     }
   }
 }

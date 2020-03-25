@@ -107,7 +107,7 @@ public class ServerApp {
 
     servletMap.put("/photoboard/add", new PhotoBoardAddServlet(txManager, photoBoardDao, videoDao, photoFileDao));
     servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, videoDao));
-    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao, photoFileDao));
+    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao));
     servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(txManager, photoBoardDao, photoFileDao));
     servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(txManager, photoBoardDao, photoFileDao));
 

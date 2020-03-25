@@ -1,6 +1,10 @@
 package jeoneunhye.vms;
 
+import java.io.InputStream;
 import java.util.Map;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.DataSource;
 import jeoneunhye.sql.PlatformTransactionManager;
@@ -13,22 +17,32 @@ import jeoneunhye.vms.dao.mariadb.VideoDaoImpl;
 public class DataLoaderListener implements ApplicationContextListener {
   @Override
   public void contextInitialized(Map<String, Object> context) {
-    String jdbcUrl = "jdbc:mariadb://localhost:3306/vmsdb";
-    String username = "eunhye";
-    String password = "1111";
+    try {
+      String jdbcUrl = "jdbc:mariadb://localhost:3306/vmsdb";
+      String username = "eunhye";
+      String password = "1111";
 
-    DataSource dataSource = new DataSource(
-        jdbcUrl, username, password);
-    context.put("dataSource", dataSource);
+      DataSource dataSource = new DataSource(
+          jdbcUrl, username, password);
+      context.put("dataSource", dataSource);
 
-    context.put("videoDao", new VideoDaoImpl(dataSource));
-    context.put("memberDao", new MemberDaoImpl(dataSource));
-    context.put("boardDao", new BoardDaoImpl(dataSource));
-    context.put("photoBoardDao", new PhotoBoardDaoImpl(dataSource));
-    context.put("photoFileDao", new PhotoFileDaoImpl(dataSource));
+      InputStream inputStream = Resources.getResourceAsStream(
+          "jeoneunhye/vms/conf/mybatis-config.xml");
+      SqlSessionFactory sqlSessionFactory =
+          new SqlSessionFactoryBuilder().build(inputStream);
 
-    PlatformTransactionManager txManager = new PlatformTransactionManager(dataSource);
-    context.put("transactionManager", txManager);
+      context.put("videoDao", new VideoDaoImpl(sqlSessionFactory));
+      context.put("memberDao", new MemberDaoImpl(sqlSessionFactory));
+      context.put("boardDao", new BoardDaoImpl(sqlSessionFactory));
+      context.put("photoBoardDao", new PhotoBoardDaoImpl(sqlSessionFactory));
+      context.put("photoFileDao", new PhotoFileDaoImpl(sqlSessionFactory));
+
+      PlatformTransactionManager txManager = new PlatformTransactionManager(dataSource);
+      context.put("transactionManager", txManager);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override

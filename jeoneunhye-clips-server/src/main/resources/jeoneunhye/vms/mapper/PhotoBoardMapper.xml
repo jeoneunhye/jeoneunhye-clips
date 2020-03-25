@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PhotoBoardMapper">
+
+  <resultMap type="PhotoBoard" id="PhotoBoardMap">
+    <id column="photo_id"   property="no"/>
+    <result column="titl"   property="title"/>
+    <result column="conts"  property="content"/>
+    <result column="cdt"    property="createdDate"/>
+    <result column="vw_cnt" property="viewCount"/>
+
+    <association property="video" javaType="Video">
+      <id column="video_id"       property="no"/>
+      <result column="video_titl" property="title"/>
+    </association>
+    
+    <collection property="files" ofType="PhotoFile">
+      <id column="photo_file_id" property="no"/>
+      <result column="file_path" property="filepath"/>
+    </collection>
+  </resultMap>
+
+  <insert id="insertPhotoBoard" parameterType="PhotoBoard"
+    useGeneratedKeys="true" keyColumn="photo_id" keyProperty="no">
+    insert into vms_photo(
+      titl,
+      conts,
+      video_id)
+    values(
+      #{title}, 
+      #{content}, 
+      #{video.no})
+  </insert>
+
+  <select id="selectPhotoBoard" resultMap="PhotoBoardMap" parameterType="int">
+    select 
+      photo_id, 
+      titl, 
+      cdt,
+      vw_cnt
+    from 
+      vms_photo
+    where 
+      video_id=#{no}
+    order by 
+      photo_id desc
+  </select>
+
+  <select id="selectDetail" resultMap="PhotoBoardMap" parameterType="int">
+    select 
+      p.photo_id, 
+      p.titl, 
+      p.conts, 
+      p.cdt, 
+      p.vw_cnt, 
+      v.video_id, 
+      v.titl video_titl,
+      f.photo_file_id, 
+      f.file_path
+    from vms_photo p 
+      inner join vms_video v on p.video_id=v.video_id
+      left outer join vms_photo_file f on p.photo_id=f.photo_id
+    where 
+      p.photo_id=#{no}
+  </select>
+
+  <update id="updatePhotoBoard" parameterType="PhotoBoard">
+    update vms_photo set
+      titl=#{title}, 
+      conts=#{content}
+    where photo_id=#{no}
+  </update>
+
+  <delete id="deletePhotoBoard" parameterType="int">
+    delete from vms_photo
+    where photo_id=#{no}
+  </delete>
+</mapper>

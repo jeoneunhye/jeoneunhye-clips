@@ -2,6 +2,7 @@ package jeoneunhye.vms.domain;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.List;
 
 public class PhotoBoard implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -11,13 +12,13 @@ public class PhotoBoard implements Serializable {
   String content;
   Date createdDate;
   int viewCount;
-
   Video video;
+  List<PhotoFile> files;
 
   @Override
   public String toString() {
     return "PhotoBoard [no=" + no + ", title=" + title + ", content=" + content + ", createdDate="
-        + createdDate + ", viewCount=" + viewCount + ", video=" + video + "]";
+        + createdDate + ", viewCount=" + viewCount + ", video=" + video + ", files=" + files + "]";
   }
 
   public int getNo() {
@@ -66,5 +67,13 @@ public class PhotoBoard implements Serializable {
 
   public void setVideo(Video video) {
     this.video = video;
+  }
+
+  public List<PhotoFile> getFiles() {
+    return files;
+  }
+
+  public void setFiles(List<PhotoFile> files) {
+    this.files = files;
   }
 }

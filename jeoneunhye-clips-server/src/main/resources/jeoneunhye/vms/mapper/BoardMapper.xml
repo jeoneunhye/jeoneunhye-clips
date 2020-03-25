@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="BoardMapper">
+
+  <resultMap type="Board" id="BoardMap">
+    <id column="board_id"   property="no"/>
+    <result column="titl"   property="title"/>
+    <result column="conts"  property="contents"/>
+    <result column="writer" property="writer"/>
+    <result column="cdt"    property="writeDate"/>
+    <result column="vw_cnt" property="viewCount"/> 
+  </resultMap>
+
+  <insert id="insertBoard" parameterType="Board">
+    insert into vms_board(
+      titl,
+      conts,
+      writer)
+    values(
+      #{title}, 
+      #{contents}, 
+      #{writer})
+  </insert>
+
+  <select id="selectBoard" resultMap="BoardMap">
+    select 
+      board_id, 
+      titl, 
+      writer, 
+      cdt, 
+      vw_cnt
+    from vms_board
+  </select>
+
+  <select id="selectDetail" resultMap="BoardMap" parameterType="int">
+    select 
+      board_id, 
+      titl, 
+      conts, 
+      writer, 
+      cdt, 
+      vw_cnt
+    from 
+      vms_board
+    where 
+      board_id=#{no}
+  </select>
+
+  <update id="updateBoard" parameterType="Board">
+    update vms_board set
+      titl=#{title}, 
+      conts=#{contents}, 
+      writer=#{writer}
+    where board_id=#{no}
+  </update>
+
+  <delete id="deleteBoard" parameterType="int">
+    delete from vms_board
+    where board_id=#{no}
+  </delete>
+</mapper>

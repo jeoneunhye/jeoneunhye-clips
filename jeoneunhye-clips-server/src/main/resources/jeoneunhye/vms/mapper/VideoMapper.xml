@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="VideoMapper">
+
+  <resultMap type="Video" id="VideoMap">
+    <id column="video_id"      property="no"/>
+    <result column="subject"   property="subject"/>
+    <result column="titl"      property="title"/>
+    <result column="url"       property="url"/>
+    <result column="playtime"  property="playTime"/>
+    <result column="uploader"  property="writer"/>
+    <result column="upload_dt" property="uploadDate"/>
+  </resultMap>
+    
+  <insert id="insertVideo" parameterType="Video">
+    insert into vms_video(
+      subject, 
+      titl, 
+      url, 
+      playtime, 
+      uploader, 
+      upload_dt)
+    values(
+      #{subject}, 
+      #{title}, 
+      #{url}, 
+      #{playTime}, 
+      #{writer}, 
+      #{uploadDate})
+  </insert>
+
+  <select id="selectVideo" resultMap="VideoMap">
+    select 
+      video_id, 
+      subject, 
+      titl, 
+      playtime, 
+      uploader, 
+      upload_dt
+    from vms_video
+  </select>
+
+  <select id="selectDetail" resultMap="VideoMap" parameterType="int">
+    select 
+      video_id, 
+      subject, 
+      titl, 
+      url, 
+      playtime, 
+      uploader, 
+      upload_dt
+    from 
+      vms_video
+    where 
+      video_id=#{no}
+  </select>
+  
+  <update id="updateVideo" parameterType="Video">
+    update vms_video set
+      subject=#{subject},
+      titl=#{title}, 
+      url=#{url}, 
+      playtime=#{playTime}, 
+      uploader=#{writer}, 
+      upload_dt=#{uploadDate}
+    where video_id=#{no}
+  </update>
+  
+  <delete id="deleteVideo" parameterType="int">
+    delete from vms_video
+    where video_id=#{no}
+  </delete>
+</mapper>
