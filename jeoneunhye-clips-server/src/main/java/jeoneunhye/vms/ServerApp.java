@@ -12,9 +12,10 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.ibatis.session.SqlSessionFactory;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.sql.DataSource;
 import jeoneunhye.sql.PlatformTransactionManager;
+import jeoneunhye.sql.SqlSessionFactoryProxy;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
@@ -76,7 +77,7 @@ public class ServerApp {
   public void service() {
     notifyApplicationInitialized();
 
-    DataSource dataSource = (DataSource) context.get("dataSource");
+    SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) context.get("sqlSessionFactory");
 
     VideoDao videoDao = (VideoDao) context.get("videoDao");
     MemberDao memberDao = (MemberDao) context.get("memberDao");
@@ -125,7 +126,7 @@ public class ServerApp {
         executorService.submit(() -> {
           processRequest(socket);
 
-          dataSource.removeConnection();
+          ((SqlSessionFactoryProxy) sqlSessionFactory).closeSession();
 
           System.out.println("-----클라이언트 요청 처리 완료");
         });

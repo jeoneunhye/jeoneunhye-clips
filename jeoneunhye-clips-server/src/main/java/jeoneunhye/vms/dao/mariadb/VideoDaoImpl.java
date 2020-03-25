@@ -17,8 +17,6 @@ public class VideoDaoImpl implements VideoDao {
   public int insert(Video video) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       int count = sqlSession.insert("VideoMapper.insertVideo", video);
-      sqlSession.commit();
-
       return count;
     }
   }
@@ -41,8 +39,6 @@ public class VideoDaoImpl implements VideoDao {
   public int update(Video video) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       int count = sqlSession.update("VideoMapper.updateVideo", video);
-      sqlSession.commit();
-
       return count;
     }
   }
@@ -51,8 +47,6 @@ public class VideoDaoImpl implements VideoDao {
   public int delete(int no) throws Exception {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       int count = sqlSession.delete("VideoMapper.deleteVideo", no);
-      sqlSession.commit();
-
       return count;
     }
   }
