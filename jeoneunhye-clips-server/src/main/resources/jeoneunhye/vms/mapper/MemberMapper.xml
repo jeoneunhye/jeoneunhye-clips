@@ -15,6 +15,15 @@
     <result column="cdt"      property="registeredDate"/>
   </resultMap>
 
+  <sql id="select1">
+      select 
+      member_id, 
+      id, 
+      phone, 
+      email, 
+      cdt
+  </sql>
+  
   <insert id="insertMember" parameterType="Member">
     insert into vms_member(
       id, 
@@ -31,24 +40,14 @@
   </insert>
 
   <select id="selectMember" resultMap="MemberMap">
-    select 
-      member_id, 
-      id, 
-      phone, 
-      email, 
-      cdt
+    <include refid="select1"/>
     from vms_member
   </select>
 
   <select id="selectDetail" resultMap="MemberMap" parameterType="int">
-    select 
-      member_id, 
-      id, 
+    <include refid="select1"/>,
       nickname, 
-      pwd, 
-      phone, 
-      email, 
-      cdt
+      pwd
     from 
       vms_member
     where 
@@ -56,11 +55,13 @@
   </select>
 
   <update id="updateMember" parameterType="Member">
-    update vms_member set
-      nickname=#{nickname},
-      pwd=password(#{password}), 
-      phone=#{phone},
-      email=#{email}
+    update vms_member
+    <set>
+      <if test="nickname != null and nickname != ''">nickname=#{nickname},</if>
+      <if test="password != null and password != ''">pwd=password(#{password}),</if>
+      <if test="phone != null and phone != ''">phone=#{phone},</if>
+      <if test="email != null and email != ''">email=#{email}</if>
+    </set>
     where member_id=#{no}
   </update>
 
@@ -71,12 +72,7 @@
 
   <select id="selectByKeyword" resultMap="MemberMap" parameterType="string">
     <bind name="keywordPattern" value="'%' + _parameter + '%'"/>
-    select 
-      member_id, 
-      id, 
-      phone, 
-      email, 
-      cdt
+    <include refid="select1"/>
     from 
       vms_member
     where 
@@ -86,14 +82,9 @@
   </select>
 
   <select id="selectByEmailPassword" resultMap="MemberMap" parameterType="map">
-    select 
-      member_id, 
-      id, 
+    <include refid="select1"/>,
       nickname, 
-      pwd, 
-      phone, 
-      email, 
-      cdt
+      pwd
     from vms_member
     where 
       email=#{email} 

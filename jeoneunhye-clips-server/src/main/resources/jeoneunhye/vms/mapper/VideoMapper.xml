@@ -15,6 +15,16 @@
     <result column="upload_dt" property="uploadDate"/>
   </resultMap>
     
+  <sql id="select1">
+    select 
+      video_id, 
+      subject, 
+      titl, 
+      playtime, 
+      uploader, 
+      upload_dt
+  </sql>
+  
   <insert id="insertVideo" parameterType="Video">
     insert into vms_video(
       subject, 
@@ -32,26 +42,21 @@
       #{uploadDate})
   </insert>
 
-  <select id="selectVideo" resultMap="VideoMap">
-    select 
-      video_id, 
-      subject, 
-      titl, 
-      playtime, 
-      uploader, 
-      upload_dt
+  <select id="selectVideo" resultMap="VideoMap" parameterType="map">
+    <include refid="select1"/>
     from vms_video
+    <where>
+      <if test="subject != null">subject like concat('%', #{subject}, '%')</if>
+      <if test="title != null">and titl like concat('%', #{title}, '%')</if>
+      <if test="playTime != null">and playtime &lt;= #{playTime}</if>
+      <if test="writer != null">and uploader like concat('%', #{writer}, '%')</if>
+      <if test="uploadDate != null">and upload_dt >= #{uploadDate}</if>
+    </where>
   </select>
 
   <select id="selectDetail" resultMap="VideoMap" parameterType="int">
-    select 
-      video_id, 
-      subject, 
-      titl, 
-      url, 
-      playtime, 
-      uploader, 
-      upload_dt
+    <include refid="select1"/>,
+      url
     from 
       vms_video
     where 
@@ -59,13 +64,15 @@
   </select>
   
   <update id="updateVideo" parameterType="Video">
-    update vms_video set
-      subject=#{subject},
-      titl=#{title}, 
-      url=#{url}, 
-      playtime=#{playTime}, 
-      uploader=#{writer}, 
-      upload_dt=#{uploadDate}
+    update vms_video
+    <set>
+      <if test="subject != null and subject != ''">subject=#{subject},</if>
+      <if test="title != null and title != ''">titl=#{title},</if>
+      <if test="url != null and url != ''">url=#{url},</if>
+      <if test="playTime != null and playTime != ''">playtime=#{playTime},</if>
+      <if test="writer != null and writer != ''">uploader=#{writer},</if>
+      <if test="uploadDate != null">upload_dt=#{uploadDate}</if>
+    </set>
     where video_id=#{no}
   </update>
   

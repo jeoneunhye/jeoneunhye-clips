@@ -1,6 +1,7 @@
 package jeoneunhye.vms.dao.mariadb;
 
 import java.util.List;
+import java.util.Map;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import jeoneunhye.vms.dao.VideoDao;
@@ -48,6 +49,13 @@ public class VideoDaoImpl implements VideoDao {
     try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
       int count = sqlSession.delete("VideoMapper.deleteVideo", no);
       return count;
+    }
+  }
+
+  @Override
+  public List<Video> findByKeyword(Map<String, Object> params) throws Exception {
+    try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+      return sqlSession.selectList("VideoMapper.selectVideo", params);
     }
   }
 }

@@ -25,10 +25,10 @@ public class BoardUpdateServlet implements Servlet {
 
     Board newBoard = new Board();
     newBoard.setNo(no);
-    newBoard.setTitle(Prompt.getString(in, out, String.format("제목(%s)? \n", oldBoard.getTitle())
-        , oldBoard.getTitle()));
-    newBoard.setContents(Prompt.getString(in, out, String.format("내용(%s)? \n", oldBoard.getContents())
-        , oldBoard.getContents()));
+    newBoard.setTitle(Prompt.getString(in, out,
+        String.format("제목(%s)? \n", oldBoard.getTitle())));
+    newBoard.setContents(Prompt.getString(in, out,
+        String.format("내용(%s)? \n", oldBoard.getContents())));
     newBoard.setWriter(oldBoard.getWriter());
     newBoard.setWriteDate(oldBoard.getWriteDate());
     newBoard.setViewCount(oldBoard.getViewCount());

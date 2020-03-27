@@ -14,6 +14,15 @@
     <result column="vw_cnt" property="viewCount"/> 
   </resultMap>
 
+  <sql id="select1">
+    select 
+      board_id, 
+      titl, 
+      writer, 
+      cdt, 
+      vw_cnt
+  </sql>
+
   <insert id="insertBoard" parameterType="Board">
     insert into vms_board(
       titl,
@@ -26,23 +35,13 @@
   </insert>
 
   <select id="selectBoard" resultMap="BoardMap">
-    select 
-      board_id, 
-      titl, 
-      writer, 
-      cdt, 
-      vw_cnt
+    <include refid="select1"/>
     from vms_board
   </select>
-
+  
   <select id="selectDetail" resultMap="BoardMap" parameterType="int">
-    select 
-      board_id, 
-      titl, 
-      conts, 
-      writer, 
-      cdt, 
-      vw_cnt
+    <include refid="select1"/>,
+      conts
     from 
       vms_board
     where 
@@ -50,10 +49,12 @@
   </select>
 
   <update id="updateBoard" parameterType="Board">
-    update vms_board set
-      titl=#{title}, 
-      conts=#{contents}, 
-      writer=#{writer}
+    update vms_board
+    <set>
+      <if test="title != null and title != ''">titl=#{title},</if>
+      <if test="contents != null and contents != ''">conts=#{contents},</if>
+      <if test="writer != null and writer != ''">writer=#{writer}</if>
+    </set>
     where board_id=#{no}
   </update>
 

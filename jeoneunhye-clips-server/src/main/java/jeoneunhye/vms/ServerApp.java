@@ -43,6 +43,7 @@ import jeoneunhye.vms.servlet.VideoAddServlet;
 import jeoneunhye.vms.servlet.VideoDeleteServlet;
 import jeoneunhye.vms.servlet.VideoDetailServlet;
 import jeoneunhye.vms.servlet.VideoListServlet;
+import jeoneunhye.vms.servlet.VideoSearchServlet;
 import jeoneunhye.vms.servlet.VideoUpdateServlet;
 
 public class ServerApp {
@@ -92,6 +93,7 @@ public class ServerApp {
     servletMap.put("/video/detail", new VideoDetailServlet(videoDao));
     servletMap.put("/video/update", new VideoUpdateServlet(videoDao));
     servletMap.put("/video/delete", new VideoDeleteServlet(videoDao));
+    servletMap.put("/video/search", new VideoSearchServlet(videoDao));
 
     servletMap.put("/member/add", new MemberAddServlet(memberDao));
     servletMap.put("/member/list", new MemberListServlet(memberDao));

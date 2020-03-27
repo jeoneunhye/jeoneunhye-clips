@@ -26,14 +26,14 @@ public class MemberUpdateServlet implements Servlet {
     Member newMember = new Member();
     newMember.setNo(no);
     newMember.setId(oldMember.getId());
-    newMember.setNickname(Prompt.getString(in, out, String.format("닉네임(%s)? \n", oldMember.getNickname()),
-        oldMember.getNickname()));
-    newMember.setPassword(Prompt.getString(in, out, String.format("암호(%s)? \n", oldMember.getPassword()),
-        oldMember.getPassword()));
-    newMember.setPhone(Prompt.getString(in, out, String.format("휴대폰번호(%s)? \n", oldMember.getPhone()),
-        oldMember.getPhone()));
-    newMember.setEmail(Prompt.getString(in, out, String.format("이메일(%s)? \n", oldMember.getEmail()),
-        oldMember.getEmail()));
+    newMember.setNickname(Prompt.getString(in, out,
+        String.format("닉네임(%s)? \n", oldMember.getNickname())));
+    newMember.setPassword(Prompt.getString(in, out,
+        String.format("암호(%s)? \n", oldMember.getPassword())));
+    newMember.setPhone(Prompt.getString(in, out,
+        String.format("휴대폰번호(%s)? \n", oldMember.getPhone())));
+    newMember.setEmail(Prompt.getString(in, out,
+        String.format("이메일(%s)? \n", oldMember.getEmail())));
     newMember.setRegisteredDate(oldMember.getRegisteredDate());
 
     if (memberDao.update(newMember) > 0) {

@@ -43,33 +43,39 @@ public class PhotoBoardUpdateServlet implements Servlet {
     newPhotoBoard.setCreatedDate(oldPhotoBoard.getCreatedDate());
     newPhotoBoard.setViewCount(oldPhotoBoard.getViewCount());
 
+    printPhotoFiles(out, oldPhotoBoard);
+    out.println();
+    out.println("사진은 일부만 변경할 수 없습니다.");
+    out.println("전체를 새로 등록해야 합니다.");
+
+    String response = Prompt.getString(in, out, "사진을 변경하시겠습니까?(Y/n) ");
+    if (response.equalsIgnoreCase("y")) {
+      newPhotoBoard.setFiles(inputPhotoFiles(in, out));
+    }
+
     transactionTemplate.execute(() -> {
       if (photoBoardDao.update(newPhotoBoard) == 0) {
         throw new Exception("사진 게시글을 변경할 수 없습니다.");
       }
 
-      printPhotoFiles(out, no);
-
-      out.println();
-      out.println("사진은 일부만 변경할 수 없습니다.");
-      out.println("전체를 새로 등록해야 합니다.");
-
-      String response = Prompt.getString(in, out, "사진을 변경하시겠습니까?(Y/n) ");
-      if (response.equalsIgnoreCase("y")) {
+      if (newPhotoBoard.getFiles() != null) {
         photoFileDao.deleteAll(no);
-
-        ArrayList<PhotoFile> newPhotoFiles = inputPhotoFiles(in, out);
-        for (PhotoFile newPhotoFile : newPhotoFiles) {
-          newPhotoFile.setBoardNo(newPhotoBoard.getNo());
-
-          photoFileDao.insert(newPhotoFile);
-        }
+        photoFileDao.insert(newPhotoBoard);
       }
 
       out.println("사진 게시글을 변경하였습니다.");
 
       return null;
     });
+  }
+
+  private void printPhotoFiles(PrintStream out, PhotoBoard photoBoard) throws Exception {
+    out.println("사진 파일:");
+
+    List<PhotoFile> oldPhotoFiles = photoBoard.getFiles();
+    for (PhotoFile oldphotoFile : oldPhotoFiles) {
+      out.printf("> %s\n", oldphotoFile.getFilepath());
+    }
   }
 
   private ArrayList<PhotoFile> inputPhotoFiles(Scanner in, PrintStream out) {
@@ -94,14 +100,5 @@ public class PhotoBoardUpdateServlet implements Servlet {
     }
 
     return newPhotoFiles;
-  }
-
-  private void printPhotoFiles(PrintStream out, int boardNo) throws Exception {
-    out.println("사진 파일:");
-
-    List<PhotoFile> oldPhotoFiles = photoFileDao.findAll(boardNo);
-    for (PhotoFile oldphotoFile : oldPhotoFiles) {
-      out.printf("> %s\n", oldphotoFile.getFilepath());
-    }
   }
 }

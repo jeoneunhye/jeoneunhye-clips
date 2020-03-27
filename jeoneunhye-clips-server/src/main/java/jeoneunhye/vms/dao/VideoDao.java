@@ -1,6 +1,7 @@
 package jeoneunhye.vms.dao;
 
 import java.util.List;
+import java.util.Map;
 import jeoneunhye.vms.domain.Video;
 
 public interface VideoDao {
@@ -13,4 +14,6 @@ public interface VideoDao {
   public int update(Video video) throws Exception;
 
   public int delete(int no) throws Exception;
+  
+  default List<Video> findByKeyword(Map<String, Object> params) throws Exception {return null;}
 }

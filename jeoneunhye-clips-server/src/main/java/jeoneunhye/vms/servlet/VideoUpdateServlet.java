@@ -25,18 +25,18 @@ public class VideoUpdateServlet implements Servlet {
 
     Video newVideo = new Video();
     newVideo.setNo(oldVideo.getNo());
-    newVideo.setSubject(Prompt.getString(in, out, String.format("주제(%s)? \n", oldVideo.getSubject()),
-        oldVideo.getSubject()));
-    newVideo.setTitle(Prompt.getString(in, out, String.format("제목(%s)? \n", oldVideo.getTitle()),
-        oldVideo.getTitle()));
-    newVideo.setUrl(Prompt.getString(in, out, String.format("주소(%s)? \n", oldVideo.getUrl()),
-        oldVideo.getUrl()));
-    newVideo.setPlayTime(Prompt.getString(in, out, String.format("재생시간(%s)? \n", oldVideo.getPlayTime()),
-        oldVideo.getPlayTime()));
-    newVideo.setWriter(Prompt.getString(in, out, String.format("업로더(%s)? \n", oldVideo.getWriter()),
-        oldVideo.getWriter()));
-    newVideo.setUploadDate(Prompt.getDate(in, out, String.format("업로드 날짜(%s)? \n", oldVideo.getUploadDate()),
-        String.valueOf(oldVideo.getUploadDate())));
+    newVideo.setSubject(Prompt.getString(in, out,
+        String.format("주제(%s)? \n", oldVideo.getSubject())));
+    newVideo.setTitle(Prompt.getString(in, out,
+        String.format("제목(%s)? \n", oldVideo.getTitle())));
+    newVideo.setUrl(Prompt.getString(in, out,
+        String.format("주소(%s)? \n", oldVideo.getUrl())));
+    newVideo.setPlayTime(Prompt.getString(in, out,
+        String.format("재생시간(%s)? \n", oldVideo.getPlayTime())));
+    newVideo.setWriter(Prompt.getString(in, out,
+        String.format("업로더(%s)? \n", oldVideo.getWriter())));
+    newVideo.setUploadDate(Prompt.getDate(in, out,
+        String.format("업로드 날짜(%s)? \n", oldVideo.getUploadDate())));
 
     if (videoDao.update(newVideo) > 0) {
       out.println("영상을 변경하였습니다.");
