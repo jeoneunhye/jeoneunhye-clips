@@ -9,12 +9,11 @@ import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.MybatisDaoFactory;
 import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
-import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.dao.VideoDao;
-import jeoneunhye.vms.service.impl.BoardServiceImpl;
+import jeoneunhye.vms.service.impl.BoardServiceImpl2;
 import jeoneunhye.vms.service.impl.MemberServiceImpl;
 import jeoneunhye.vms.service.impl.PhotoBoardServiceImpl;
 import jeoneunhye.vms.service.impl.VideoServiceImpl;
@@ -32,7 +31,7 @@ public class DataLoaderListener implements ApplicationContextListener {
 
       VideoDao videoDao = daoFactory.createDao(VideoDao.class);
       MemberDao memberDao = daoFactory.createDao(MemberDao.class);
-      BoardDao boardDao = daoFactory.createDao(BoardDao.class);
+      // BoardDao boardDao = daoFactory.createDao(BoardDao.class);
       PhotoBoardDao photoBoardDao = daoFactory.createDao(PhotoBoardDao.class);
       PhotoFileDao photoFileDao = daoFactory.createDao(PhotoFileDao.class);
 
@@ -41,7 +40,7 @@ public class DataLoaderListener implements ApplicationContextListener {
 
       context.put("videoService", new VideoServiceImpl(videoDao));
       context.put("memberService", new MemberServiceImpl(memberDao));
-      context.put("boardService", new BoardServiceImpl(boardDao));
+      context.put("boardService", new BoardServiceImpl2(sqlSessionFactory));
       context.put("photoBoardService",
           new PhotoBoardServiceImpl(txManager, photoBoardDao, photoFileDao));
 
