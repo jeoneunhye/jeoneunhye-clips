@@ -3,21 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
+import jeoneunhye.vms.service.BoardService;
 
 public class BoardDetailServlet implements Servlet {
-  BoardDao boardDao;
+  BoardService boardService;
 
-  public BoardDetailServlet(BoardDao boardDao) {
-    this.boardDao = boardDao;
+  public BoardDetailServlet(BoardService boardService) {
+    this.boardService = boardService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    Board board = boardDao.findByNo(no);
+    Board board = boardService.get(no);
     if (board != null) {
       out.printf("제목: %s\n", board.getTitle());
       out.printf("내용: %s\n", board.getContents());

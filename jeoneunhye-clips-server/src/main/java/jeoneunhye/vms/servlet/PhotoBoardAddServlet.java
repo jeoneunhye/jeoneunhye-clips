@@ -4,29 +4,20 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import jeoneunhye.sql.PlatformTransactionManager;
-import jeoneunhye.sql.TransactionCallback;
-import jeoneunhye.sql.TransactionTemplate;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.PhotoBoardDao;
-import jeoneunhye.vms.dao.PhotoFileDao;
-import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.service.PhotoBoardService;
+import jeoneunhye.vms.service.VideoService;
 
 public class PhotoBoardAddServlet implements Servlet {
-  TransactionTemplate transactionTemplate;
-  PhotoBoardDao photoBoardDao;
-  VideoDao videoDao;
-  PhotoFileDao photoFileDao;
+  PhotoBoardService photoBoardService;
+  VideoService videoService;
 
-  public PhotoBoardAddServlet(PlatformTransactionManager txManager, PhotoBoardDao photoBoardDao,
-      VideoDao videoDao, PhotoFileDao photoFileDao) {
-    this.transactionTemplate = new TransactionTemplate(txManager);
-    this.photoBoardDao = photoBoardDao;
-    this.videoDao = videoDao;
-    this.photoFileDao = photoFileDao;
+  public PhotoBoardAddServlet(PhotoBoardService photoBoardService, VideoService videoService) {
+    this.photoBoardService = photoBoardService;
+    this.videoService = videoService;
   }
 
   @Override
@@ -37,7 +28,7 @@ public class PhotoBoardAddServlet implements Servlet {
 
     int videoNo = Prompt.getInt(in, out, "영상 번호? ");
 
-    Video video = videoDao.findByNo(videoNo);
+    Video video = videoService.get(videoNo);
     if (video == null) {
       out.println("영상 번호가 유효하지 않습니다.");
       return;
@@ -48,20 +39,9 @@ public class PhotoBoardAddServlet implements Servlet {
     List<PhotoFile> photoFiles = inputPhotoFiles(in, out);
     photoBoard.setFiles(photoFiles);
 
-    transactionTemplate.execute(new TransactionCallback() {
-      @Override
-      public Object doInTransaction() throws Exception {
-        if (photoBoardDao.insert(photoBoard) == 0) {
-          throw new Exception("사진 게시글을 등록할 수 없습니다.");
-        }
+    photoBoardService.add(photoBoard);
 
-        photoFileDao.insert(photoBoard);
-
-        out.println("사진 게시글을 등록하였습니다.");
-
-        return null;
-      }
-    });
+    out.println("새 사진 게시글을 등록하였습니다.");
   }
 
   private ArrayList<PhotoFile> inputPhotoFiles(Scanner in, PrintStream out) {

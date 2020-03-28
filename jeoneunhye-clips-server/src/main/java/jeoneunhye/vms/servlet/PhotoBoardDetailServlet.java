@@ -3,22 +3,22 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
+import jeoneunhye.vms.service.PhotoBoardService;
 
 public class PhotoBoardDetailServlet implements Servlet {
-  PhotoBoardDao photoBoardDao;
+  PhotoBoardService photoBoardService;
 
-  public PhotoBoardDetailServlet(PhotoBoardDao photoBoardDao) {
-    this.photoBoardDao = photoBoardDao;
+  public PhotoBoardDetailServlet(PhotoBoardService photoBoardService) {
+    this.photoBoardService = photoBoardService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    PhotoBoard photoBoard = photoBoardDao.findByNo(no);
+    PhotoBoard photoBoard = photoBoardService.get(no);
     if (photoBoard != null) {
       out.printf("영상: %s\n", photoBoard.getVideo().getTitle());
       out.printf("제목: %s\n", photoBoard.getTitle());

@@ -8,11 +8,20 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
+import jeoneunhye.vms.dao.BoardDao;
+import jeoneunhye.vms.dao.MemberDao;
+import jeoneunhye.vms.dao.PhotoBoardDao;
+import jeoneunhye.vms.dao.PhotoFileDao;
+import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
 import jeoneunhye.vms.dao.mariadb.PhotoBoardDaoImpl;
 import jeoneunhye.vms.dao.mariadb.PhotoFileDaoImpl;
 import jeoneunhye.vms.dao.mariadb.VideoDaoImpl;
+import jeoneunhye.vms.service.impl.BoardServiceImpl;
+import jeoneunhye.vms.service.impl.MemberServiceImpl;
+import jeoneunhye.vms.service.impl.PhotoBoardServiceImpl;
+import jeoneunhye.vms.service.impl.VideoServiceImpl;
 
 public class DataLoaderListener implements ApplicationContextListener {
   @Override
@@ -23,14 +32,20 @@ public class DataLoaderListener implements ApplicationContextListener {
       SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryProxy(
           new SqlSessionFactoryBuilder().build(inputStream));
 
-      context.put("videoDao", new VideoDaoImpl(sqlSessionFactory));
-      context.put("memberDao", new MemberDaoImpl(sqlSessionFactory));
-      context.put("boardDao", new BoardDaoImpl(sqlSessionFactory));
-      context.put("photoBoardDao", new PhotoBoardDaoImpl(sqlSessionFactory));
-      context.put("photoFileDao", new PhotoFileDaoImpl(sqlSessionFactory));
+      VideoDao videoDao =  new VideoDaoImpl(sqlSessionFactory);
+      MemberDao memberDao = new MemberDaoImpl(sqlSessionFactory);
+      BoardDao boardDao = new BoardDaoImpl(sqlSessionFactory);
+      PhotoBoardDao photoBoardDao = new PhotoBoardDaoImpl(sqlSessionFactory);
+      PhotoFileDao photoFileDao = new PhotoFileDaoImpl(sqlSessionFactory);
 
       PlatformTransactionManager txManager = new PlatformTransactionManager(sqlSessionFactory);
       context.put("transactionManager", txManager);
+
+      context.put("videoService", new VideoServiceImpl(videoDao));
+      context.put("memberService", new MemberServiceImpl(memberDao));
+      context.put("boardService", new BoardServiceImpl(boardDao));
+      context.put("photoBoardService",
+          new PhotoBoardServiceImpl(txManager, photoBoardDao, photoFileDao));
 
       context.put("sqlSessionFactory", sqlSessionFactory);
 

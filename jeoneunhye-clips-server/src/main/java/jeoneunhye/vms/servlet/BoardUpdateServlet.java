@@ -3,21 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
+import jeoneunhye.vms.service.BoardService;
 
 public class BoardUpdateServlet implements Servlet {
-  BoardDao boardDao;
+  BoardService boardService;
 
-  public BoardUpdateServlet(BoardDao boardDao) {
-    this.boardDao = boardDao;
+  public BoardUpdateServlet(BoardService boardService) {
+    this.boardService = boardService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    Board oldBoard = boardDao.findByNo(no);
+    Board oldBoard = boardService.get(no);
     if (oldBoard == null) {
       out.println("해당 번호의 게시글이 없습니다.");
       return;
@@ -33,11 +33,8 @@ public class BoardUpdateServlet implements Servlet {
     newBoard.setWriteDate(oldBoard.getWriteDate());
     newBoard.setViewCount(oldBoard.getViewCount());
 
-    if (boardDao.update(newBoard) > 0) {
-      out.println("게시글을 변경하였습니다.");
+    boardService.update(newBoard);
 
-    } else {
-      out.println("게시글을 변경할 수 없습니다.");
-    }
+    out.println("게시글을 변경했습니다.");
   }
 }

@@ -3,21 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.service.VideoService;
 
 public class VideoDetailServlet implements Servlet {
-  VideoDao videoDao;
+  VideoService videoService;
 
-  public VideoDetailServlet(VideoDao videoDao) {
-    this.videoDao = videoDao;
+  public VideoDetailServlet(VideoService videoService) {
+    this.videoService = videoService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    Video video = videoDao.findByNo(no);
+    Video video = videoService.get(no);
     if (video != null) {
       out.printf("주제: %s\n", video.getSubject());
       out.printf("제목: %s\n", video.getTitle());
@@ -27,7 +27,7 @@ public class VideoDetailServlet implements Servlet {
       out.printf("업로드 날짜: %s\n", video.getUploadDate());
 
     } else {
-      out.println("해당 영상을 조회할 수 없습니다.");
+      out.println("해당 번호의 영상이 없습니다.");
     }
   }
 }

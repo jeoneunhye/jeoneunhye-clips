@@ -3,24 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.VideoDao;
+import jeoneunhye.vms.service.VideoService;
 
 public class VideoDeleteServlet implements Servlet {
-  VideoDao videoDao;
+  VideoService videoService;
 
-  public VideoDeleteServlet(VideoDao videoDao) {
-    this.videoDao = videoDao;
+  public VideoDeleteServlet(VideoService videoService) {
+    this.videoService = videoService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = Prompt.getInt(in, out, "번호? ");
 
-    if (videoDao.delete(no) > 0) {
-      out.println("영상을 삭제하였습니다.");
+    videoService.delete(no);
 
-    } else {
-      out.println("영상을 삭제할 수 없습니다.");
-    }
+    out.println("영상을 삭제했습니다.");
   }
 }

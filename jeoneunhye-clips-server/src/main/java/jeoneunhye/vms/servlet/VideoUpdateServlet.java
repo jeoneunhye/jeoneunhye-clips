@@ -3,21 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.service.VideoService;
 
 public class VideoUpdateServlet implements Servlet {
-  VideoDao videoDao;
+  VideoService videoService;
 
-  public VideoUpdateServlet(VideoDao videoDao) {
-    this.videoDao = videoDao;
+  public VideoUpdateServlet(VideoService videoService) {
+    this.videoService = videoService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    Video oldVideo = videoDao.findByNo(no);
+    Video oldVideo = videoService.get(no);
     if (oldVideo == null) {
       out.println("해당 번호의 영상이 없습니다.");
       return;
@@ -38,11 +38,8 @@ public class VideoUpdateServlet implements Servlet {
     newVideo.setUploadDate(Prompt.getDate(in, out,
         String.format("업로드 날짜(%s)? \n", oldVideo.getUploadDate())));
 
-    if (videoDao.update(newVideo) > 0) {
-      out.println("영상을 변경하였습니다.");
+    videoService.update(newVideo);
 
-    } else {
-      out.println("영상을 변경할 수 없습니다.");
-    }
+    out.println("영상을 변경했습니다.");
   }
 }

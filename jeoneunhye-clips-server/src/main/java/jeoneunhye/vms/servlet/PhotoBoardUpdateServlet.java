@@ -4,31 +4,23 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import jeoneunhye.sql.PlatformTransactionManager;
-import jeoneunhye.sql.TransactionTemplate;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.PhotoBoardDao;
-import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
+import jeoneunhye.vms.service.PhotoBoardService;
 
 public class PhotoBoardUpdateServlet implements Servlet {
-  TransactionTemplate transactionTemplate;
-  PhotoBoardDao photoBoardDao;
-  PhotoFileDao photoFileDao;
+  PhotoBoardService photoBoardService;
 
-  public PhotoBoardUpdateServlet(PlatformTransactionManager txManager,
-      PhotoBoardDao photoBoardDao, PhotoFileDao photoFileDao) {
-    this.transactionTemplate = new TransactionTemplate(txManager);
-    this.photoBoardDao = photoBoardDao;
-    this.photoFileDao = photoFileDao;
+  public PhotoBoardUpdateServlet(PhotoBoardService photoBoardService) {
+    this.photoBoardService = photoBoardService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    PhotoBoard oldPhotoBoard = photoBoardDao.findByNo(no);
+    PhotoBoard oldPhotoBoard = photoBoardService.get(no);
     if (oldPhotoBoard == null) {
       out.println("해당 번호의 사진 게시글이 없습니다.");
       return;
@@ -53,20 +45,9 @@ public class PhotoBoardUpdateServlet implements Servlet {
       newPhotoBoard.setFiles(inputPhotoFiles(in, out));
     }
 
-    transactionTemplate.execute(() -> {
-      if (photoBoardDao.update(newPhotoBoard) == 0) {
-        throw new Exception("사진 게시글을 변경할 수 없습니다.");
-      }
+    photoBoardService.update(newPhotoBoard);
 
-      if (newPhotoBoard.getFiles() != null) {
-        photoFileDao.deleteAll(no);
-        photoFileDao.insert(newPhotoBoard);
-      }
-
-      out.println("사진 게시글을 변경하였습니다.");
-
-      return null;
-    });
+    out.println("사진 게시글을 변경했습니다.");
   }
 
   private void printPhotoFiles(PrintStream out, PhotoBoard photoBoard) throws Exception {

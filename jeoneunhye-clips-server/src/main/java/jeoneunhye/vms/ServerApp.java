@@ -14,13 +14,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.ibatis.session.SqlSessionFactory;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
-import jeoneunhye.vms.dao.BoardDao;
-import jeoneunhye.vms.dao.MemberDao;
-import jeoneunhye.vms.dao.PhotoBoardDao;
-import jeoneunhye.vms.dao.PhotoFileDao;
-import jeoneunhye.vms.dao.VideoDao;
+import jeoneunhye.vms.service.BoardService;
+import jeoneunhye.vms.service.MemberService;
+import jeoneunhye.vms.service.PhotoBoardService;
+import jeoneunhye.vms.service.VideoService;
 import jeoneunhye.vms.servlet.BoardAddServlet;
 import jeoneunhye.vms.servlet.BoardDeleteServlet;
 import jeoneunhye.vms.servlet.BoardDetailServlet;
@@ -80,41 +78,38 @@ public class ServerApp {
 
     SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) context.get("sqlSessionFactory");
 
-    VideoDao videoDao = (VideoDao) context.get("videoDao");
-    MemberDao memberDao = (MemberDao) context.get("memberDao");
-    BoardDao boardDao = (BoardDao) context.get("boardDao");
-    PhotoBoardDao photoBoardDao = (PhotoBoardDao) context.get("photoBoardDao");
-    PhotoFileDao photoFileDao = (PhotoFileDao) context.get("photoFileDao");
+    VideoService videoService = (VideoService) context.get("videoService");
+    MemberService memberService = (MemberService) context.get("memberService");
+    BoardService boardService = (BoardService) context.get("boardService");
+    PhotoBoardService photoBoardService = (PhotoBoardService) context.get("photoBoardService");
 
-    PlatformTransactionManager txManager = (PlatformTransactionManager) context.get("transactionManager");
+    servletMap.put("/video/add", new VideoAddServlet(videoService));
+    servletMap.put("/video/list", new VideoListServlet(videoService));
+    servletMap.put("/video/detail", new VideoDetailServlet(videoService));
+    servletMap.put("/video/update", new VideoUpdateServlet(videoService));
+    servletMap.put("/video/delete", new VideoDeleteServlet(videoService));
+    servletMap.put("/video/search", new VideoSearchServlet(videoService));
 
-    servletMap.put("/video/add", new VideoAddServlet(videoDao));
-    servletMap.put("/video/list", new VideoListServlet(videoDao));
-    servletMap.put("/video/detail", new VideoDetailServlet(videoDao));
-    servletMap.put("/video/update", new VideoUpdateServlet(videoDao));
-    servletMap.put("/video/delete", new VideoDeleteServlet(videoDao));
-    servletMap.put("/video/search", new VideoSearchServlet(videoDao));
+    servletMap.put("/member/add", new MemberAddServlet(memberService));
+    servletMap.put("/member/list", new MemberListServlet(memberService));
+    servletMap.put("/member/detail", new MemberDetailServlet(memberService));
+    servletMap.put("/member/update", new MemberUpdateServlet(memberService));
+    servletMap.put("/member/delete", new MemberDeleteServlet(memberService));
+    servletMap.put("/member/search", new MemberSearchServlet(memberService));
 
-    servletMap.put("/member/add", new MemberAddServlet(memberDao));
-    servletMap.put("/member/list", new MemberListServlet(memberDao));
-    servletMap.put("/member/detail", new MemberDetailServlet(memberDao));
-    servletMap.put("/member/update", new MemberUpdateServlet(memberDao));
-    servletMap.put("/member/delete", new MemberDeleteServlet(memberDao));
-    servletMap.put("/member/search", new MemberSearchServlet(memberDao));
+    servletMap.put("/board/add", new BoardAddServlet(boardService));
+    servletMap.put("/board/list", new BoardListServlet(boardService));
+    servletMap.put("/board/detail", new BoardDetailServlet(boardService));
+    servletMap.put("/board/update", new BoardUpdateServlet(boardService));
+    servletMap.put("/board/delete", new BoardDeleteServlet(boardService));
 
-    servletMap.put("/board/add", new BoardAddServlet(boardDao));
-    servletMap.put("/board/list", new BoardListServlet(boardDao));
-    servletMap.put("/board/detail", new BoardDetailServlet(boardDao));
-    servletMap.put("/board/update", new BoardUpdateServlet(boardDao));
-    servletMap.put("/board/delete", new BoardDeleteServlet(boardDao));
+    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardService, videoService));
+    servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardService, videoService));
+    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardService));
+    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardService));
+    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardService));
 
-    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(txManager, photoBoardDao, videoDao, photoFileDao));
-    servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardDao, videoDao));
-    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardDao));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(txManager, photoBoardDao, photoFileDao));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(txManager, photoBoardDao, photoFileDao));
-
-    servletMap.put("/auth/login", new LoginServlet(memberDao));
+    servletMap.put("/auth/login", new LoginServlet(memberService));
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 

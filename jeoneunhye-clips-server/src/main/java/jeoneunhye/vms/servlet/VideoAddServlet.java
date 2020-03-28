@@ -3,14 +3,14 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.service.VideoService;
 
 public class VideoAddServlet implements Servlet {
-  VideoDao videoDao;
+  VideoService videoService;
 
-  public VideoAddServlet(VideoDao videoDao) {
-    this.videoDao = videoDao;
+  public VideoAddServlet(VideoService videoService) {
+    this.videoService = videoService;
   }
 
   @Override
@@ -23,11 +23,8 @@ public class VideoAddServlet implements Servlet {
     video.setWriter(Prompt.getString(in, out, "업로더? "));
     video.setUploadDate(Prompt.getDate(in, out, "업로드 날짜? "));
 
-    if (videoDao.insert(video) > 0) {
-      out.println("영상을 저장하였습니다.");
+    videoService.add(video);
 
-    } else {
-      out.println("영상을 저장할 수 없습니다.");
-    }
+    out.println("새 영상을 등록했습니다.");
   }
 }

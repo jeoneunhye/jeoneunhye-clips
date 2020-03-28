@@ -3,14 +3,14 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
+import jeoneunhye.vms.service.MemberService;
 
 public class MemberAddServlet implements Servlet {
-  MemberDao memberDao;
+  MemberService memberService;
 
-  public MemberAddServlet(MemberDao memberDao) {
-    this.memberDao = memberDao;
+  public MemberAddServlet(MemberService memberService) {
+    this.memberService = memberService;
   }
 
   @Override
@@ -22,11 +22,8 @@ public class MemberAddServlet implements Servlet {
     member.setPhone(Prompt.getString(in, out, "휴대폰번호? "));
     member.setEmail(Prompt.getString(in, out, "이메일? "));
 
-    if (memberDao.insert(member) > 0) {
-      out.println("회원을 저장하였습니다.");
+    memberService.add(member);
 
-    } else {
-      out.println("회원을 저장할 수 없습니다.");
-    }
+    out.println("새 회원을 등록했습니다.");
   }
 }

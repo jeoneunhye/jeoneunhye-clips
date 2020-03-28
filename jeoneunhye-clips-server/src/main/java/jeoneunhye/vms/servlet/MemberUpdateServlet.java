@@ -3,21 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
+import jeoneunhye.vms.service.MemberService;
 
 public class MemberUpdateServlet implements Servlet {
-  MemberDao memberDao;
+  MemberService memberService;
 
-  public MemberUpdateServlet(MemberDao memberDao) {
-    this.memberDao = memberDao;
+  public MemberUpdateServlet(MemberService memberService) {
+    this.memberService = memberService;
   }
 
   @Override
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
-    Member oldMember = memberDao.findByNo(no);
+    Member oldMember = memberService.get(no);
     if (oldMember == null) {
       out.println("해당 번호의 회원이 없습니다.");
       return;
@@ -36,11 +36,8 @@ public class MemberUpdateServlet implements Servlet {
         String.format("이메일(%s)? \n", oldMember.getEmail())));
     newMember.setRegisteredDate(oldMember.getRegisteredDate());
 
-    if (memberDao.update(newMember) > 0) {
-      out.println("회원을 변경하였습니다.");
+    memberService.update(newMember);
 
-    } else {
-      out.println("회원을 변경할 수 없습니다.");
-    }
+    out.println("회원을 변경했습니다.");
   }
 }

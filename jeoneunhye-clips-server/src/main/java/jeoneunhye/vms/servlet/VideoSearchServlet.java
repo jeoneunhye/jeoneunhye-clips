@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Prompt;
-import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
+import jeoneunhye.vms.service.VideoService;
 
 public class VideoSearchServlet implements Servlet {
-  VideoDao videoDao;
+  VideoService videoService;
 
-  public VideoSearchServlet(VideoDao videoDao) {
-    this.videoDao = videoDao;
+  public VideoSearchServlet(VideoService videoService) {
+    this.videoService = videoService;
   }
 
   @Override
@@ -49,7 +49,7 @@ public class VideoSearchServlet implements Servlet {
     out.println("[검색 결과]");
     out.println();
 
-    List<Video> videos = videoDao.findByKeyword(params);
+    List<Video> videos = videoService.search(params);
     for (Video v : videos) {
       out.printf("%d, %s, %s, %s, %s, %s\n", v.getNo(), v.getSubject(), v.getTitle(),
           v.getPlayTime(), v.getWriter(), v.getUploadDate());
