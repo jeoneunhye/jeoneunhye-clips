@@ -6,6 +6,7 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import jeoneunhye.context.ApplicationContextListener;
+import jeoneunhye.sql.MybatisDaoFactory;
 import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
 import jeoneunhye.vms.dao.BoardDao;
@@ -13,11 +14,6 @@ import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.dao.VideoDao;
-import jeoneunhye.vms.dao.mariadb.BoardDaoImpl;
-import jeoneunhye.vms.dao.mariadb.MemberDaoImpl;
-import jeoneunhye.vms.dao.mariadb.PhotoBoardDaoImpl;
-import jeoneunhye.vms.dao.mariadb.PhotoFileDaoImpl;
-import jeoneunhye.vms.dao.mariadb.VideoDaoImpl;
 import jeoneunhye.vms.service.impl.BoardServiceImpl;
 import jeoneunhye.vms.service.impl.MemberServiceImpl;
 import jeoneunhye.vms.service.impl.PhotoBoardServiceImpl;
@@ -32,11 +28,13 @@ public class DataLoaderListener implements ApplicationContextListener {
       SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryProxy(
           new SqlSessionFactoryBuilder().build(inputStream));
 
-      VideoDao videoDao =  new VideoDaoImpl(sqlSessionFactory);
-      MemberDao memberDao = new MemberDaoImpl(sqlSessionFactory);
-      BoardDao boardDao = new BoardDaoImpl(sqlSessionFactory);
-      PhotoBoardDao photoBoardDao = new PhotoBoardDaoImpl(sqlSessionFactory);
-      PhotoFileDao photoFileDao = new PhotoFileDaoImpl(sqlSessionFactory);
+      MybatisDaoFactory daoFactory = new MybatisDaoFactory(sqlSessionFactory);
+
+      VideoDao videoDao = daoFactory.createDao(VideoDao.class);
+      MemberDao memberDao = daoFactory.createDao(MemberDao.class);
+      BoardDao boardDao = daoFactory.createDao(BoardDao.class);
+      PhotoBoardDao photoBoardDao = daoFactory.createDao(PhotoBoardDao.class);
+      PhotoFileDao photoFileDao = daoFactory.createDao(PhotoFileDao.class);
 
       PlatformTransactionManager txManager = new PlatformTransactionManager(sqlSessionFactory);
       context.put("transactionManager", txManager);

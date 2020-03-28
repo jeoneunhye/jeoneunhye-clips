@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="PhotoBoardMapper">
+<mapper namespace="jeoneunhye.vms.dao.PhotoBoardDao">
 
   <resultMap type="PhotoBoard" id="PhotoBoardMap">
     <id column="photo_id"   property="no"/>
@@ -23,7 +23,7 @@
     </collection>
   </resultMap>
 
-  <insert id="insertPhotoBoard" parameterType="PhotoBoard"
+  <insert id="insert" parameterType="PhotoBoard"
     useGeneratedKeys="true" keyColumn="photo_id" keyProperty="no">
     insert into vms_photo(
       titl,
@@ -35,7 +35,7 @@
       #{video.no})
   </insert>
 
-  <select id="selectPhotoBoard" resultMap="PhotoBoardMap" parameterType="int">
+  <select id="findAllByVideoNo" resultMap="PhotoBoardMap" parameterType="int">
     select 
       photo_id, 
       titl, 
@@ -49,7 +49,7 @@
       photo_id desc
   </select>
 
-  <select id="selectDetail" resultMap="PhotoBoardMap" parameterType="int">
+  <select id="findByNo" resultMap="PhotoBoardMap" parameterType="int">
     select 
       p.photo_id, 
       p.titl, 
@@ -67,14 +67,14 @@
       p.photo_id=#{no}
   </select>
 
-  <update id="updatePhotoBoard" parameterType="PhotoBoard">
+  <update id="update" parameterType="PhotoBoard">
     update vms_photo set
       titl=#{title}, 
       conts=#{content}
     where photo_id=#{no}
   </update>
 
-  <delete id="deletePhotoBoard" parameterType="int">
+  <delete id="delete" parameterType="int">
     delete from vms_photo
     where photo_id=#{no}
   </delete>

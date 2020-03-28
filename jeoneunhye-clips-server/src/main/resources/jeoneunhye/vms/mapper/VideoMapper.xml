@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
-<mapper namespace="VideoMapper">
+<mapper namespace="jeoneunhye.vms.dao.VideoDao">
 
   <resultMap type="Video" id="VideoMap">
     <id column="video_id"      property="no"/>
@@ -25,7 +25,7 @@
       upload_dt
   </sql>
   
-  <insert id="insertVideo" parameterType="Video">
+  <insert id="insert" parameterType="Video">
     insert into vms_video(
       subject, 
       titl, 
@@ -42,19 +42,12 @@
       #{uploadDate})
   </insert>
 
-  <select id="selectVideo" resultMap="VideoMap" parameterType="map">
+  <select id="findAll" resultMap="VideoMap">
     <include refid="select1"/>
     from vms_video
-    <where>
-      <if test="subject != null">subject like concat('%', #{subject}, '%')</if>
-      <if test="title != null">and titl like concat('%', #{title}, '%')</if>
-      <if test="playTime != null">and playtime &lt;= #{playTime}</if>
-      <if test="writer != null">and uploader like concat('%', #{writer}, '%')</if>
-      <if test="uploadDate != null">and upload_dt >= #{uploadDate}</if>
-    </where>
   </select>
 
-  <select id="selectDetail" resultMap="VideoMap" parameterType="int">
+  <select id="findByNo" resultMap="VideoMap" parameterType="int">
     <include refid="select1"/>,
       url
     from 
@@ -63,7 +56,7 @@
       video_id=#{no}
   </select>
   
-  <update id="updateVideo" parameterType="Video">
+  <update id="update" parameterType="Video">
     update vms_video
     <set>
       <if test="subject != null and subject != ''">subject=#{subject},</if>
@@ -76,8 +69,20 @@
     where video_id=#{no}
   </update>
   
-  <delete id="deleteVideo" parameterType="int">
+  <delete id="delete" parameterType="int">
     delete from vms_video
     where video_id=#{no}
   </delete>
+  
+  <select id="findByKeyword" resultMap="VideoMap" parameterType="map">
+    <include refid="select1"/>
+    from vms_video
+    <where>
+      <if test="subject != null">subject like concat('%', #{subject}, '%')</if>
+      <if test="title != null">and titl like concat('%', #{title}, '%')</if>
+      <if test="playTime != null">and playtime &lt;= #{playTime}</if>
+      <if test="writer != null">and uploader like concat('%', #{writer}, '%')</if>
+      <if test="uploadDate != null">and upload_dt >= #{uploadDate}</if>
+    </where>
+  </select>
 </mapper>
