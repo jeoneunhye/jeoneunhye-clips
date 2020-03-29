@@ -2,10 +2,12 @@ package jeoneunhye.vms.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import jeoneunhye.util.Component;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
+@Component
 public class MemberServiceImpl implements MemberService {
   MemberDao memberDao;
 

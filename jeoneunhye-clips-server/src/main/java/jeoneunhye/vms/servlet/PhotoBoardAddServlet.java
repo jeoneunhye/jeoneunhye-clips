@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
@@ -11,6 +12,7 @@ import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.PhotoBoardService;
 import jeoneunhye.vms.service.VideoService;
 
+@Component("/photoboard/add")
 public class PhotoBoardAddServlet implements Servlet {
   PhotoBoardService photoBoardService;
   VideoService videoService;

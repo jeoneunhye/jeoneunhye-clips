@@ -2,10 +2,12 @@ package jeoneunhye.vms.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
+import jeoneunhye.util.Component;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
+@Component
 public class VideoServiceImpl implements VideoService {
   VideoDao videoDao;
 

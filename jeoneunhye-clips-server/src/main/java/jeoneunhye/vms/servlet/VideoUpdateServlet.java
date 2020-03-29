@@ -2,10 +2,12 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
+@Component("/video/update")
 public class VideoUpdateServlet implements Servlet {
   VideoService videoService;
 

@@ -3,9 +3,11 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
+@Component("/video/list")
 public class VideoListServlet implements Servlet {
   VideoService videoService;
 

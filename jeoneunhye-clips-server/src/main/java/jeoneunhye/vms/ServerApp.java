@@ -15,34 +15,8 @@ import java.util.concurrent.Executors;
 import org.apache.ibatis.session.SqlSessionFactory;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
-import jeoneunhye.vms.service.BoardService;
-import jeoneunhye.vms.service.MemberService;
-import jeoneunhye.vms.service.PhotoBoardService;
-import jeoneunhye.vms.service.VideoService;
-import jeoneunhye.vms.servlet.BoardAddServlet;
-import jeoneunhye.vms.servlet.BoardDeleteServlet;
-import jeoneunhye.vms.servlet.BoardDetailServlet;
-import jeoneunhye.vms.servlet.BoardListServlet;
-import jeoneunhye.vms.servlet.BoardUpdateServlet;
-import jeoneunhye.vms.servlet.LoginServlet;
-import jeoneunhye.vms.servlet.MemberAddServlet;
-import jeoneunhye.vms.servlet.MemberDeleteServlet;
-import jeoneunhye.vms.servlet.MemberDetailServlet;
-import jeoneunhye.vms.servlet.MemberListServlet;
-import jeoneunhye.vms.servlet.MemberSearchServlet;
-import jeoneunhye.vms.servlet.MemberUpdateServlet;
-import jeoneunhye.vms.servlet.PhotoBoardAddServlet;
-import jeoneunhye.vms.servlet.PhotoBoardDeleteServlet;
-import jeoneunhye.vms.servlet.PhotoBoardDetailServlet;
-import jeoneunhye.vms.servlet.PhotoBoardListServlet;
-import jeoneunhye.vms.servlet.PhotoBoardUpdateServlet;
+import jeoneunhye.util.ApplicationContext;
 import jeoneunhye.vms.servlet.Servlet;
-import jeoneunhye.vms.servlet.VideoAddServlet;
-import jeoneunhye.vms.servlet.VideoDeleteServlet;
-import jeoneunhye.vms.servlet.VideoDetailServlet;
-import jeoneunhye.vms.servlet.VideoListServlet;
-import jeoneunhye.vms.servlet.VideoSearchServlet;
-import jeoneunhye.vms.servlet.VideoUpdateServlet;
 
 public class ServerApp {
   Set<ApplicationContextListener> listeners = new HashSet<>();
@@ -52,6 +26,8 @@ public class ServerApp {
   ExecutorService executorService = Executors.newCachedThreadPool();
 
   boolean serverStop = false;
+
+  ApplicationContext iocContainer;
 
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
@@ -76,40 +52,10 @@ public class ServerApp {
   public void service() {
     notifyApplicationInitialized();
 
-    SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) context.get("sqlSessionFactory");
+    iocContainer = (ApplicationContext) context.get("iocContainer");
 
-    VideoService videoService = (VideoService) context.get("videoService");
-    MemberService memberService = (MemberService) context.get("memberService");
-    BoardService boardService = (BoardService) context.get("boardService");
-    PhotoBoardService photoBoardService = (PhotoBoardService) context.get("photoBoardService");
-
-    servletMap.put("/video/add", new VideoAddServlet(videoService));
-    servletMap.put("/video/list", new VideoListServlet(videoService));
-    servletMap.put("/video/detail", new VideoDetailServlet(videoService));
-    servletMap.put("/video/update", new VideoUpdateServlet(videoService));
-    servletMap.put("/video/delete", new VideoDeleteServlet(videoService));
-    servletMap.put("/video/search", new VideoSearchServlet(videoService));
-
-    servletMap.put("/member/add", new MemberAddServlet(memberService));
-    servletMap.put("/member/list", new MemberListServlet(memberService));
-    servletMap.put("/member/detail", new MemberDetailServlet(memberService));
-    servletMap.put("/member/update", new MemberUpdateServlet(memberService));
-    servletMap.put("/member/delete", new MemberDeleteServlet(memberService));
-    servletMap.put("/member/search", new MemberSearchServlet(memberService));
-
-    servletMap.put("/board/add", new BoardAddServlet(boardService));
-    servletMap.put("/board/list", new BoardListServlet(boardService));
-    servletMap.put("/board/detail", new BoardDetailServlet(boardService));
-    servletMap.put("/board/update", new BoardUpdateServlet(boardService));
-    servletMap.put("/board/delete", new BoardDeleteServlet(boardService));
-
-    servletMap.put("/photoboard/add", new PhotoBoardAddServlet(photoBoardService, videoService));
-    servletMap.put("/photoboard/list", new PhotoBoardListServlet(photoBoardService, videoService));
-    servletMap.put("/photoboard/detail", new PhotoBoardDetailServlet(photoBoardService));
-    servletMap.put("/photoboard/update", new PhotoBoardUpdateServlet(photoBoardService));
-    servletMap.put("/photoboard/delete", new PhotoBoardDeleteServlet(photoBoardService));
-
-    servletMap.put("/auth/login", new LoginServlet(memberService));
+    SqlSessionFactory sqlSessionFactory =
+        (SqlSessionFactory) iocContainer.getBean("sqlSessionFactory");
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 
@@ -177,7 +123,7 @@ public class ServerApp {
         return;
       }
 
-      Servlet servlet = servletMap.get(request);
+      Servlet servlet = (Servlet) iocContainer.getBean(request);
       if (servlet != null) {
         try {
           servlet.service(in, out);
@@ -212,7 +158,7 @@ public class ServerApp {
     System.out.println("영상 관리 시스템 서버입니다.");
 
     ServerApp app = new ServerApp();
-    app.addApplicationContextListener(new DataLoaderListener());
+    app.addApplicationContextListener(new ContextLoaderListener());
     app.service();
   }
 }

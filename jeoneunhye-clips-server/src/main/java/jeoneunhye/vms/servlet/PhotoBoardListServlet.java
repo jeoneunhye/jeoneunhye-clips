@@ -3,11 +3,13 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.PhotoBoardService;
 import jeoneunhye.vms.service.VideoService;
 
+@Component("/photoboard/list")
 public class PhotoBoardListServlet implements Servlet {
   PhotoBoardService photoBoardService;
   VideoService videoService;

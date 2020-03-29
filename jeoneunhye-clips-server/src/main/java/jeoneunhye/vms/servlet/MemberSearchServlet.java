@@ -3,10 +3,12 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
+@Component("/member/search")
 public class MemberSearchServlet implements Servlet {
   MemberService memberService;
 

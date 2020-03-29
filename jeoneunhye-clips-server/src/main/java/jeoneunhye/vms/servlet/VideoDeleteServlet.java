@@ -2,9 +2,11 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.service.VideoService;
 
+@Component("/video/delete")
 public class VideoDeleteServlet implements Servlet {
   VideoService videoService;
 

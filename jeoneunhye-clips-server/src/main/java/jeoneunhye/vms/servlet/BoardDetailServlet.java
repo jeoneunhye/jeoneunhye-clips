@@ -2,10 +2,12 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;
 
+@Component("/board/detail")
 public class BoardDetailServlet implements Servlet {
   BoardService boardService;
 

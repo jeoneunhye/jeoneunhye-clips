@@ -2,10 +2,12 @@ package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
+@Component("/member/add")
 public class MemberAddServlet implements Servlet {
   MemberService memberService;
 

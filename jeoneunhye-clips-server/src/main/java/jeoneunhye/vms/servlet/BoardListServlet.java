@@ -3,9 +3,11 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;
 
+@Component("/board/list")
 public class BoardListServlet implements Servlet {
   BoardService boardService;
 

@@ -4,11 +4,13 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 import jeoneunhye.vms.service.PhotoBoardService;
 
+@Component("/photoboard/update")
 public class PhotoBoardUpdateServlet implements Servlet {
   PhotoBoardService photoBoardService;
 

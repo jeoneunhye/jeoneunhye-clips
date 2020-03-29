@@ -5,10 +5,12 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
+@Component("/video/search")
 public class VideoSearchServlet implements Servlet {
   VideoService videoService;
 
