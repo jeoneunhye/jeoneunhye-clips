@@ -4,18 +4,19 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
-@Component("/member/add")
-public class MemberAddServlet implements Servlet {
+@Component
+public class MemberAddServlet {
   MemberService memberService;
 
   public MemberAddServlet(MemberService memberService) {
     this.memberService = memberService;
   }
 
-  @Override
+  @RequestMapping("/member/add")
   public void service(Scanner in, PrintStream out) throws Exception {
     Member member = new Member();
     member.setId(Prompt.getString(in, out, "아이디? "));

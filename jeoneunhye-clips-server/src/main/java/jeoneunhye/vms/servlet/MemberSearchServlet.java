@@ -5,18 +5,19 @@ import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
-@Component("/member/search")
-public class MemberSearchServlet implements Servlet {
+@Component
+public class MemberSearchServlet {
   MemberService memberService;
 
   public MemberSearchServlet(MemberService memberService) {
     this.memberService = memberService;
   }
 
-  @Override
+  @RequestMapping("/member/search")
   public void service(Scanner in, PrintStream out) throws Exception {
     String keyword = Prompt.getString(in, out, "검색어? ");
 

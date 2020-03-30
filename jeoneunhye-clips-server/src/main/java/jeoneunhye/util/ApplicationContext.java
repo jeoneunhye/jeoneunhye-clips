@@ -1,6 +1,7 @@
 package jeoneunhye.util;
 
 import java.io.File;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
@@ -40,6 +41,26 @@ public class ApplicationContext {
         System.out.printf("%s 클래스의 객체를 생성할 수 없습니다.\n", clazz.getName());
       }
     }
+  }
+
+  // ContextLoaderListener에서 특정 애노테이션이 붙은 객체들을 찾고
+  // 그 객체(빈)의 이름이 담긴 배열을 리턴한다.
+  public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
+    ArrayList<String> beanNames = new ArrayList<>();
+
+    Set<String> beanNameSet = objPool.keySet();
+    for (String beanName : beanNameSet) {
+      Object obj = objPool.get(beanName);
+
+      if (obj.getClass().getAnnotation(annotationType) != null) {
+        beanNames.add(beanName);
+      }
+    }
+
+    String[] names = new String[beanNames.size()];
+    beanNames.toArray(names);
+
+    return names;
   }
 
   // ContextLoaderListener에서 IoC 컨테이너에 보관된 객체를 확인한다.

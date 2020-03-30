@@ -4,17 +4,18 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.service.VideoService;
 
-@Component("/video/delete")
-public class VideoDeleteServlet implements Servlet {
+@Component
+public class VideoDeleteServlet {
   VideoService videoService;
 
   public VideoDeleteServlet(VideoService videoService) {
     this.videoService = videoService;
   }
 
-  @Override
+  @RequestMapping("/video/delete")
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = Prompt.getInt(in, out, "번호? ");
 

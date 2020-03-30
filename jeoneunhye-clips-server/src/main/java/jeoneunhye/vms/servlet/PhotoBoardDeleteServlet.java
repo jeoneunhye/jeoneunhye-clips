@@ -4,17 +4,18 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.service.PhotoBoardService;
 
-@Component("/photoboard/delete")
-public class PhotoBoardDeleteServlet implements Servlet {
+@Component
+public class PhotoBoardDeleteServlet {
   PhotoBoardService photoBoardService;
 
   public PhotoBoardDeleteServlet(PhotoBoardService photoBoardService) {
     this.photoBoardService = photoBoardService;
   }
 
-  @Override
+  @RequestMapping("/photoboard/delete")
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = Prompt.getInt(in, out, "번호? ");
 

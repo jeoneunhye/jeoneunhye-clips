@@ -16,18 +16,20 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
 import jeoneunhye.util.ApplicationContext;
-import jeoneunhye.vms.servlet.Servlet;
+import jeoneunhye.util.RequestHandler;
+import jeoneunhye.util.RequestMappingHandlerMapping;
 
 public class ServerApp {
   Set<ApplicationContextListener> listeners = new HashSet<>();
   Map<String, Object> context = new HashMap<>();
-  Map<String, Servlet> servletMap = new HashMap<>();
 
   ExecutorService executorService = Executors.newCachedThreadPool();
 
   boolean serverStop = false;
 
   ApplicationContext iocContainer;
+
+  RequestMappingHandlerMapping handlerMapper;
 
   public void addApplicationContextListener(ApplicationContextListener listener) {
     listeners.add(listener);
@@ -53,6 +55,8 @@ public class ServerApp {
     notifyApplicationInitialized();
 
     iocContainer = (ApplicationContext) context.get("iocContainer");
+
+    handlerMapper = (RequestMappingHandlerMapping) context.get("handlerMapper");
 
     SqlSessionFactory sqlSessionFactory =
         (SqlSessionFactory) iocContainer.getBean("sqlSessionFactory");
@@ -123,10 +127,11 @@ public class ServerApp {
         return;
       }
 
-      Servlet servlet = (Servlet) iocContainer.getBean(request);
-      if (servlet != null) {
+      RequestHandler requestHandler = handlerMapper.getHandler(request);
+      if (requestHandler != null) {
         try {
-          servlet.service(in, out);
+          requestHandler.getMethod().invoke(requestHandler.getBean(),
+              in, out);
 
         } catch (Exception e) {
           out.println("요청 처리 중 오류 발생!");

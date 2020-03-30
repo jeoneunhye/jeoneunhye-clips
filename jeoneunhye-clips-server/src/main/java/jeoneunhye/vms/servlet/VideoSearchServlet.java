@@ -7,18 +7,19 @@ import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
-@Component("/video/search")
-public class VideoSearchServlet implements Servlet {
+@Component
+public class VideoSearchServlet {
   VideoService videoService;
 
   public VideoSearchServlet(VideoService videoService) {
     this.videoService = videoService;
   }
 
-  @Override
+  @RequestMapping("/video/search")
   public void service(Scanner in, PrintStream out) throws Exception {
     HashMap<String, Object> params = new HashMap<>();
 

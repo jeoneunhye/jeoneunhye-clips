@@ -4,18 +4,19 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;
 
-@Component("/board/add")
-public class BoardAddServlet implements Servlet {
+@Component
+public class BoardAddServlet {
   BoardService boardService;
 
   public BoardAddServlet(BoardService boardService) {
     this.boardService = boardService;
   }
 
-  @Override
+  @RequestMapping("/board/add")
   public void service(Scanner in, PrintStream out) throws Exception {
     Board board = new Board();
     board.setTitle(Prompt.getString(in, out, "제목? "));

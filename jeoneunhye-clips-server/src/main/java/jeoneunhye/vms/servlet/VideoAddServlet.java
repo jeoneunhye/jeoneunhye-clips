@@ -4,18 +4,19 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
-@Component("/video/add")
-public class VideoAddServlet implements Servlet {
+@Component
+public class VideoAddServlet {
   VideoService videoService;
 
   public VideoAddServlet(VideoService videoService) {
     this.videoService = videoService;
   }
 
-  @Override
+  @RequestMapping("/video/add")
   public void service(Scanner in, PrintStream out) throws Exception {
     Video video = new Video();
     video.setSubject(Prompt.getString(in, out, "주제? "));

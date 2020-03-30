@@ -4,18 +4,19 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;
 
-@Component("/board/list")
-public class BoardListServlet implements Servlet {
+@Component
+public class BoardListServlet {
   BoardService boardService;
 
   public BoardListServlet(BoardService boardService) {
     this.boardService = boardService;
   }
 
-  @Override
+  @RequestMapping("/board/list")
   public void service(Scanner in, PrintStream out) throws Exception {
     List<Board> boards = boardService.list();
     for (Board b : boards) {

@@ -4,18 +4,19 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;
 
-@Component("/board/update")
-public class BoardUpdateServlet implements Servlet {
+@Component
+public class BoardUpdateServlet {
   BoardService boardService;
 
   public BoardUpdateServlet(BoardService boardService) {
     this.boardService = boardService;
   }
 
-  @Override
+  @RequestMapping("/board/update")
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 

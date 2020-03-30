@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.PhotoBoardService;
 import jeoneunhye.vms.service.VideoService;
 
-@Component("/photoboard/add")
-public class PhotoBoardAddServlet implements Servlet {
+@Component
+public class PhotoBoardAddServlet {
   PhotoBoardService photoBoardService;
   VideoService videoService;
 
@@ -22,7 +23,7 @@ public class PhotoBoardAddServlet implements Servlet {
     this.videoService = videoService;
   }
 
-  @Override
+  @RequestMapping("/photoboard/add")
   public void service(Scanner in, PrintStream out) throws Exception {
     PhotoBoard photoBoard = new PhotoBoard();
     photoBoard.setTitle(Prompt.getString(in, out, "제목? "));

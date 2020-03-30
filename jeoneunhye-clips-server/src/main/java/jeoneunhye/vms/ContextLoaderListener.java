@@ -1,6 +1,7 @@
 package jeoneunhye.vms;
 
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.ibatis.io.Resources;
@@ -11,6 +12,10 @@ import jeoneunhye.sql.MybatisDaoFactory;
 import jeoneunhye.sql.PlatformTransactionManager;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
 import jeoneunhye.util.ApplicationContext;
+import jeoneunhye.util.Component;
+import jeoneunhye.util.RequestHandler;
+import jeoneunhye.util.RequestMapping;
+import jeoneunhye.util.RequestMappingHandlerMapping;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.dao.MemberDao;
 import jeoneunhye.vms.dao.PhotoBoardDao;
@@ -45,9 +50,39 @@ public class ContextLoaderListener implements ApplicationContextListener {
 
       context.put("iocContainer", appCtx);
 
+      System.out.println("-----------------------------------");
+
+      RequestMappingHandlerMapping handlerMapper = new RequestMappingHandlerMapping();
+
+      String[] beanNames = appCtx.getBeanNamesForAnnotation(Component.class);
+      for (String beanName : beanNames) {
+        Object component = appCtx.getBean(beanName);
+
+        Method method = getRequestHandler(component.getClass());
+        if (method != null) {
+          RequestHandler requestHandler = new RequestHandler(method, component);
+
+          handlerMapper.addHandler(requestHandler.getPath(), requestHandler);
+        }
+      }
+
+      context.put("handlerMapper", handlerMapper);
+
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  private Method getRequestHandler(Class<?> type) {
+    Method[] methods = type.getMethods();
+    for (Method m : methods) {
+      RequestMapping anno = m.getAnnotation(RequestMapping.class);
+      if (anno != null) {
+        return m;
+      }
+    }
+
+    return null;
   }
 
   @Override

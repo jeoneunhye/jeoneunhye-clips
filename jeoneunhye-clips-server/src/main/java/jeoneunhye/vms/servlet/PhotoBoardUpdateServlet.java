@@ -6,19 +6,20 @@ import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.PhotoFile;
 import jeoneunhye.vms.service.PhotoBoardService;
 
-@Component("/photoboard/update")
-public class PhotoBoardUpdateServlet implements Servlet {
+@Component
+public class PhotoBoardUpdateServlet {
   PhotoBoardService photoBoardService;
 
   public PhotoBoardUpdateServlet(PhotoBoardService photoBoardService) {
     this.photoBoardService = photoBoardService;
   }
 
-  @Override
+  @RequestMapping("/photoboard/update")
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 

@@ -4,13 +4,14 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.PhotoBoardService;
 import jeoneunhye.vms.service.VideoService;
 
-@Component("/photoboard/list")
-public class PhotoBoardListServlet implements Servlet {
+@Component
+public class PhotoBoardListServlet {
   PhotoBoardService photoBoardService;
   VideoService videoService;
 
@@ -19,7 +20,7 @@ public class PhotoBoardListServlet implements Servlet {
     this.videoService = videoService;
   }
 
-  @Override
+  @RequestMapping("/photoboard/list")
   public void service(Scanner in, PrintStream out) throws Exception {
     out.println("영상 번호? ");
     out.println("!{}!");

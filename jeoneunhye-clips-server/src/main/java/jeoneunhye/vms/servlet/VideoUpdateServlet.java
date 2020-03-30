@@ -4,18 +4,19 @@ import java.io.PrintStream;
 import java.util.Scanner;
 import jeoneunhye.util.Component;
 import jeoneunhye.util.Prompt;
+import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
-@Component("/video/update")
-public class VideoUpdateServlet implements Servlet {
+@Component
+public class VideoUpdateServlet {
   VideoService videoService;
 
   public VideoUpdateServlet(VideoService videoService) {
     this.videoService = videoService;
   }
 
-  @Override
+  @RequestMapping("/video/update")
   public void service(Scanner in, PrintStream out) throws Exception {
     int no = (Prompt.getInt(in, out, "번호? "));
 
