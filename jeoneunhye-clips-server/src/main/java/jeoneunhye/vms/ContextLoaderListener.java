@@ -1,62 +1,31 @@
 package jeoneunhye.vms;
 
-import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.sql.MybatisDaoFactory;
-import jeoneunhye.sql.PlatformTransactionManager;
-import jeoneunhye.sql.SqlSessionFactoryProxy;
-import jeoneunhye.util.ApplicationContext;
-import jeoneunhye.util.Component;
 import jeoneunhye.util.RequestHandler;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.util.RequestMappingHandlerMapping;
-import jeoneunhye.vms.dao.BoardDao;
-import jeoneunhye.vms.dao.MemberDao;
-import jeoneunhye.vms.dao.PhotoBoardDao;
-import jeoneunhye.vms.dao.PhotoFileDao;
-import jeoneunhye.vms.dao.VideoDao;
 
 public class ContextLoaderListener implements ApplicationContextListener {
   @Override
   public void contextInitialized(Map<String, Object> context) {
     try {
-      HashMap<String, Object> beans = new HashMap<>();
+      ApplicationContext iocContainer = new AnnotationConfigApplicationContext(AppConfig.class);
+      printBeans(iocContainer);
 
-      InputStream inputStream = Resources.getResourceAsStream(
-          "jeoneunhye/vms/conf/mybatis-config.xml");
-      SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryProxy(
-          new SqlSessionFactoryBuilder().build(inputStream));
-      beans.put("sqlSessionFactory", sqlSessionFactory);
-
-      MybatisDaoFactory daoFactory = new MybatisDaoFactory(sqlSessionFactory);
-
-      beans.put("videoDao", daoFactory.createDao(VideoDao.class));
-      beans.put("memberDao", daoFactory.createDao(MemberDao.class));
-      beans.put("boardDao", daoFactory.createDao(BoardDao.class));
-      beans.put("photoBoardDao", daoFactory.createDao(PhotoBoardDao.class));
-      beans.put("photoFileDao", daoFactory.createDao(PhotoFileDao.class));
-
-      PlatformTransactionManager txManager = new PlatformTransactionManager(sqlSessionFactory);
-      beans.put("transactionManager", txManager);
-
-      ApplicationContext appCtx = new ApplicationContext("jeoneunhye.vms", beans);
-      appCtx.printBeans();
-
-      context.put("iocContainer", appCtx);
+      context.put("iocContainer", iocContainer);
 
       System.out.println("-----------------------------------");
 
       RequestMappingHandlerMapping handlerMapper = new RequestMappingHandlerMapping();
 
-      String[] beanNames = appCtx.getBeanNamesForAnnotation(Component.class);
+      String[] beanNames = iocContainer.getBeanNamesForAnnotation(Component.class);
       for (String beanName : beanNames) {
-        Object component = appCtx.getBean(beanName);
+        Object component = iocContainer.getBean(beanName);
 
         Method method = getRequestHandler(component.getClass());
         if (method != null) {
@@ -70,6 +39,16 @@ public class ContextLoaderListener implements ApplicationContextListener {
 
     } catch (Exception e) {
       e.printStackTrace();
+    }
+  }
+
+  private void printBeans(ApplicationContext appCtx) {
+    System.out.println("Spring IoC Container에 들어있는 객체들:");
+    String[] beanNames = appCtx.getBeanDefinitionNames();
+    for (String beanName : beanNames) {
+      System.out.printf("%s ==> %s\n",
+          beanName,
+          appCtx.getBean(beanName).getClass().getName());
     }
   }
 

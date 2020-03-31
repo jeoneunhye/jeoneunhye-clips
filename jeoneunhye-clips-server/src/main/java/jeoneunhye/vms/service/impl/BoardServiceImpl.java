@@ -1,7 +1,7 @@
 package jeoneunhye.vms.service.impl;
 
 import java.util.List;
-import jeoneunhye.util.Component;
+import org.springframework.stereotype.Component;
 import jeoneunhye.vms.dao.BoardDao;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;

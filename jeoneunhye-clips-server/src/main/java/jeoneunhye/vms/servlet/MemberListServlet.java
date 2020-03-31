@@ -3,7 +3,7 @@ package jeoneunhye.vms.servlet;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
-import jeoneunhye.util.Component;
+import org.springframework.stereotype.Component;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;

@@ -13,9 +13,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.springframework.context.ApplicationContext;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.sql.SqlSessionFactoryProxy;
-import jeoneunhye.util.ApplicationContext;
 import jeoneunhye.util.RequestHandler;
 import jeoneunhye.util.RequestMappingHandlerMapping;
 

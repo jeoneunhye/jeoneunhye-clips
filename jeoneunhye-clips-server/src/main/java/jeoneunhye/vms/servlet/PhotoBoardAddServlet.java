@@ -4,7 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import jeoneunhye.util.Component;
+import org.springframework.stereotype.Component;
 import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.PhotoBoard;

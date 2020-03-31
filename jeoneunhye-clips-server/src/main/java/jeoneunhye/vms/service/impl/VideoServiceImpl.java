@@ -2,7 +2,7 @@ package jeoneunhye.vms.service.impl;
 
 import java.util.HashMap;
 import java.util.List;
-import jeoneunhye.util.Component;
+import org.springframework.stereotype.Component;
 import jeoneunhye.vms.dao.VideoDao;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
