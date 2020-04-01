@@ -2,8 +2,8 @@ package jeoneunhye.vms.service.impl;
 
 import java.util.List;
 import org.springframework.stereotype.Component;
-import jeoneunhye.sql.PlatformTransactionManager;
-import jeoneunhye.sql.TransactionTemplate;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
 import jeoneunhye.vms.domain.PhotoBoard;
@@ -24,12 +24,17 @@ public class PhotoBoardServiceImpl implements PhotoBoardService {
 
   @Override
   public void add(PhotoBoard photoBoard) throws Exception {
-    transactionTemplate.execute(() -> {
-      if (photoBoardDao.insert(photoBoard) == 0) {
-        throw new Exception("사진 게시글을 등록할 수 없습니다.");
-      }
+    transactionTemplate.execute((status) -> {
+        try {
+          if (photoBoardDao.insert(photoBoard) == 0) {
+            throw new Exception("사진 게시글을 등록할 수 없습니다.");
+          }
 
-      photoFileDao.insert(photoBoard);
+          photoFileDao.insert(photoBoard);
+
+        } catch (Exception e) {
+          status.setRollbackOnly();
+        }
 
       return null;
     });
@@ -47,7 +52,8 @@ public class PhotoBoardServiceImpl implements PhotoBoardService {
 
   @Override
   public void update(PhotoBoard photoBoard) throws Exception {
-    transactionTemplate.execute(() -> {
+    transactionTemplate.execute((status) -> {
+      try {
       if (photoBoardDao.update(photoBoard) == 0) {
         throw new Exception("사진 게시글을 변경할 수 없습니다.");
       }
@@ -58,17 +64,26 @@ public class PhotoBoardServiceImpl implements PhotoBoardService {
         photoFileDao.insert(photoBoard);
       }
 
+      } catch (Exception e) {
+        status.setRollbackOnly();
+      }
+
       return null;
     });
   }
 
   @Override
   public void delete(int no) throws Exception {
-    transactionTemplate.execute(() -> {
+    transactionTemplate.execute((status) -> {
+      try {
       photoFileDao.deleteAll(no);
 
       if (photoBoardDao.delete(no) == 0) {
         throw new Exception("해당 번호의 사진 게시글이 없습니다.");
+      }
+
+      } catch (Exception e) {
+        status.setRollbackOnly();
       }
 
       return null;

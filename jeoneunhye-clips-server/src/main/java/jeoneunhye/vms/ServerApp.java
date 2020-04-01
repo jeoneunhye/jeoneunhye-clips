@@ -12,10 +12,8 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.context.ApplicationContext;
 import jeoneunhye.context.ApplicationContextListener;
-import jeoneunhye.sql.SqlSessionFactoryProxy;
 import jeoneunhye.util.RequestHandler;
 import jeoneunhye.util.RequestMappingHandlerMapping;
 
@@ -58,9 +56,6 @@ public class ServerApp {
 
     handlerMapper = (RequestMappingHandlerMapping) context.get("handlerMapper");
 
-    SqlSessionFactory sqlSessionFactory =
-        (SqlSessionFactory) iocContainer.getBean("sqlSessionFactory");
-
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 
       System.out.println("클라이언트 연결 대기중...");
@@ -72,8 +67,6 @@ public class ServerApp {
 
         executorService.submit(() -> {
           processRequest(socket);
-
-          ((SqlSessionFactoryProxy) sqlSessionFactory).closeSession();
 
           System.out.println("-----클라이언트 요청 처리 완료");
         });
