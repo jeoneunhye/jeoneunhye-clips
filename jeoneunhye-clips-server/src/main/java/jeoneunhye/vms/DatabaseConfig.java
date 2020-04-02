@@ -1,6 +1,8 @@
 package jeoneunhye.vms;
 
 import javax.sql.DataSource;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @PropertySource("classpath:jeoneunhye/vms/conf/jdbc.properties")
 public class DatabaseConfig {
+  static Logger logger = LogManager.getLogger(DatabaseConfig.class);
+
   @Value("${jdbc.driver}")
   String jdbcDriver;
 
@@ -27,7 +31,7 @@ public class DatabaseConfig {
   String jdbcPassword;
 
   public DatabaseConfig() {
-    System.out.println("DatabaseConfig 객체 생성");
+    logger.debug("DatabaseConfig 객체 생성");
   }
 
   @Bean

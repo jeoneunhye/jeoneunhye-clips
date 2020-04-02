@@ -3,6 +3,8 @@ package jeoneunhye.vms;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
@@ -12,12 +14,16 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import jeoneunhye.context.ApplicationContextListener;
 import jeoneunhye.util.RequestHandler;
 import jeoneunhye.util.RequestMappingHandlerMapping;
 
 public class ServerApp {
+  static Logger logger = LogManager.getLogger(ServerApp.class);
+
   Set<ApplicationContextListener> listeners = new HashSet<>();
   Map<String, Object> context = new HashMap<>();
 
@@ -58,27 +64,27 @@ public class ServerApp {
 
     try (ServerSocket serverSocket = new ServerSocket(9999)) {
 
-      System.out.println("클라이언트 연결 대기중...");
+      logger.info("클라이언트 연결 대기중...");
 
       while (true) {
         Socket socket = serverSocket.accept();
 
-        System.out.println("클라이언트 연결 완료!");
+        logger.info("클라이언트 연결 완료!");
 
         executorService.submit(() -> {
           processRequest(socket);
 
-          System.out.println("-----클라이언트 요청 처리 완료");
+          logger.info("-----클라이언트 요청 처리 완료");
         });
 
-        System.out.println("-----클라이언트가 연결을 종료하였습니다.");
+        logger.info("-----클라이언트가 연결을 종료하였습니다.");
         if (serverStop) {
           break;
         }
       }
 
     } catch (Exception e) {
-      System.out.println("연결 중 오류 발생!");
+      logger.error("연결 중 오류 발생!: %s" + e.getMessage());
     }
 
     executorService.shutdown();
@@ -92,13 +98,15 @@ public class ServerApp {
         Thread.sleep(500);
 
       } catch (Exception e) {
-        e.printStackTrace();
+        StringWriter strWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(strWriter));
+        logger.debug(strWriter.toString());
       }
     }
 
     notifyApplicationDestroyed();
 
-    System.out.println("서버를 종료합니다.");
+    logger.info("서버를 종료합니다.");
   }
 
   void processRequest(Socket clientSocket) {
@@ -107,10 +115,10 @@ public class ServerApp {
         Scanner in = new Scanner(socket.getInputStream());
         PrintStream out = new PrintStream(socket.getOutputStream())) {
 
-      System.out.println("데이터 통신 시작");
+      logger.info("데이터 통신 시작");
 
       String request = in.nextLine();
-      System.out.printf("=> %s\n", request);
+      logger.info(String.format("=> %s\n", request));
 
       if (request.equalsIgnoreCase("/server/stop")) {
         serverStop = true;
@@ -130,8 +138,10 @@ public class ServerApp {
           out.println("요청 처리 중 오류 발생!");
           out.println(e.getMessage());
 
-          System.out.println("클라이언트 요청 처리 중 오류 발생:");
-          e.printStackTrace();
+          logger.info("클라이언트 요청 처리 중 오류 발생:");
+          StringWriter strWriter = new StringWriter();
+          e.printStackTrace(new PrintWriter(strWriter));
+          logger.debug(strWriter.toString());
         }
 
       } else {
@@ -140,20 +150,23 @@ public class ServerApp {
 
       out.println("!end!");
       out.flush();
-      System.out.println("클라이언트에게 응답 완료");
+      logger.info("클라이언트에게 응답 완료");
 
     } catch (Exception e) {
-      System.out.print("예외 발생: ");
-      e.printStackTrace();
+      logger.error("예외 발생: ");
+      StringWriter strWriter = new StringWriter();
+      e.printStackTrace(new PrintWriter(strWriter));
+      logger.debug(strWriter.toString());
     }
   }
 
   private void notFound(PrintStream out) throws IOException {
     out.println("요청한 명령을 처리할 수 없습니다.");
+    logger.info("해당 명령을 지원하지 않습니다.");
   }
 
   public static void main(String[] args) {
-    System.out.println("영상 관리 시스템 서버입니다.");
+    logger.info("영상 관리 시스템 서버입니다.");
 
     ServerApp app = new ServerApp();
     app.addApplicationContextListener(new ContextLoaderListener());
