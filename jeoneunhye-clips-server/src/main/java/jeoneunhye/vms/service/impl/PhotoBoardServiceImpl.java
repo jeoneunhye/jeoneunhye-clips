@@ -3,6 +3,7 @@ package jeoneunhye.vms.service.impl;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 import jeoneunhye.vms.dao.PhotoBoardDao;
 import jeoneunhye.vms.dao.PhotoFileDao;
@@ -22,22 +23,14 @@ public class PhotoBoardServiceImpl implements PhotoBoardService {
     this.photoFileDao = photoFileDao;
   }
 
+  @Transactional
   @Override
   public void add(PhotoBoard photoBoard) throws Exception {
-    transactionTemplate.execute((status) -> {
-        try {
-          if (photoBoardDao.insert(photoBoard) == 0) {
-            throw new Exception("사진 게시글을 등록할 수 없습니다.");
-          }
+    if (photoBoardDao.insert(photoBoard) == 0) {
+      throw new Exception("사진 게시글을 등록할 수 없습니다.");
+    }
 
-          photoFileDao.insert(photoBoard);
-
-        } catch (Exception e) {
-          status.setRollbackOnly();
-        }
-
-      return null;
-    });
+    photoFileDao.insert(photoBoard);
   }
 
   @Override
@@ -50,43 +43,27 @@ public class PhotoBoardServiceImpl implements PhotoBoardService {
     return photoBoardDao.findByNo(no);
   }
 
+  @Transactional
   @Override
   public void update(PhotoBoard photoBoard) throws Exception {
-    transactionTemplate.execute((status) -> {
-      try {
-      if (photoBoardDao.update(photoBoard) == 0) {
-        throw new Exception("사진 게시글을 변경할 수 없습니다.");
-      }
+    if (photoBoardDao.update(photoBoard) == 0) {
+      throw new Exception("사진 게시글을 변경할 수 없습니다.");
+    }
 
-      if (photoBoard.getFiles() != null) {
-        photoFileDao.deleteAll(photoBoard.getNo());
+    if (photoBoard.getFiles() != null) {
+      photoFileDao.deleteAll(photoBoard.getNo());
 
-        photoFileDao.insert(photoBoard);
-      }
-
-      } catch (Exception e) {
-        status.setRollbackOnly();
-      }
-
-      return null;
-    });
+      photoFileDao.insert(photoBoard);
+    }
   }
 
+  @Transactional
   @Override
   public void delete(int no) throws Exception {
-    transactionTemplate.execute((status) -> {
-      try {
-      photoFileDao.deleteAll(no);
+    photoFileDao.deleteAll(no);
 
-      if (photoBoardDao.delete(no) == 0) {
-        throw new Exception("해당 번호의 사진 게시글이 없습니다.");
-      }
-
-      } catch (Exception e) {
-        status.setRollbackOnly();
-      }
-
-      return null;
-    });
+    if (photoBoardDao.delete(no) == 0) {
+      throw new Exception("해당 번호의 사진 게시글이 없습니다.");
+    }
   }
 }
