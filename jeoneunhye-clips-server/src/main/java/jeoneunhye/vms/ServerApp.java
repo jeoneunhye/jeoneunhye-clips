@@ -117,10 +117,22 @@ public class ServerApp {
 
       logger.info("데이터 통신 시작");
 
-      String request = in.nextLine();
-      logger.info(String.format("=> %s\n", request));
+      String[] requestLine = in.nextLine().split(" ");
+      while (true) {
+        String line = in.nextLine();
+        if (line.length() == 0) {
+          break;
+        }
+      }
 
-      if (request.equalsIgnoreCase("/server/stop")) {
+      String method = requestLine[0];
+      String requestUri = requestLine[1];
+      logger.info(String.format("method => %s", method));
+      logger.info(String.format("request-uri => %s", requestUri));
+
+      printResponseHeader(out);
+
+      if (requestUri.equalsIgnoreCase("/server/stop")) {
         serverStop = true;
         out.println("OK");
         out.println("!end!");
@@ -128,7 +140,7 @@ public class ServerApp {
         return;
       }
 
-      RequestHandler requestHandler = handlerMapper.getHandler(request);
+      RequestHandler requestHandler = handlerMapper.getHandler(requestUri);
       if (requestHandler != null) {
         try {
           requestHandler.getMethod().invoke(requestHandler.getBean(),
@@ -148,7 +160,6 @@ public class ServerApp {
         notFound(out);
       }
 
-      out.println("!end!");
       out.flush();
       logger.info("클라이언트에게 응답 완료");
 
@@ -158,6 +169,12 @@ public class ServerApp {
       e.printStackTrace(new PrintWriter(strWriter));
       logger.debug(strWriter.toString());
     }
+  }
+
+  private void printResponseHeader(PrintStream out) {
+    out.println("HTTP/1.1 200 OK");
+    out.println("Server: VMS Server");
+    out.println();
   }
 
   private void notFound(PrintStream out) throws IOException {
