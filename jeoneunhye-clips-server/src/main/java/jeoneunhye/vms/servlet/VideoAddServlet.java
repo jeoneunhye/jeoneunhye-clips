@@ -1,9 +1,9 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.sql.Date;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
@@ -17,17 +17,31 @@ public class VideoAddServlet {
   }
 
   @RequestMapping("/video/add")
-  public void service(Scanner in, PrintStream out) throws Exception {
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
     Video video = new Video();
-    video.setSubject(Prompt.getString(in, out, "주제? "));
-    video.setTitle(Prompt.getString(in, out, "제목? "));
-    video.setUrl(Prompt.getString(in, out, "주소? "));
-    video.setPlayTime(Prompt.getString(in, out, "재생시간? "));
-    video.setWriter(Prompt.getString(in, out, "업로더? "));
-    video.setUploadDate(Prompt.getDate(in, out, "업로드 날짜? "));
+    video.setSubject(params.get("subject"));
+    video.setTitle(params.get("title"));
+    video.setUrl(params.get("url"));
+    video.setPlayTime(params.get("playTime"));
+    video.setWriter(params.get("uploader"));
+    video.setUploadDate(Date.valueOf(params.get("uploadDate")));
+
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<meta http-equiv='refresh' content='2;url=/video/list'>");
+    out.println("<title>영상 입력</title>");
+    out.println("</head>");
+    out.println("<body>");
+
+    out.println("<h1>영상 입력 결과</h1>");
 
     videoService.add(video);
 
-    out.println("새 영상을 등록했습니다.");
+    out.println("<p>새 영상을 등록했습니다.</p>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

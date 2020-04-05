@@ -1,9 +1,8 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
@@ -17,30 +16,31 @@ public class MemberUpdateServlet {
   }
 
   @RequestMapping("/member/update")
-  public void service(Scanner in, PrintStream out) throws Exception {
-    int no = (Prompt.getInt(in, out, "번호? "));
-
-    Member oldMember = memberService.get(no);
-    if (oldMember == null) {
-      out.println("해당 번호의 회원이 없습니다.");
-      return;
-    }
-
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
     Member newMember = new Member();
-    newMember.setNo(no);
-    newMember.setId(oldMember.getId());
-    newMember.setNickname(Prompt.getString(in, out,
-        String.format("닉네임(%s)? \n", oldMember.getNickname())));
-    newMember.setPassword(Prompt.getString(in, out,
-        String.format("암호(%s)? \n", oldMember.getPassword())));
-    newMember.setPhone(Prompt.getString(in, out,
-        String.format("휴대폰번호(%s)? \n", oldMember.getPhone())));
-    newMember.setEmail(Prompt.getString(in, out,
-        String.format("이메일(%s)? \n", oldMember.getEmail())));
-    newMember.setRegisteredDate(oldMember.getRegisteredDate());
+    newMember.setNo(Integer.parseInt(params.get("no")));
+    newMember.setId(params.get("id"));
+    newMember.setNickname(params.get("nickname"));
+    newMember.setPassword(params.get("password"));
+    newMember.setPhone(params.get("tel"));
+    newMember.setEmail(params.get("email"));
+
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<meta http-equiv='refresh' content='2;url=/member/list'>");
+    out.println("<title>회원 변경</title>");
+    out.println("</head>");
+    out.println("<body>");
+
+    out.println("<h1>회원 변경 결과</h1>");
 
     memberService.update(newMember);
 
-    out.println("회원을 변경했습니다.");
+    out.println("<p>회원을 변경했습니다.</p>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

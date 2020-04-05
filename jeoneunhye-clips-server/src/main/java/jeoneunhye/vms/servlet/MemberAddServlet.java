@@ -1,9 +1,8 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
@@ -17,16 +16,30 @@ public class MemberAddServlet {
   }
 
   @RequestMapping("/member/add")
-  public void service(Scanner in, PrintStream out) throws Exception {
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
     Member member = new Member();
-    member.setId(Prompt.getString(in, out, "아이디? "));
-    member.setNickname(Prompt.getString(in, out, "닉네임? "));
-    member.setPassword(Prompt.getString(in, out, "암호? "));
-    member.setPhone(Prompt.getString(in, out, "휴대폰번호? "));
-    member.setEmail(Prompt.getString(in, out, "이메일? "));
+    member.setId(params.get("id"));
+    member.setNickname(params.get("nickname"));
+    member.setPassword(params.get("password"));
+    member.setPhone(params.get("tel"));
+    member.setEmail(params.get("email"));
+
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<meta http-equiv='refresh' content='2;url=/member/list'>");
+    out.println("<title>회원 입력</title>");
+    out.println("</head>");
+    out.println("<body>");
+
+    out.println("<h1>회원 입력 결과</h1>");
 
     memberService.add(member);
 
-    out.println("새 회원을 등록했습니다.");
+    out.println("<p>새 회원을 등록했습니다.</p>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

@@ -1,9 +1,8 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.service.MemberService;
 
@@ -16,11 +15,25 @@ public class MemberDeleteServlet {
   }
 
   @RequestMapping("/member/delete")
-  public void service(Scanner in, PrintStream out) throws Exception {
-    int no = Prompt.getInt(in, out, "번호? ");
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<meta http-equiv='refresh' content='2;url=/member/list'>");
+    out.println("<title>회원 삭제</title>");
+    out.println("</head>");
+    out.println("<body>");
+
+    out.println("<h1>회원 삭제 결과</h1>");
+
+    int no = Integer.parseInt(params.get("no"));
 
     memberService.delete(no);
 
-    out.println("회원을 삭제했습니다.");
+    out.println("<p>회원을 삭제했습니다.</p>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

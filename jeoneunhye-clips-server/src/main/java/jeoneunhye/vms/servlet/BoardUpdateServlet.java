@@ -1,9 +1,8 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Board;
 import jeoneunhye.vms.service.BoardService;
@@ -17,27 +16,29 @@ public class BoardUpdateServlet {
   }
 
   @RequestMapping("/board/update")
-  public void service(Scanner in, PrintStream out) throws Exception {
-    int no = (Prompt.getInt(in, out, "번호? "));
-
-    Board oldBoard = boardService.get(no);
-    if (oldBoard == null) {
-      out.println("해당 번호의 게시글이 없습니다.");
-      return;
-    }
-
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
     Board newBoard = new Board();
-    newBoard.setNo(no);
-    newBoard.setTitle(Prompt.getString(in, out,
-        String.format("제목(%s)? \n", oldBoard.getTitle())));
-    newBoard.setContents(Prompt.getString(in, out,
-        String.format("내용(%s)? \n", oldBoard.getContents())));
-    newBoard.setWriter(oldBoard.getWriter());
-    newBoard.setWriteDate(oldBoard.getWriteDate());
-    newBoard.setViewCount(oldBoard.getViewCount());
+    newBoard.setNo(Integer.parseInt(params.get("no")));
+    newBoard.setTitle(params.get("title"));
+    newBoard.setContents(params.get("content"));
+    newBoard.setWriter(params.get("writer"));
+
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<meta http-equiv='refresh' content='2;url=/board/list'>");
+    out.println("<title>게시글 변경</title>");
+    out.println("</head>");
+    out.println("<body>");
+
+    out.println("<h1>게시글 변경 결과</h1>");
 
     boardService.update(newBoard);
 
-    out.println("게시글을 변경했습니다.");
+    out.println("<p>게시글을 변경했습니다.</p>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

@@ -1,9 +1,8 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
@@ -17,16 +16,37 @@ public class LoginServlet {
   }
 
   @RequestMapping("/auth/login")
-  public void service(Scanner in, PrintStream out) throws Exception {
-    String email = Prompt.getString(in, out, "이메일? ");
-    String password = Prompt.getString(in, out, "암호? ");
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
+    String email = params.get("email");
+    String password = params.get("password");
 
     Member member = memberService.get(email, password);
+
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
     if (member != null) {
-      out.printf("'%s'님 환영합니다.\n", member.getId());
+      out.println("<meta http-equiv='refresh' content='2;url=/board/list'>");
 
     } else {
-      out.println("사용자 정보가 유효하지 않습니다.");
+      out.println("<meta http-equiv='refresh' content='2;url=/auth/loginForm'>");
     }
+
+    out.println("<title>로그인</title>");
+    out.println("</head>");
+    out.println("<body>");
+
+    out.println("<h1>로그인 결과</h1>");
+
+    if (member != null) {
+      out.printf("<p>'%s'님 환영합니다.</p>\n", member.getId());
+
+    } else {
+      out.println("<p>사용자 정보가 유효하지 않습니다.</p>");
+    }
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

@@ -1,12 +1,10 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
@@ -20,42 +18,69 @@ public class VideoSearchServlet {
   }
 
   @RequestMapping("/video/search")
-  public void service(Scanner in, PrintStream out) throws Exception {
-    HashMap<String, Object> params = new HashMap<>();
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
+    HashMap<String, Object> keywordMap = new HashMap<>();
 
-    String keyword = Prompt.getString(in, out, "주제 검색: ");
+    String keyword = params.get("subject");
     if (keyword.length() > 0) {
-      params.put("subject", keyword);
+      keywordMap.put("subject", keyword);
     }
 
-    keyword = Prompt.getString(in, out, "제목 검색: ");
+    keyword = params.get("title");
     if (keyword.length() > 0) {
-      params.put("title", keyword);
+      keywordMap.put("title", keyword);
     }
 
-    int value = Prompt.getInt(in, out, "재생시간 검색: ");
-    if (value > 0) {
-      params.put("playTime", value);
-    }
-
-    keyword = Prompt.getString(in, out, "업로더 검색: ");
+    keyword = params.get("playTime");
     if (keyword.length() > 0) {
-      params.put("writer", keyword);
+      keywordMap.put("playTime", keyword);
     }
 
-    Date date = Prompt.getDate(in, out, "업로드일 검색: ");
-    if (date != null) {
-      params.put("uploadDate", date);
+    keyword = params.get("uploader");
+    if (keyword.length() > 0) {
+      keywordMap.put("uploader", keyword);
     }
 
-    out.println("------------------------------");
-    out.println("[검색 결과]");
-    out.println();
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("  <meta charset='UTF-8'>");
+    out.println("  <title>영상 검색</title>");
+    out.println("</head>");
+    out.println("<body>");
 
-    List<Video> videos = videoService.search(params);
+    out.println("  <h1>영상 검색 결과</h1>");
+    out.println("  <table border='1'>");
+    out.println("  <tr>");
+    out.println("    <th>번호</th>");
+    out.println("    <th>주제</th>");
+    out.println("    <th>제목</th>");
+    out.println("    <th>재생시간</th>");
+    out.println("    <th>업로더</th>");
+    out.println("    <th>업로드일</th>");
+    out.println("  </tr>");
+
+    List<Video> videos = videoService.search(keywordMap);
     for (Video v : videos) {
-      out.printf("%d, %s, %s, %s, %s, %s\n", v.getNo(), v.getSubject(), v.getTitle(),
-          v.getPlayTime(), v.getWriter(), v.getUploadDate());
+      out.printf("  <tr>"
+          + "<td>%d</td> "
+          + "<td><a href='/video/detail?no=%d'>%s</a></td>"
+          + "<td>%s</td>"
+          + "<td>%s</td>"
+          + "<td>%s</td>"
+          + "<td>%s</td>"
+          + "</tr>\n",
+          v.getNo(),
+          v.getNo(),
+          v.getSubject(),
+          v.getTitle(),
+          v.getPlayTime(),
+          v.getWriter(),
+          v.getUploadDate());
     }
+    out.println("</table>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }

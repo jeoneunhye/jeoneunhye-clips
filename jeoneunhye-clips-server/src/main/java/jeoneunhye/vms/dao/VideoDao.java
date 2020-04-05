@@ -14,6 +14,6 @@ public interface VideoDao {
   public int update(Video video) throws Exception;
 
   public int delete(int no) throws Exception;
-  
-  default List<Video> findByKeyword(Map<String, Object> params) throws Exception {return null;}
+
+  List<Video> findByKeyword(Map<String, Object> params) throws Exception;
 }

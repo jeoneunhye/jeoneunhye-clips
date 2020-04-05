@@ -1,9 +1,9 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.sql.Date;
+import java.util.Map;
 import org.springframework.stereotype.Component;
-import jeoneunhye.util.Prompt;
 import jeoneunhye.util.RequestMapping;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
@@ -17,32 +17,32 @@ public class VideoUpdateServlet {
   }
 
   @RequestMapping("/video/update")
-  public void service(Scanner in, PrintStream out) throws Exception {
-    int no = (Prompt.getInt(in, out, "번호? "));
+  public void service(Map<String, String> params, PrintStream out) throws Exception {
+    Video video = new Video();
+    video.setNo(Integer.parseInt(params.get("no")));
+    video.setSubject(params.get("subject"));
+    video.setTitle(params.get("title"));
+    video.setUrl(params.get("url"));
+    video.setPlayTime(params.get("playTime"));
+    video.setWriter(params.get("uploader"));
+    video.setUploadDate(Date.valueOf(params.get("uploadDate")));
 
-    Video oldVideo = videoService.get(no);
-    if (oldVideo == null) {
-      out.println("해당 번호의 영상이 없습니다.");
-      return;
-    }
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<meta http-equiv='refresh' content='2;url=/video/list'>");
+    out.println("<title>영상 변경</title>");
+    out.println("</head>");
+    out.println("<body>");
 
-    Video newVideo = new Video();
-    newVideo.setNo(oldVideo.getNo());
-    newVideo.setSubject(Prompt.getString(in, out,
-        String.format("주제(%s)? \n", oldVideo.getSubject())));
-    newVideo.setTitle(Prompt.getString(in, out,
-        String.format("제목(%s)? \n", oldVideo.getTitle())));
-    newVideo.setUrl(Prompt.getString(in, out,
-        String.format("주소(%s)? \n", oldVideo.getUrl())));
-    newVideo.setPlayTime(Prompt.getString(in, out,
-        String.format("재생시간(%s)? \n", oldVideo.getPlayTime())));
-    newVideo.setWriter(Prompt.getString(in, out,
-        String.format("업로더(%s)? \n", oldVideo.getWriter())));
-    newVideo.setUploadDate(Prompt.getDate(in, out,
-        String.format("업로드 날짜(%s)? \n", oldVideo.getUploadDate())));
+    out.println("<h1>영상 변경 결과</h1>");
 
-    videoService.update(newVideo);
+    videoService.update(video);
 
-    out.println("영상을 변경했습니다.");
+    out.println("<p>영상을 변경했습니다.</p>");
+
+    out.println("</body>");
+    out.println("</html>");
   }
 }
