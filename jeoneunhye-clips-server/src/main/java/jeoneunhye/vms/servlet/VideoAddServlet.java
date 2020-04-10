@@ -1,6 +1,6 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.Map;
 import org.springframework.stereotype.Component;
@@ -17,7 +17,7 @@ public class VideoAddServlet {
   }
 
   @RequestMapping("/video/add")
-  public void service(Map<String, String> params, PrintStream out) throws Exception {
+  public void service(Map<String, String> params, PrintWriter out) throws Exception {
     Video video = new Video();
     video.setSubject(params.get("subject"));
     video.setTitle(params.get("title"));

@@ -1,6 +1,6 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 import jeoneunhye.util.RequestMapping;
@@ -16,7 +16,7 @@ public class MemberAddServlet {
   }
 
   @RequestMapping("/member/add")
-  public void service(Map<String, String> params, PrintStream out) throws Exception {
+  public void service(Map<String, String> params, PrintWriter out) throws Exception {
     Member member = new Member();
     member.setId(params.get("id"));
     member.setNickname(params.get("nickname"));

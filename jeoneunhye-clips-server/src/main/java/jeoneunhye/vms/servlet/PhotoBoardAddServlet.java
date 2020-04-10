@@ -1,6 +1,6 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class PhotoBoardAddServlet {
   }
 
   @RequestMapping("/photoboard/add")
-  public void service(Map<String, String> params, PrintStream out) throws Exception {
+  public void service(Map<String, String> params, PrintWriter out) throws Exception {
     int videoNo = Integer.parseInt(params.get("videoNo"));
 
     out.println("<!DOCTYPE html>");

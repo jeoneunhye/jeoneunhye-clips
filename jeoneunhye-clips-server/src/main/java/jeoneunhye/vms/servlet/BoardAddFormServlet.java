@@ -1,6 +1,6 @@
 package jeoneunhye.vms.servlet;
 
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 import jeoneunhye.util.RequestMapping;
@@ -8,7 +8,7 @@ import jeoneunhye.util.RequestMapping;
 @Component
 public class BoardAddFormServlet {
   @RequestMapping("/board/addForm")
-  public void service(Map<String, String> params, PrintStream out) throws Exception {
+  public void service(Map<String, String> params, PrintWriter out) throws Exception {
     out.println("<!DOCTYPE html>");
     out.println("<html>");
     out.println("<head>");
