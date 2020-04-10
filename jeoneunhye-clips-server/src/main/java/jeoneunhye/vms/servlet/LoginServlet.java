@@ -1,52 +1,68 @@
 package jeoneunhye.vms.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import org.springframework.stereotype.Component;
-import jeoneunhye.util.RequestMapping;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
-@Component
-public class LoginServlet {
-  MemberService memberService;
+@WebServlet("/auth/login")
+public class LoginServlet extends GenericServlet {
+  private static final long serialVersionUID = 1L;
 
-  public LoginServlet(MemberService memberService) {
-    this.memberService = memberService;
-  }
+  @Override
+  public void service(ServletRequest request, ServletResponse response)
+      throws ServletException, IOException {
+    try {
+      response.setContentType("text/html;charset=UTF-8");
+      PrintWriter out = response.getWriter();
 
-  @RequestMapping("/auth/login")
-  public void service(Map<String, String> params, PrintWriter out) throws Exception {
-    String email = params.get("email");
-    String password = params.get("password");
+      ServletContext servletContext = request.getServletContext();
+      ApplicationContext iocContainer =
+          (ApplicationContext) servletContext.getAttribute("iocContainer");
 
-    Member member = memberService.get(email, password);
+      MemberService memberService = iocContainer.getBean(MemberService.class);
 
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<meta charset='UTF-8'>");
-    if (member != null) {
-      out.println("<meta http-equiv='refresh' content='2;url=/board/list'>");
+      String email = request.getParameter("email");
+      String password = request.getParameter("password");
 
-    } else {
-      out.println("<meta http-equiv='refresh' content='2;url=/auth/loginForm'>");
+      Member member = memberService.get(email, password);
+
+      out.println("<!DOCTYPE html>");
+      out.println("<html>");
+      out.println("<head>");
+      out.println("<meta charset='UTF-8'>");
+      if (member != null) {
+        out.println("<meta http-equiv='refresh' content='2;url=../board/list'>");
+
+      } else {
+        out.println("<meta http-equiv='refresh' content='2;url=loginForm'>");
+      }
+
+      out.println("<title>로그인</title>");
+      out.println("</head>");
+      out.println("<body>");
+
+      out.println("<h1>로그인 결과</h1>");
+
+      if (member != null) {
+        out.printf("<p>'%s'님 환영합니다.</p>\n", member.getId());
+
+      } else {
+        out.println("<p>사용자 정보가 유효하지 않습니다.</p>");
+      }
+
+      out.println("</body>");
+      out.println("</html>");
+
+    } catch (Exception e) {
+      throw new ServletException(e);
     }
-
-    out.println("<title>로그인</title>");
-    out.println("</head>");
-    out.println("<body>");
-
-    out.println("<h1>로그인 결과</h1>");
-
-    if (member != null) {
-      out.printf("<p>'%s'님 환영합니다.</p>\n", member.getId());
-
-    } else {
-      out.println("<p>사용자 정보가 유효하지 않습니다.</p>");
-    }
-
-    out.println("</body>");
-    out.println("</html>");
   }
 }

@@ -1,30 +1,44 @@
 package jeoneunhye.vms.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import org.springframework.stereotype.Component;
-import jeoneunhye.util.RequestMapping;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
 
-@Component
-public class LoginFormServlet {
-  @RequestMapping("/auth/loginForm")
-  public void service(Map<String, String> params, PrintWriter out) throws Exception {
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<meta charset='UTF-8'>");
-    out.println("<title>로그인</title>");
-    out.println("</head>");
-    out.println("<body>");
+@WebServlet("/auth/loginForm")
+public class LoginFormServlet extends GenericServlet {
+  private static final long serialVersionUID = 1L;
 
-    out.println("<h1>로그인</h1>");
-    out.println("<form action='/auth/login'>");
-    out.println("이메일: <input name='email' type='email'><br>");
-    out.println("암호: <input name='password' type='password'><br>");
-    out.println("<button>로그인</button>");
-    out.println("</form>");
+  @Override
+  public void service(ServletRequest request, ServletResponse response)
+      throws ServletException, IOException {
+    try {
+      response.setContentType("text/html;charset=UTF-8");
+      PrintWriter out = response.getWriter();
 
-    out.println("</body>");
-    out.println("</html>");
+      out.println("<!DOCTYPE html>");
+      out.println("<html>");
+      out.println("<head>");
+      out.println("<meta charset='UTF-8'>");
+      out.println("<title>로그인</title>");
+      out.println("</head>");
+      out.println("<body>");
+
+      out.println("<h1>로그인</h1>");
+      out.println("<form action='login'>");
+      out.println("이메일: <input name='email' type='email'><br>");
+      out.println("암호: <input name='password' type='password'><br>");
+      out.println("<button>로그인</button>");
+      out.println("</form>");
+
+      out.println("</body>");
+      out.println("</html>");
+
+    } catch (Exception e) {
+      throw new ServletException(e);
+    }
   }
 }

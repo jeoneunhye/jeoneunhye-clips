@@ -1,46 +1,62 @@
 package jeoneunhye.vms.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import org.springframework.stereotype.Component;
-import jeoneunhye.util.RequestMapping;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
-@Component
-public class MemberUpdateServlet {
-  MemberService memberService;
+@WebServlet("/member/update")
+public class MemberUpdateServlet extends GenericServlet {
+  private static final long serialVersionUID = 1L;
 
-  public MemberUpdateServlet(MemberService memberService) {
-    this.memberService = memberService;
-  }
+  @Override
+  public void service(ServletRequest request, ServletResponse response)
+      throws ServletException, IOException {
+    try {
+      response.setContentType("text/html;charset=UTF-8");
+      PrintWriter out = response.getWriter();
 
-  @RequestMapping("/member/update")
-  public void service(Map<String, String> params, PrintWriter out) throws Exception {
-    Member newMember = new Member();
-    newMember.setNo(Integer.parseInt(params.get("no")));
-    newMember.setId(params.get("id"));
-    newMember.setNickname(params.get("nickname"));
-    newMember.setPassword(params.get("password"));
-    newMember.setPhone(params.get("tel"));
-    newMember.setEmail(params.get("email"));
+      ServletContext servletContext = request.getServletContext();
+      ApplicationContext iocContainer =
+          (ApplicationContext) servletContext.getAttribute("iocContainer");
 
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<meta charset='UTF-8'>");
-    out.println("<meta http-equiv='refresh' content='2;url=/member/list'>");
-    out.println("<title>회원 변경</title>");
-    out.println("</head>");
-    out.println("<body>");
+      MemberService memberService = iocContainer.getBean(MemberService.class);
 
-    out.println("<h1>회원 변경 결과</h1>");
+      Member member = new Member();
+      member.setNo(Integer.parseInt(request.getParameter("no")));
+      member.setId(request.getParameter("id"));
+      member.setNickname(request.getParameter("nickname"));
+      member.setPassword(request.getParameter("password"));
+      member.setPhone(request.getParameter("tel"));
+      member.setEmail(request.getParameter("email"));
 
-    memberService.update(newMember);
+      out.println("<!DOCTYPE html>");
+      out.println("<html>");
+      out.println("<head>");
+      out.println("<meta charset='UTF-8'>");
+      out.println("<meta http-equiv='refresh' content='2;url=list'>");
+      out.println("<title>회원 변경</title>");
+      out.println("</head>");
+      out.println("<body>");
 
-    out.println("<p>회원을 변경했습니다.</p>");
+      out.println("<h1>회원 변경 결과</h1>");
 
-    out.println("</body>");
-    out.println("</html>");
+      memberService.update(member);
+
+      out.println("<p>회원을 변경했습니다.</p>");
+
+      out.println("</body>");
+      out.println("</html>");
+
+    } catch (Exception e) {
+      throw new ServletException(e);
+    }
   }
 }

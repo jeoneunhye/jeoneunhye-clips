@@ -1,39 +1,54 @@
 package jeoneunhye.vms.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import org.springframework.stereotype.Component;
-import jeoneunhye.util.RequestMapping;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.service.BoardService;
 
-@Component
-public class BoardDeleteServlet {
-  BoardService boardService;
+@WebServlet("/board/delete")
+public class BoardDeleteServlet extends GenericServlet {
+  private static final long serialVersionUID = 1L;
 
-  public BoardDeleteServlet(BoardService boardService) {
-    this.boardService = boardService;
-  }
+  @Override
+  public void service(ServletRequest request, ServletResponse response)
+      throws ServletException, IOException {
+    try {
+      response.setContentType("text/html;charset=UTF-8");
+      PrintWriter out = response.getWriter();
 
-  @RequestMapping("/board/delete")
-  public void service(Map<String, String> params, PrintWriter out) throws Exception {
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<meta charset='UTF-8'>");
-    out.println("<meta http-equiv='refresh' content='2;url=/board/list'>");
-    out.println("<title>게시글 삭제</title>");
-    out.println("</head>");
-    out.println("<body>");
+      ServletContext servletContext = request.getServletContext();
+      ApplicationContext iocContainer =
+          (ApplicationContext) servletContext.getAttribute("iocContainer");
 
-    out.println("<h1>게시글 삭제 결과</h1>");
+      BoardService boardService = iocContainer.getBean(BoardService.class);
 
-    int no = Integer.parseInt(params.get("no"));
+      int no = Integer.parseInt(request.getParameter("no"));
 
-    boardService.delete(no);
+      boardService.delete(no);
 
-    out.println("<p>게시글을 삭제했습니다.</p>");
+      out.println("<!DOCTYPE html>");
+      out.println("<html>");
+      out.println("<head>");
+      out.println("<meta charset='UTF-8'>");
+      out.println("<meta http-equiv='refresh' content='2;url=list'>");
+      out.println("<title>게시글 삭제</title>");
+      out.println("</head>");
+      out.println("<body>");
 
-    out.println("</body>");
-    out.println("</html>");
+      out.println("<h1>게시글 삭제 결과</h1>");
+      out.println("<p>게시글을 삭제했습니다.</p>");
+
+      out.println("</body>");
+      out.println("</html>");
+
+    } catch (Exception e) {
+      throw new ServletException(e);
+    }
   }
 }

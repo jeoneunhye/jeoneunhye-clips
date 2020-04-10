@@ -1,14 +1,23 @@
 package jeoneunhye.vms.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import org.springframework.stereotype.Component;
-import jeoneunhye.util.RequestMapping;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
 
-@Component
-public class VideoAddFormServlet {
-  @RequestMapping("/video/addForm")
-  public void service(Map<String, String> params, PrintWriter out) throws Exception {
+@WebServlet("/video/addForm")
+public class VideoAddFormServlet extends GenericServlet {
+  private static final long serialVersionUID = 1L;
+
+  @Override
+  public void service(ServletRequest request, ServletResponse response)
+      throws ServletException, IOException {
+    response.setContentType("text/html;charset=UTF-8");
+    PrintWriter out = response.getWriter();
+
     out.println("<!DOCTYPE html>");
     out.println("<html>");
     out.println("<head>");
@@ -18,7 +27,7 @@ public class VideoAddFormServlet {
     out.println("<body>");
 
     out.println("<h1>영상 입력</h1>");
-    out.println("<form action='/video/add'>");
+    out.println("<form action='add'>");
     out.println("주제: <input name='subject' type='text'><br>");
     out.println("제목: <input name='title' type='text'><br>");
     out.println("주소:<br>");

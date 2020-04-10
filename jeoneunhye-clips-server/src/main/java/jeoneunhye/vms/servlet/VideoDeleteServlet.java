@@ -1,39 +1,55 @@
 package jeoneunhye.vms.servlet;
 
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Map;
-import org.springframework.stereotype.Component;
-import jeoneunhye.util.RequestMapping;
+import javax.servlet.GenericServlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebServlet;
+import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.service.VideoService;
 
-@Component
-public class VideoDeleteServlet {
-  VideoService videoService;
+@WebServlet("/video/delete")
+public class VideoDeleteServlet extends GenericServlet {
+  private static final long serialVersionUID = 1L;
 
-  public VideoDeleteServlet(VideoService videoService) {
-    this.videoService = videoService;
-  }
+  @Override
+  public void service(ServletRequest request, ServletResponse response)
+      throws ServletException, IOException {
+    try {
+      response.setContentType("text/html;charset=UTF-8");
+      PrintWriter out = response.getWriter();
 
-  @RequestMapping("/video/delete")
-  public void service(Map<String, String> params, PrintWriter out) throws Exception {
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<meta charset='UTF-8'>");
-    out.println("<meta http-equiv='refresh' content='2;url=/video/list'>");
-    out.println("<title>영상 삭제</title>");
-    out.println("</head>");
-    out.println("<body>");
+      ServletContext servletContext = request.getServletContext();
+      ApplicationContext iocContainer =
+          (ApplicationContext) servletContext.getAttribute("iocContainer");
 
-    out.println("<h1>영상 삭제 결과</h1>");
+      VideoService videoService = iocContainer.getBean(VideoService.class);
 
-    int no = Integer.parseInt(params.get("no"));
+      out.println("<!DOCTYPE html>");
+      out.println("<html>");
+      out.println("<head>");
+      out.println("<meta charset='UTF-8'>");
+      out.println("<meta http-equiv='refresh' content='2;url=list'>");
+      out.println("<title>영상 삭제</title>");
+      out.println("</head>");
+      out.println("<body>");
 
-    videoService.delete(no);
+      out.println("<h1>영상 삭제 결과</h1>");
 
-    out.println("<p>영상을 삭제했습니다.</p>");
+      int no = Integer.parseInt(request.getParameter("no"));
 
-    out.println("</body>");
-    out.println("</html>");
+      videoService.delete(no);
+
+      out.println("<p>영상을 삭제했습니다.</p>");
+
+      out.println("</body>");
+      out.println("</html>");
+
+    } catch (Exception e) {
+      throw new ServletException(e);
+    }
   }
 }

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'eclipse'
+    id 'war'
 }
 
 tasks.withType(JavaCompile) {
@@ -37,6 +38,9 @@ dependencies {
 
     // Apache HttpComponents 라이브러리
     implementation 'org.apache.httpcomponents.client5:httpclient5:5.0'
+    
+    // Servlet-API
+    compileOnly 'javax.servlet:javax.servlet-api:4.0.1'
 
     implementation 'com.google.guava:guava:28.0-jre'
     testImplementation 'junit:junit:4.12'
