@@ -2,28 +2,28 @@ package jeoneunhye.vms.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
 @WebServlet("/video/detail")
-public class VideoDetailServlet extends GenericServlet {
+public class VideoDetailServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void service(ServletRequest request, ServletResponse response)
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
 
-      ServletContext servletContext = request.getServletContext();
+      ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
 
@@ -44,18 +44,18 @@ public class VideoDetailServlet extends GenericServlet {
       out.println("<h1>영상 상세정보</h1>");
 
       if (video != null) {
-        out.println("<form action='update'>");
+        out.println("<form action='update' method='post'>");
         out.printf("번호: <input name='no' readonly type='text' value='%s'><br>\n", video.getNo());
         out.printf("주제: <input name='subject' type='text' value='%s'><br>\n", video.getSubject());
         out.printf("제목: <input name='title' type='text' value='%s'><br>\n", video.getTitle());
         out.printf("주소: <input name='url' type='text' value='%s'><br>\n", video.getUrl());
-        out.printf("재생시간: <input name='playtime' type='text' value='%s'><br>\n", video.getPlayTime());
+        out.printf("재생시간: <input name='playTime' type='text' value='%s'><br>\n", video.getPlayTime());
         out.printf("업로더: <input name='uploader' type='text' value='%s'><br>\n", video.getWriter());
         out.printf("업로드일: <input name='uploadDate' type='date' value='%s'><br>\n", video.getUploadDate());
         out.println("<p>");
         out.println("<button>변경</button>");
         out.printf("<a href='delete?no=%d'>삭제</a>\n", video.getNo());
-        out.printf("<a href='list?videoNo=%d'>사진 게시판</a>\n", video.getNo());
+        out.printf("<a href='../photoboard/list?videoNo=%d'>사진 게시판</a>\n", video.getNo());
         out.println("</p>");
         out.println("</form>");
 

@@ -2,28 +2,28 @@ package jeoneunhye.vms.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.domain.Member;
 import jeoneunhye.vms.service.MemberService;
 
 @WebServlet("/member/detail")
-public class MemberDetailServlet extends GenericServlet {
+public class MemberDetailServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void service(ServletRequest request, ServletResponse response)
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
 
-      ServletContext servletContext = request.getServletContext();
+      ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
 
@@ -44,7 +44,7 @@ public class MemberDetailServlet extends GenericServlet {
       out.println("<h1>회원 상세정보</h1>");
 
       if (member != null) {
-        out.println("<form action='update'>");
+        out.println("<form action='update' method='post'>");
         out.printf("번호: <input name='no' type='text' readonly value='%d'><br>\n", member.getNo());
         out.printf("아이디: %s<br>\n", member.getId());
         out.printf("닉네임: <input name='nickname' type='text' value='%s'><br>\n", member.getNickname());

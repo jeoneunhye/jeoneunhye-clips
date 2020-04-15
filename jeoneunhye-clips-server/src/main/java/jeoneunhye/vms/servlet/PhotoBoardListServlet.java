@@ -3,12 +3,12 @@ package jeoneunhye.vms.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
-import javax.servlet.GenericServlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.domain.PhotoBoard;
 import jeoneunhye.vms.domain.Video;
@@ -16,17 +16,17 @@ import jeoneunhye.vms.service.PhotoBoardService;
 import jeoneunhye.vms.service.VideoService;
 
 @WebServlet("/photoboard/list")
-public class PhotoBoardListServlet extends GenericServlet {
+public class PhotoBoardListServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
   @Override
-  public void service(ServletRequest request, ServletResponse response)
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
 
-      ServletContext servletContext = request.getServletContext();
+      ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
 
@@ -50,7 +50,7 @@ public class PhotoBoardListServlet extends GenericServlet {
         }
 
         out.printf("  <h1>강의 사진 - %s</h1>", video.getTitle());
-        out.printf("  <a href='addForm?videoNo=%d'>새 사진</a><br>\n", videoNo);
+        out.printf("  <a href='add?videoNo=%d'>새 사진</a><br>\n", videoNo);
         out.println("  <table border='1'>");
         out.println("  <tr>");
         out.println("    <th>번호</th>");
