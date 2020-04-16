@@ -1,7 +1,6 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,9 +18,6 @@ public class VideoDeleteServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
-      response.setContentType("text/html;charset=UTF-8");
-      PrintWriter out = response.getWriter();
-
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
@@ -30,22 +26,14 @@ public class VideoDeleteServlet extends HttpServlet {
 
       int no = Integer.parseInt(request.getParameter("no"));
 
-      videoService.delete(no);
+      if (videoService.delete(no) > 0) {
+        response.sendRedirect("list");
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<meta http-equiv='refresh' content='2;url=list'>");
-      out.println("<title>영상 삭제</title>");
-      out.println("</head>");
-      out.println("<body>");
-
-      out.println("<h1>영상 삭제 결과</h1>");
-      out.println("<p>영상을 삭제했습니다.</p>");
-
-      out.println("</body>");
-      out.println("</html>");
+      } else {
+        request.getSession().setAttribute("errorMessage", "영상 번호가 유효하지 않습니다.");
+        request.getSession().setAttribute("url", "video/list");
+        response.sendRedirect("../error");
+      }
 
     } catch (Exception e) {
       throw new ServletException(e);

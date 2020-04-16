@@ -16,8 +16,8 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
-  public void add(Video video) throws Exception {
-    videoDao.insert(video);
+  public int add(Video video) throws Exception {
+    return videoDao.insert(video);
   }
 
   @Override
@@ -31,13 +31,13 @@ public class VideoServiceImpl implements VideoService {
   }
 
   @Override
-  public void update(Video video) throws Exception {
-    videoDao.update(video);
+  public int update(Video video) throws Exception {
+    return videoDao.update(video);
   }
 
   @Override
-  public void delete(int no) throws Exception {
-    videoDao.delete(no);
+  public int delete(int no) throws Exception {
+    return videoDao.delete(no);
   }
 
   @Override

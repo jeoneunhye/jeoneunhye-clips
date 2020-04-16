@@ -1,7 +1,6 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletContext;
@@ -24,8 +23,6 @@ public class PhotoBoardUpdateServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       request.setCharacterEncoding("UTF-8");
-      response.setContentType("text/html;charset=UTF-8");
-      PrintWriter out = response.getWriter();
 
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
@@ -34,6 +31,7 @@ public class PhotoBoardUpdateServlet extends HttpServlet {
       PhotoBoardService photoBoardService = iocContainer.getBean(PhotoBoardService.class);
 
       int no = Integer.parseInt(request.getParameter("no"));
+      int videoNo = 0;
 
       PhotoBoard photoBoard = photoBoardService.get(no);
       photoBoard.setTitle(request.getParameter("title"));
@@ -55,28 +53,11 @@ public class PhotoBoardUpdateServlet extends HttpServlet {
         photoBoard.setFiles(null);
       }
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.printf("<meta http-equiv='refresh' content='2;url=list?videoNo=%d'>",
-          photoBoard.getVideo().getNo());
-      out.println("<title>사진 변경</title>");
-      out.println("</head>");
-      out.println("<body>");
+      videoNo = photoBoard.getVideo().getNo();
 
-      out.println("<h1>사진 변경 결과</h1>");
+      photoBoardService.update(photoBoard);
 
-      try {
-        photoBoardService.update(photoBoard);
-        out.println("<p>사진을 변경했습니다.</p>");
-
-      } catch (Exception e) {
-        out.println("<p>해당 번호의 사진 게시글이 없습니다.</p>");
-      }
-
-      out.println("</body>");
-      out.println("</html>");
+      response.sendRedirect("list?videoNo=" + videoNo);
 
     } catch (Exception e) {
       throw new ServletException(e);

@@ -1,7 +1,6 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,9 +18,6 @@ public class MemberDeleteServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
-      response.setContentType("text/html;charset=UTF-8");
-      PrintWriter out = response.getWriter();
-
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
@@ -30,22 +26,14 @@ public class MemberDeleteServlet extends HttpServlet {
 
       int no = Integer.parseInt(request.getParameter("no"));
 
-      memberService.delete(no);
+      if (memberService.delete(no) > 0) {
+        response.sendRedirect("list");
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<meta http-equiv='refresh' content='2;url=list'>");
-      out.println("<title>회원 삭제</title>");
-      out.println("</head>");
-      out.println("<body>");
-
-      out.println("<h1>회원 삭제 결과</h1>");
-      out.println("<p>회원을 삭제했습니다.</p>");
-
-      out.println("</body>");
-      out.println("</html>");
+      } else {
+        request.getSession().setAttribute("errorMessage", "회원 번호가 유효하지 않습니다.");
+        request.getSession().setAttribute("url", "member/list");
+        response.sendRedirect("../error");
+      }
 
     } catch (Exception e) {
       throw new ServletException(e);

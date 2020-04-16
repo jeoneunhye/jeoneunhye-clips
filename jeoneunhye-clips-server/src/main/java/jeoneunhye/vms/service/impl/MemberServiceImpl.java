@@ -16,8 +16,8 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public void add(Member member) throws Exception {
-    memberDao.insert(member);
+  public int add(Member member) throws Exception {
+    return memberDao.insert(member);
   }
 
   @Override
@@ -31,13 +31,13 @@ public class MemberServiceImpl implements MemberService {
   }
 
   @Override
-  public void update(Member member) throws Exception {
-    memberDao.update(member);
+  public int update(Member member) throws Exception {
+    return memberDao.update(member);
   }
 
   @Override
-  public void delete(int no) throws Exception {
-    memberDao.delete(no);
+  public int delete(int no) throws Exception {
+    return memberDao.delete(no);
   }
 
   @Override

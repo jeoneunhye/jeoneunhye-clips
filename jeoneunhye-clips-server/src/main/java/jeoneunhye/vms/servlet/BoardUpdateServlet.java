@@ -72,8 +72,6 @@ public class BoardUpdateServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       request.setCharacterEncoding("UTF-8");
-      response.setContentType("text/html;charset=UTF-8");
-      PrintWriter out = response.getWriter();
 
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
@@ -87,22 +85,14 @@ public class BoardUpdateServlet extends HttpServlet {
       board.setContents(request.getParameter("content"));
       board.setWriter(request.getParameter("writer"));
 
-      boardService.update(board);
+      if (boardService.update(board) > 0) {
+        response.sendRedirect("list");
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<meta http-equiv='refresh' content='2;url=list'>");
-      out.println("<title>게시글 변경</title>");
-      out.println("</head>");
-      out.println("<body>");
-
-      out.println("<h1>게시글 변경 결과</h1>");
-      out.println("<p>게시글을 변경했습니다.</p>");
-
-      out.println("</body>");
-      out.println("</html>");
+      } else {
+        request.getSession().setAttribute("errorMessage", "게시글 번호가 유효하지 않습니다.");
+        request.getSession().setAttribute("url", "board/list");
+        response.sendRedirect("../error");
+      }
 
     } catch (Exception e) {
       throw new ServletException(e);

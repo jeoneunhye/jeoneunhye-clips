@@ -52,8 +52,6 @@ public class VideoAddServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       request.setCharacterEncoding("UTF-8");
-      response.setContentType("text/html;charset=UTF-8");
-      PrintWriter out = response.getWriter();
 
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
@@ -69,22 +67,14 @@ public class VideoAddServlet extends HttpServlet {
       video.setWriter(request.getParameter("uploader"));
       video.setUploadDate(Date.valueOf(request.getParameter("uploadDate")));
 
-      videoService.add(video);
+      if (videoService.add(video) > 0) {
+        response.sendRedirect("list");
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<meta http-equiv='refresh' content='2;url=list'>");
-      out.println("<title>영상 입력</title>");
-      out.println("</head>");
-      out.println("<body>");
-
-      out.println("<h1>영상 입력 결과</h1>");
-      out.println("<p>새 영상을 등록했습니다.</p>");
-
-      out.println("</body>");
-      out.println("</html>");
+      } else {
+        request.getSession().setAttribute("errorMessage", "영상을 등록할 수 없습니다.");
+        request.getSession().setAttribute("url", "video/list");
+        response.sendRedirect("../error");
+      }
 
     } catch (Exception e) {
       throw new ServletException(e);

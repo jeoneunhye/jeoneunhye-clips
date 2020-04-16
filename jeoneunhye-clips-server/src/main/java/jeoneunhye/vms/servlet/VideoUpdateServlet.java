@@ -1,7 +1,6 @@
 package jeoneunhye.vms.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Date;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -22,8 +21,6 @@ public class VideoUpdateServlet extends HttpServlet {
       throws ServletException, IOException {
     try {
       request.setCharacterEncoding("UTF-8");
-      response.setContentType("text/html;charset=UTF-8");
-      PrintWriter out = response.getWriter();
 
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
@@ -40,23 +37,13 @@ public class VideoUpdateServlet extends HttpServlet {
       video.setWriter(request.getParameter("uploader"));
       video.setUploadDate(Date.valueOf(request.getParameter("uploadDate")));
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<meta http-equiv='refresh' content='2;url=list'>");
-      out.println("<title>영상 변경</title>");
-      out.println("</head>");
-      out.println("<body>");
-
-      out.println("<h1>영상 변경 결과</h1>");
-
-      videoService.update(video);
-
-      out.println("<p>영상을 변경했습니다.</p>");
-
-      out.println("</body>");
-      out.println("</html>");
+      if (videoService.update(video) > 0) {
+        response.sendRedirect("list");
+      } else {
+        request.getSession().setAttribute("errorMessage", "영상 번호가 유효하지 않습니다.");
+        request.getSession().setAttribute("url", "video/list");
+        response.sendRedirect("../error");
+      }
 
     } catch (Exception e) {
       throw new ServletException(e);
