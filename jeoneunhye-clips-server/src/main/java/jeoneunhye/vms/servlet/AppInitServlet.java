@@ -1,28 +1,30 @@
-package jeoneunhye.vms;
+package jeoneunhye.vms.servlet;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import jeoneunhye.vms.AppConfig;
 
-// @WebListener
-public class ContextLoaderListener implements ServletContextListener {
-  static Logger logger = LogManager.getLogger(ContextLoaderListener.class);
+@WebServlet(value = "/AppInitServlet", loadOnStartup = 1)
+public class AppInitServlet extends HttpServlet {
+  private static final long serialVersionUID = 1L;
+
+  static Logger logger = LogManager.getLogger(AppInitServlet.class);
 
   @Override
-  public void contextInitialized(ServletContextEvent sce) {
+  public void init() throws ServletException {
     try {
-      ServletContext servletContext = sce.getServletContext();
+      ServletContext servletContext = getServletContext();
 
       ApplicationContext iocContainer = new AnnotationConfigApplicationContext(AppConfig.class);
       printBeans(iocContainer);
 
       servletContext.setAttribute("iocContainer", iocContainer);
-
-      logger.debug("-----------------------------------");
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -38,7 +40,4 @@ public class ContextLoaderListener implements ServletContextListener {
           appCtx.getBean(beanName).getClass().getName()));
     }
   }
-
-  @Override
-  public void contextDestroyed(ServletContextEvent sce) {}
 }
