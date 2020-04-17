@@ -33,13 +33,7 @@ public class BoardUpdateServlet extends HttpServlet {
 
       Board board = boardService.get(no);
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<title>게시글 변경</title>");
-      out.println("</head>");
-      out.println("<body>");
+      request.getRequestDispatcher("/header").include(request, response);
 
       out.println("<h1>게시글 변경</h1>");
 
@@ -51,19 +45,19 @@ public class BoardUpdateServlet extends HttpServlet {
         out.printf("번호: <input name='no' readonly type='text' value='%d'><br>\n", board.getNo());
         out.printf("제목: <input name='title' type='text' value='%s'><br>\n", board.getTitle());
         out.println("내용:<br>");
-        out.printf("<textarea name='content' rows='5' cols='60'>%s</textarea><br>\n",
-            board.getContents());
+        out.printf("<textarea name='content' rows='5' cols='60'>%s</textarea><br>\n", board.getContents());
         out.printf("등록일: %s<br>\n", board.getWriteDate());
         out.printf("조회수: %d<br>\n", board.getViewCount());
         out.println("<button>변경</button>");
         out.println("</form>");
       }
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 
@@ -89,13 +83,13 @@ public class BoardUpdateServlet extends HttpServlet {
         response.sendRedirect("list");
 
       } else {
-        request.getSession().setAttribute("errorMessage", "게시글 번호가 유효하지 않습니다.");
-        request.getSession().setAttribute("url", "board/list");
-        response.sendRedirect("../error");
+        throw new Exception("게시글 번호가 유효하지 않습니다.");
       }
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

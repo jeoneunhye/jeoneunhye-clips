@@ -30,14 +30,8 @@ public class VideoListServlet extends HttpServlet {
 
       VideoService videoService = iocContainer.getBean(VideoService.class);
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("  <meta charset='UTF-8'>");
-      out.println("  <title>영상 목록</title>");
-      out.println("</head>");
+      request.getRequestDispatcher("/header").include(request, response);
 
-      out.println("<body>");
       out.println("  <h1>영상</h1>");
       out.println("  <a href='add'>새 영상</a><br>");
       out.println("  <table border='1'>");
@@ -79,11 +73,12 @@ public class VideoListServlet extends HttpServlet {
       out.println("업로드일: <input name='uploadDate' type='date'><br>");
       out.println("<button>검색</button>");
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

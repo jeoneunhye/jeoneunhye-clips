@@ -23,13 +23,7 @@ public class VideoAddServlet extends HttpServlet {
     response.setContentType("text/html;charset=UTF-8");
     PrintWriter out = response.getWriter();
 
-    out.println("<!DOCTYPE html>");
-    out.println("<html>");
-    out.println("<head>");
-    out.println("<meta charset='UTF-8'>");
-    out.println("<title>영상 입력</title>");
-    out.println("</head>");
-    out.println("<body>");
+    request.getRequestDispatcher("/header").include(request, response);
 
     out.println("<h1>영상 입력</h1>");
     out.println("<form action='add' method='post'>");
@@ -43,8 +37,7 @@ public class VideoAddServlet extends HttpServlet {
     out.println("<button>등록</button>");
     out.println("</form>");
 
-    out.println("</body>");
-    out.println("</html>");
+    request.getRequestDispatcher("/footer").include(request, response);
   }
 
   @Override
@@ -71,13 +64,13 @@ public class VideoAddServlet extends HttpServlet {
         response.sendRedirect("list");
 
       } else {
-        request.getSession().setAttribute("errorMessage", "영상을 등록할 수 없습니다.");
-        request.getSession().setAttribute("url", "video/list");
-        response.sendRedirect("../error");
+        throw new Exception("영상을 등록할 수 없습니다.");
       }
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.getSession().setAttribute("errorMessage", e);
+      request.getSession().setAttribute("url", "list");
+      response.sendRedirect("../error");
     }
   }
 }

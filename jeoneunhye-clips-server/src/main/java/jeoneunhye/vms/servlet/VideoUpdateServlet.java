@@ -39,14 +39,14 @@ public class VideoUpdateServlet extends HttpServlet {
 
       if (videoService.update(video) > 0) {
         response.sendRedirect("list");
-      } else {
-        request.getSession().setAttribute("errorMessage", "영상 번호가 유효하지 않습니다.");
-        request.getSession().setAttribute("url", "video/list");
-        response.sendRedirect("../error");
-      }
 
+      } else {
+        throw new Exception("영상 번호가 유효하지 않습니다.");
+      }
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

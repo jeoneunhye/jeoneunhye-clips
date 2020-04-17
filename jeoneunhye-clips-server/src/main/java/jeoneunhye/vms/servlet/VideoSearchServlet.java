@@ -58,13 +58,7 @@ public class VideoSearchServlet extends HttpServlet {
         keywordMap.put("uploadDate", keyword);
       }
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("  <meta charset='UTF-8'>");
-      out.println("  <title>영상 검색</title>");
-      out.println("</head>");
-      out.println("<body>");
+      request.getRequestDispatcher("/header").include(request, response);
 
       out.println("  <h1>영상 검색 결과</h1>");
       out.println("  <table border='1'>");
@@ -97,11 +91,12 @@ public class VideoSearchServlet extends HttpServlet {
       }
       out.println("</table>");
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

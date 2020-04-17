@@ -33,13 +33,7 @@ public class VideoDetailServlet extends HttpServlet {
 
       Video video = videoService.get(no);
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<title>영상 상세정보</title>");
-      out.println("</head>");
-      out.println("<body>");
+      request.getRequestDispatcher("/header").include(request, response);
 
       out.println("<h1>영상 상세정보</h1>");
 
@@ -63,11 +57,12 @@ public class VideoDetailServlet extends HttpServlet {
         out.println("<p>해당 번호의 영상이 없습니다.</p>");
       }
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

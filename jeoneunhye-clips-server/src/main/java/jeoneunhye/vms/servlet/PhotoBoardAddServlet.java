@@ -24,6 +24,8 @@ public class PhotoBoardAddServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    int videoNo = Integer.parseInt(request.getParameter("videoNo"));
+
     try {
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -34,17 +36,9 @@ public class PhotoBoardAddServlet extends HttpServlet {
 
       VideoService videoService = iocContainer.getBean(VideoService.class);
 
-      int videoNo = Integer.parseInt(request.getParameter("videoNo"));
-
       Video video = videoService.get(videoNo);
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<title>사진 입력</title>");
-      out.println("</head>");
-      out.println("<body>");
+      request.getRequestDispatcher("/header").include(request, response);
 
       out.println("<h1>사진 입력</h1>");
       out.println("<form action='add' method='post'>");
@@ -63,28 +57,29 @@ public class PhotoBoardAddServlet extends HttpServlet {
       out.println("<button>등록</button>");
       out.println("</form>");
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list?videoNo=" + videoNo);
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    try {
-      request.setCharacterEncoding("UTF-8");
+    request.setCharacterEncoding("UTF-8");
 
+    int videoNo = Integer.parseInt(request.getParameter("videoNo"));
+
+    try {
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
 
       VideoService videoService = iocContainer.getBean(VideoService.class);
       PhotoBoardService photoBoardService = iocContainer.getBean(PhotoBoardService.class);
-
-      int videoNo = Integer.parseInt(request.getParameter("videoNo"));
 
       Video video = videoService.get(videoNo);
       if (video == null) {
@@ -116,7 +111,9 @@ public class PhotoBoardAddServlet extends HttpServlet {
       response.sendRedirect("list?videoNo=" + videoNo);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list?videoNo=" + videoNo);
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

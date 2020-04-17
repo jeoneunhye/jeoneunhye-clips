@@ -21,9 +21,11 @@ public class PhotoBoardUpdateServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    try {
-      request.setCharacterEncoding("UTF-8");
+    request.setCharacterEncoding("UTF-8");
 
+    int videoNo = 0;
+
+    try {
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
           (ApplicationContext) servletContext.getAttribute("iocContainer");
@@ -31,7 +33,6 @@ public class PhotoBoardUpdateServlet extends HttpServlet {
       PhotoBoardService photoBoardService = iocContainer.getBean(PhotoBoardService.class);
 
       int no = Integer.parseInt(request.getParameter("no"));
-      int videoNo = 0;
 
       PhotoBoard photoBoard = photoBoardService.get(no);
       photoBoard.setTitle(request.getParameter("title"));
@@ -60,7 +61,9 @@ public class PhotoBoardUpdateServlet extends HttpServlet {
       response.sendRedirect("list?videoNo=" + videoNo);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list?videoNo=" + videoNo);
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

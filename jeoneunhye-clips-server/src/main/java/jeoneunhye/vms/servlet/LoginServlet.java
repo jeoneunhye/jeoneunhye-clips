@@ -23,13 +23,7 @@ public class LoginServlet extends HttpServlet {
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("<meta charset='UTF-8'>");
-      out.println("<title>로그인</title>");
-      out.println("</head>");
-      out.println("<body>");
+      request.getRequestDispatcher("/header").include(request, response);
 
       out.println("<h1>로그인</h1>");
       out.println("<form action='login' method='post'>");
@@ -38,11 +32,12 @@ public class LoginServlet extends HttpServlet {
       out.println("<button>로그인</button>");
       out.println("</form>");
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 
@@ -92,7 +87,9 @@ public class LoginServlet extends HttpServlet {
       out.println("</html>");
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "login");
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

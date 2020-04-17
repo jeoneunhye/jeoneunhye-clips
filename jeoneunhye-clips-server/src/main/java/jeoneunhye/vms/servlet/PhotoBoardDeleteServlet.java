@@ -17,6 +17,9 @@ public class PhotoBoardDeleteServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    int videoNo = Integer.parseInt(request.getParameter("videoNo"));
+    int no = Integer.parseInt(request.getParameter("no"));
+
     try {
       ServletContext servletContext = getServletContext();
       ApplicationContext iocContainer =
@@ -24,15 +27,14 @@ public class PhotoBoardDeleteServlet extends HttpServlet {
 
       PhotoBoardService photoBoardService = iocContainer.getBean(PhotoBoardService.class);
 
-      int videoNo = Integer.parseInt(request.getParameter("videoNo"));
-      int no = Integer.parseInt(request.getParameter("no"));
-
       photoBoardService.delete(no);
 
       response.sendRedirect("list?videoNo=" + videoNo);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list?videoNo=" + videoNo);
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }

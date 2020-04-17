@@ -22,6 +22,8 @@ public class PhotoBoardListServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+    int videoNo = 0;
+
     try {
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
@@ -33,23 +35,18 @@ public class PhotoBoardListServlet extends HttpServlet {
       VideoService videoService = iocContainer.getBean(VideoService.class);
       PhotoBoardService photoBoardService = iocContainer.getBean(PhotoBoardService.class);
 
-      out.println("<!DOCTYPE html>");
-      out.println("<html>");
-      out.println("<head>");
-      out.println("  <meta charset='UTF-8'>");
-      out.println("  <title>강의 사진 목록</title>");
-      out.println("</head>");
-      out.println("<body>");
+      request.getRequestDispatcher("/header").include(request, response);
 
       try {
-        int videoNo = Integer.parseInt(request.getParameter("videoNo"));
+        videoNo = Integer.parseInt(request.getParameter("videoNo"));
 
         Video video = videoService.get(videoNo);
         if (video == null) {
           throw new Exception("영상 번호가 유효하지 않습니다.");
         }
 
-        out.printf("  <h1>강의 사진 - %s</h1>", video.getTitle());
+        out.printf("  <h1>강의 사진 - <a href='../lesson/detail?no=%d'>%s</a></h1>",
+            videoNo, video.getTitle());
         out.printf("  <a href='add?videoNo=%d'>새 사진</a><br>\n", videoNo);
         out.println("  <table border='1'>");
         out.println("  <tr>");
@@ -79,11 +76,12 @@ public class PhotoBoardListServlet extends HttpServlet {
         out.printf("<p>%s</p>\n", e.getMessage());
       }
 
-      out.println("</body>");
-      out.println("</html>");
+      request.getRequestDispatcher("/footer").include(request, response);
 
     } catch (Exception e) {
-      throw new ServletException(e);
+      request.setAttribute("error", e);
+      request.setAttribute("url", "list?videoNo=" + videoNo);
+      request.getRequestDispatcher("/error").forward(request, response);
     }
   }
 }
