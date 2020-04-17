@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import jeoneunhye.vms.domain.Member;
 
 @WebServlet("/header")
 public class HeaderServlet extends HttpServlet {
@@ -53,6 +54,15 @@ public class HeaderServlet extends HttpServlet {
     out.println("      <a class='nav-link' href='../member/list'>회원</a>");
     out.println("    </li>");
     out.println("  </ul>");
+
+    Member loginUser = (Member) request.getSession().getAttribute("loginUser");
+    if (loginUser != null) {
+      out.printf("  <span class='navbar-text'>%s</span>\n", loginUser.getId());
+      out.println("  <a href='../auth/logout' class='btn btn-success btn-sm'>로그아웃</a>");
+
+    } else {
+      out.println("  <a href='../auth/login' class='btn btn-success btn-sm'>로그인</a>");
+    }
 
     out.println("</div>");
     out.println("</nav>");

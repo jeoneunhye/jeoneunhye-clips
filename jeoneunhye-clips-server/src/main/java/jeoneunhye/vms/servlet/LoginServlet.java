@@ -78,6 +78,7 @@ public class LoginServlet extends HttpServlet {
 
       if (member != null) {
         out.printf("<p>'%s'님 환영합니다.</p>\n", member.getId());
+        request.getSession().setAttribute("loginUser", member);
 
       } else {
         out.println("<p>사용자 정보가 유효하지 않습니다.</p>");
