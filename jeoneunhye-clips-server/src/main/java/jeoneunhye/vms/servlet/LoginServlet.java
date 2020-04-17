@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,18 @@ public class LoginServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     try {
+      String email = "";
+      Cookie[] cookies = request.getCookies();
+      if (cookies != null) {
+        for (Cookie cookie : cookies) {
+          if (cookie.getName().equals("email")) {
+            email = cookie.getValue();
+            break;
+          }
+        }
+      }
+      request.setAttribute("email", email);
+
       response.setContentType("text/html;charset=UTF-8");
       PrintWriter out = response.getWriter();
 
@@ -27,7 +40,8 @@ public class LoginServlet extends HttpServlet {
 
       out.println("<h1>로그인</h1>");
       out.println("<form action='login' method='post'>");
-      out.println("이메일: <input name='email' type='email'><br>");
+      out.printf("이메일: <input name='email' type='email' value='%s'>", email);
+      out.println("<input name='saveEmail' type='checkbox'>이메일 저장<br>");
       out.println("암호: <input name='password' type='password'><br>");
       out.println("<button>로그인</button>");
       out.println("</form>");
@@ -56,6 +70,16 @@ public class LoginServlet extends HttpServlet {
 
       String email = request.getParameter("email");
       String password = request.getParameter("password");
+      String saveEmail = request.getParameter("saveEmail");
+
+      Cookie cookie = new Cookie("email", email);
+      if (saveEmail != null) {
+        cookie.setMaxAge(60 * 60 * 24 * 30);
+      } else {
+        cookie.setMaxAge(0);
+      }
+
+      response.addCookie(cookie);
 
       Member member = memberService.get(email, password);
 
@@ -64,7 +88,7 @@ public class LoginServlet extends HttpServlet {
       out.println("<head>");
       out.println("<meta charset='UTF-8'>");
       if (member != null) {
-        out.println("<meta http-equiv='refresh' content='2;url=../board/list'>");
+        out.println("<meta http-equiv='refresh' content='2;url=../index.html'>");
 
       } else {
         out.println("<meta http-equiv='refresh' content='2;url=login'>");
