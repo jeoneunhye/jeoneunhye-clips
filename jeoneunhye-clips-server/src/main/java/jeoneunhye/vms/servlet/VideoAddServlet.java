@@ -3,17 +3,21 @@ package jeoneunhye.vms.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
+import java.util.UUID;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import org.springframework.context.ApplicationContext;
 import jeoneunhye.vms.domain.Video;
 import jeoneunhye.vms.service.VideoService;
 
 @WebServlet("/video/add")
+@MultipartConfig(maxFileSize = 10000000)
 public class VideoAddServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
@@ -26,7 +30,7 @@ public class VideoAddServlet extends HttpServlet {
     request.getRequestDispatcher("/header").include(request, response);
 
     out.println("<h1>영상 입력</h1>");
-    out.println("<form action='add' method='post'>");
+    out.println("<form action='add' method='post' enctype='multipart/form-data'>");
     out.println("주제: <input name='subject' type='text'><br>");
     out.println("제목: <input name='title' type='text'><br>");
     out.println("주소:<br>");
@@ -34,6 +38,7 @@ public class VideoAddServlet extends HttpServlet {
     out.println("재생시간: <input name='playTime' type='text'><br>");
     out.println("업로더: <input name='uploader' type='text'><br>");
     out.println("업로드일: <input name='uploadDate' type='date'><br>");
+    out.println("사진: <input name='photo' type='file'><br>");
     out.println("<button>등록</button>");
     out.println("</form>");
 
@@ -59,6 +64,14 @@ public class VideoAddServlet extends HttpServlet {
       video.setPlayTime(request.getParameter("playTime"));
       video.setWriter(request.getParameter("uploader"));
       video.setUploadDate(Date.valueOf(request.getParameter("uploadDate")));
+
+      Part photoPart = request.getPart("photo");
+      if (photoPart.getSize() > 0) {
+        String dirPath = getServletContext().getRealPath("/upload/video");
+        String filename = UUID.randomUUID().toString();
+        photoPart.write(dirPath + "/" + filename);
+        video.setPhoto(filename);
+      }
 
       if (videoService.add(video) > 0) {
         response.sendRedirect("list");

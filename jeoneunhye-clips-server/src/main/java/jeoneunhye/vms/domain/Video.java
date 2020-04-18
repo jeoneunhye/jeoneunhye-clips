@@ -13,6 +13,7 @@ public class Video implements Serializable {
   private String playTime;
   private String writer;
   private Date uploadDate;
+  private String photo;
 
   // video.csv 파일 데이터 포맷
   // 번호,주제,제목,주소,재생시간,업로더,업로드날짜
@@ -40,7 +41,8 @@ public class Video implements Serializable {
   @Override
   public String toString() {
     return "Video [no=" + no + ", subject=" + subject + ", title=" + title + ", url=" + url
-        + ", playTime=" + playTime + ", writer=" + writer + ", uploadDate=" + uploadDate + "]";
+        + ", playTime=" + playTime + ", writer=" + writer + ", uploadDate=" + uploadDate
+        + ", photo=" + photo + "]";
   }
 
   @Override
@@ -48,12 +50,13 @@ public class Video implements Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result + no;
+    result = prime * result + ((photo == null) ? 0 : photo.hashCode());
+    result = prime * result + ((playTime == null) ? 0 : playTime.hashCode());
     result = prime * result + ((subject == null) ? 0 : subject.hashCode());
     result = prime * result + ((title == null) ? 0 : title.hashCode());
-    result = prime * result + ((writer == null) ? 0 : writer.hashCode());
-    result = prime * result + ((url == null) ? 0 : url.hashCode());
-    result = prime * result + ((playTime == null) ? 0 : playTime.hashCode());
     result = prime * result + ((uploadDate == null) ? 0 : uploadDate.hashCode());
+    result = prime * result + ((url == null) ? 0 : url.hashCode());
+    result = prime * result + ((writer == null) ? 0 : writer.hashCode());
     return result;
   }
 
@@ -65,9 +68,18 @@ public class Video implements Serializable {
       return false;
     if (getClass() != obj.getClass())
       return false;
-
     Video other = (Video) obj;
     if (no != other.no)
+      return false;
+    if (photo == null) {
+      if (other.photo != null)
+        return false;
+    } else if (!photo.equals(other.photo))
+      return false;
+    if (playTime == null) {
+      if (other.playTime != null)
+        return false;
+    } else if (!playTime.equals(other.playTime))
       return false;
     if (subject == null) {
       if (other.subject != null)
@@ -79,25 +91,20 @@ public class Video implements Serializable {
         return false;
     } else if (!title.equals(other.title))
       return false;
+    if (uploadDate == null) {
+      if (other.uploadDate != null)
+        return false;
+    } else if (!uploadDate.equals(other.uploadDate))
+      return false;
     if (url == null) {
       if (other.url != null)
         return false;
     } else if (!url.equals(other.url))
       return false;
-    if (playTime == null) {
-      if (other.playTime != null)
-        return false;
-    } else if (!playTime.equals(other.playTime))
-      return false;
     if (writer == null) {
       if (other.writer != null)
         return false;
     } else if (!writer.equals(other.writer))
-      return false;
-    if (uploadDate == null) {
-      if (other.uploadDate != null)
-        return false;
-    } else if (!uploadDate.equals(other.uploadDate))
       return false;
     return true;
   }
@@ -105,43 +112,64 @@ public class Video implements Serializable {
   public int getNo() {
     return no;
   }
+
   public void setNo(int no) {
     this.no = no;
   }
+
   public String getSubject() {
     return subject;
   }
+
   public void setSubject(String subject) {
     this.subject = subject;
   }
+
   public String getTitle() {
     return title;
   }
+
   public void setTitle(String title) {
     this.title = title;
   }
+
   public String getUrl() {
     return url;
   }
+
   public void setUrl(String url) {
     this.url = url;
   }
+
   public String getPlayTime() {
     return playTime;
   }
+
   public void setPlayTime(String playTime) {
     this.playTime = playTime;
   }
+
   public String getWriter() {
     return writer;
   }
+
   public void setWriter(String writer) {
     this.writer = writer;
   }
+
   public Date getUploadDate() {
     return uploadDate;
   }
+
   public void setUploadDate(Date uploadDate) {
     this.uploadDate = uploadDate;
+  }
+
+  public String getPhoto() {
+    return photo;
+  }
+
+  public void setPhoto(String photo) {
+    this.photo = photo;
   }
 }

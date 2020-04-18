@@ -41,29 +41,30 @@ public class PhotoBoardDetailServlet extends HttpServlet {
       out.println("<h1>사진 상세정보</h1>");
 
       if (photoBoard != null) {
-        out.println("<form action='update' method='post'>");
+        out.println("<form action='update' method='post' enctype='multipart/form-data'>");
         out.printf("번호: <input name='no' type='text' readonly value='%d'><br>\n",
             photoBoard.getNo());
         out.printf("영상: %s<br>\n", photoBoard.getVideo().getTitle());
         out.printf("제목: <input name='title' type='text' value='%s'><br>\n", photoBoard.getTitle());
         out.println("내용:<br>");
-        out.printf("<textarea name='title' rows='5' cols='60'>%s</textarea><br>\n",
+        out.printf("<textarea name='content' rows='5' cols='60'>%s</textarea><br>\n",
             photoBoard.getContent());
         out.printf("작성일: %s<br>\n", photoBoard.getCreatedDate());
         out.printf("조회수: %d<br>\n", photoBoard.getViewCount());
         out.println("<hr>");
         out.println("사진 파일:<br>");
-        out.println("<ul>\n");
-        for (PhotoFile photoFile : photoBoard.getFiles()) {
-          out.printf("  <li>%s</li>\n", photoFile.getFilepath());
-        }
-        out.println("</ul>");
 
-        out.println("사진: <input name='photo1' type='file'><br>");
-        out.println("사진: <input name='photo2' type='file'><br>");
-        out.println("사진: <input name='photo3' type='file'><br>");
-        out.println("사진: <input name='photo4' type='file'><br>");
-        out.println("사진: <input name='photo5' type='file'><br>");
+        out.println("<p>");
+        for (PhotoFile photoFile : photoBoard.getFiles()) {
+          out.printf("<img src='../upload/photoboard/%s' height='100'>\n", photoFile.getFilepath());
+        }
+        out.println("</p>");
+
+        out.println("사진: <input name='photo' type='file'><br>");
+        out.println("사진: <input name='photo' type='file'><br>");
+        out.println("사진: <input name='photo' type='file'><br>");
+        out.println("사진: <input name='photo' type='file'><br>");
+        out.println("사진: <input name='photo' type='file'><br>");
         out.println("<p><button>변경</button>");
 
         videoNo = photoBoard.getVideo().getNo();

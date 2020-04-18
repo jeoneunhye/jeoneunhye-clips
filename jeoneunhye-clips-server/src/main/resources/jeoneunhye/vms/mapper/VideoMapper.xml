@@ -13,6 +13,7 @@
     <result column="playtime"  property="playTime"/>
     <result column="uploader"  property="writer"/>
     <result column="upload_dt" property="uploadDate"/>
+    <result column="photo"     property="photo"/>
   </resultMap>
     
   <sql id="select1">
@@ -32,14 +33,16 @@
       url, 
       playtime, 
       uploader, 
-      upload_dt)
+      upload_dt, 
+      photo)
     values(
       #{subject}, 
       #{title}, 
       #{url}, 
       #{playTime}, 
       #{writer}, 
-      #{uploadDate})
+      #{uploadDate}, 
+      #{photo})
   </insert>
 
   <select id="findAll" resultMap="VideoMap">
@@ -49,7 +52,8 @@
 
   <select id="findByNo" resultMap="VideoMap" parameterType="int">
     <include refid="select1"/>,
-      url
+      url,
+      photo
     from 
       vms_video
     where 
@@ -64,7 +68,8 @@
       <if test="url != null and url != ''">url=#{url},</if>
       <if test="playTime != null and playTime != ''">playtime=#{playTime},</if>
       <if test="writer != null and writer != ''">uploader=#{writer},</if>
-      <if test="uploadDate != null">upload_dt=#{uploadDate}</if>
+      <if test="uploadDate != null">upload_dt=#{uploadDate},</if>
+      <if test="photo != null and photo != ''">photo=#{photo}</if>
     </set>
     where video_id=#{no}
   </update>
